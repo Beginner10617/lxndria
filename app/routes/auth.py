@@ -6,7 +6,7 @@ from flask import url_for, flash, redirect, Blueprint, request, render_template
 from app import mail, db, limiter, login_manager
 from app.models import User
 from app.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetForm
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user, login_required
 
 auth_bp = Blueprint('auth', __name__)
 WEBAPP_NAME = os.getenv('WEBAPP_NAME')
@@ -167,7 +167,11 @@ def reset_password(token):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
+@auth_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('routes.auth.login'))
 '''
 Actionables
 1. HTML formatting of the email body.

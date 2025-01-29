@@ -1,0 +1,96 @@
+/* General Reset */
+body, h1, p {
+    margin: rem;
+    padding: 0;
+    text-decoration: none;
+    color: inherit;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    background-color: #121212; /* Dark background */
+    color: #f1f1f1; /* Light text */;
+  }
+  a{
+    text-decoration: none;
+    color: inherit;
+  }
+  /* Banner Styling */
+  .banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #444; /* Dark background */
+    color: white; /* Text color */
+    position: sticky; /* Sticks to the top on scroll */
+    top: 0;
+    z-index: 1000;
+  }
+  
+  /* Logo and Site Name */
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    width: 50px; /* Adjust as needed */
+    height: 50px;
+    margin-left: 20px;
+    margin-right: 30px;
+  }
+  
+  .site-name {
+    font-size: 2.25rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: bold;
+  }
+  
+  
+  .menu-container {
+    position: relative;
+    display: inline-block;
+}
+.menu-button {
+    padding: 15px;
+    margin-right: 10px;
+    background-color: #444;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%; /* Makes the button circular */
+    width:  35px; /* Set a fixed width */
+    height: 35px; /* Set a fixed height */
+    text-align: center;
+    font-size: 2rem;
+    line-height: 1; /* Adjusts vertical alignment */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.menu-button:hover {
+    background-color: #555;
+}
+.menu-list {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #707070;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+    width: 150px;
+}
+.menu-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+.menu-list li:hover {
+    background-color: #f0f0f0;
+}
+.show {
+    display: block;
+}

@@ -5,15 +5,15 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
+    return render_template('index.html')
+
+@main_bp.route('/admin')
+@login_required
+def admin():
     if not current_user.is_authenticated:
         print('Not authenticated')
         return redirect(url_for('routes.auth.login'))
-    print(current_user.username)
+    
     if current_user.username == 'admin':
-        return render_template('index.html', total_users=User.query.count(), admin=True)
-    return redirect(url_for('routes.main.home'))
-
-@main_bp.route('/home')
-@login_required
-def home():
-    return render_template('home.html')
+        return render_template('admin.html', total_users=User.query.count(), admin=True)
+    return render_template('admin.html')
