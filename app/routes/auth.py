@@ -5,7 +5,7 @@ from flask_mail import Message
 from flask import url_for, flash, redirect, Blueprint, request, render_template
 from app import mail, db, limiter, login_manager
 from app.models import User
-from app.forms import RegistrationForm, LoginForm
+from app.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetForm
 from flask_login import current_user, login_user
 
 auth_bp = Blueprint('auth', __name__)
@@ -20,6 +20,14 @@ def send_verification_email(user):
     msg = Message('Email Verification', sender=os.getenv('EMAIL_ID'), recipients=[user.email])
     msg.body = 'Hi '+user.name+'! To verify your email for '+WEBAPP_NAME+', visit the following link:\n' + verify_url + '\nPlease note that these links will expire in 24 hours.'
     mail.send(msg)
+
+def send_reset_password_email(user):
+    token_for_reset = jwt.encode({'email': user.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, 'secret_key', algorithm='HS256')
+    reset_url = url_for('routes.auth.reset_password', token=token_for_reset, _external=True)
+    msg = Message('Password Reset', sender=os.getenv('EMAIL_ID'), recipients=[user.email])
+    msg.body = 'Hi '+user.name+'! To reset your password for '+WEBAPP_NAME+', visit the following link:\n' + reset_url + '\nPlease note that these links will expire in 24 hours.'
+    mail.send(msg)
+
 
 @auth_bp.route('/verify_email/<token>')
 def verify_email(token):
@@ -40,7 +48,7 @@ def verify_email(token):
         flash('The verification link has expired', 'error')
     except jwt.InvalidTokenError:
         flash('Invalid verification link', 'error')
-    return redirect(url_for('login'))
+    return redirect(url_for('routes.auth.login'))
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -85,7 +93,7 @@ def register():
     return render_template('register.html', form=form)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
-#@limiter.limit("5 per minute")
+@limiter.limit("5 per minute")
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -101,13 +109,66 @@ def login():
         return redirect(url_for('routes.main.index'))
     return render_template('login.html', form=form)
 
+@auth_bp.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    return redirect(url_for('routes.auth.reset_password_request'))
+
+@auth_bp.route('/reset-password', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
+def reset_password_request():
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        user = User.query.filter_by(email=email).first()
+        if user:
+            send_reset_password_email(user)
+            flash('Password reset link sent to your email.', 'success')
+        else:
+            flash('No account found with that email.', 'error')
+    return render_template('reset_password_request.html', form=form)
+
+
+@auth_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        data = jwt.decode(token, 'secret_key', algorithms=['HS256'])
+        email = data['email']
+        user = User.query.filter_by(email=email).first()
+        if user:
+            form = ResetPasswordForm()
+            if form.validate_on_submit():
+                password = form.password.data
+                confirm_password = form.confirm_password.data
+        
+                # Check if password is valid
+                if len(password) < 8:
+                    flash('Password must be at least 8 characters long.', 'error')
+                    return redirect(url_for('routes.auth.register'))
+                
+                if password != confirm_password:
+                    flash('Passwords do not match.', 'error')
+                    return redirect(url_for('routes.auth.reset_password_token', token=token))
+                user.set_password(password)
+                db.session.commit()
+                print('Password reset successfully')
+                flash('Password reset successfully.', 'success')
+                return redirect(url_for('routes.auth.login'))
+            return render_template('reset_password.html', form=form, token=token)
+        else:
+            flash('Invalid reset link.', 'error')
+            return redirect(url_for('routes.auth.login'))
+    except jwt.ExpiredSignatureError:
+        flash('The reset link has expired.', 'error')
+    except jwt.InvalidTokenError:
+        flash('Invalid reset link.', 'error')
+        
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
 '''
 Actionables
-1. Implement "forgot password" functionality with secure password reset tokens.
-2. Add logout functionality to explicitly terminate sessions.
-3. HTML formatting of the email body.
+1. HTML formatting of the email body.
 '''
