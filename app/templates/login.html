@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+    <title>Login</title>
+  </head>
+  <body>
+    <div class="login-container">
+        <div class="login-box">
+          <h2>Login</h2>
+          <form action="{{ url_for('routes.auth.login') }}" method="POST">
+            {{ form.hidden_tag() }}
+              <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" placeholder="Username" required>
+              </div>
+              <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" placeholder="Create your password" required>
+              </div>
+            <button type="submit" class="register-button">Submit</button>
+          </form>
+          <div class="forgot-password">
+            <a href="/forgot-password" class="forgot-password"> Forgot Password? </a>
+          </div>
+          <div class="register-link">
+            Don't have an account? <a href="/register" class="register-link">Register</a>
+          </div>
+          <div class = "flash"></div>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li class="alert {{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+          {% endwith %}
+          </div>
+        </div>
+    </div>
+</body>
+</html>

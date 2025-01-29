@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+    <title>Register</title>
+  </head>
+  <body>
+    <div class="register-container">
+        <div class="register-box">
+          <h2>Register</h2>
+          <form action="{{ url_for('routes.auth.register') }}" method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="input-group">
+              <label for="username">Username</label>
+              {{ form.username(class="form-control", placeholder="Username") }}
+            </div>
+            
+            <div class="input-group">
+              <label for="name">Name</label>
+              {{ form.name(class="form-control", placeholder="Name") }}
+            </div>
+            
+            <div class="input-group">
+              <label for="email">Email</label>
+              {{ form.email(class="form-control", placeholder="Enter your email") }}
+            </div>
+            
+            <div class="input-group">
+              <label for="password">Password</label>
+              {{ form.password(class="form-control", placeholder="Create your password") }}
+            </div>
+            
+            <div class="input-group">
+              <label for="confirm_password">Confirm Password</label>
+              {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
+            </div>
+            
+            <button type="submit" class="register-button">Submit</button>
+          </form>
+          <div class="flash"></div>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li class="alert {{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+          {% endwith %}
+          </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #121212; /* Dark background */
+    color: #f1f1f1; /* Light text */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .login-box {
+    background-color: #1e1e1e; /* Darker grey box */
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .register-box {
+    background-color: #1e1e1e; /* Darker grey box */
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+    width: 100%;
+    max-width: 400px;
+  }
+
+  h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #ffffff; /* White text for title */
+  }
+  
+  .input-group {
+    margin-bottom: 1rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #cccccc; /* Slightly muted text */
+  }
+  
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #333; /* Dark border */
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #2b2b2b; /* Input background */
+    color: #f1f1f1; /* Light text */
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: #6366f1; /* Accent color */
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* Subtle glow */
+  }
+  
+  .login-button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a7d44; /* Greenish button */
+    color: #f1f1f1; /* Light text */
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-button:hover {
+    background-color: #469a52; /* Lighter green on hover */
+  }
+  
+  .login-button:active {
+    background-color: #316936; /* Darker green on click */
+  }
+  
+.forgot-password{
+    text-align: left;
+    margin-top: 1rem;
+    color: #cccccc; /* Slightly muted text */
+  }
+  
+  .forgot-password a {
+    color: #6366f1; /* Accent color */
+    text-decoration: none;
+  }
+  
+  .forgot-password a:hover {
+    text-decoration: underline;
+  }
+  
+  .error {
+    background-color: #ff4d4d; /* Red error background */
+    color: #ffffff; /* White text */
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.register-link{
+    text-align: left;
+    margin-top: 1rem;
+    color: #cccccc; /* Slightly muted text */
+  }
+  
+  .register-link a {
+    color: #6366f1; /* Accent color */
+    text-decoration: none;
+  }
+  
+  .register-link a:hover {
+    text-decoration: underline;
+}
+
+.register-button{
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a7d44; /* Greenish button */
+    color: #f1f1f1; /* Light text */
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .register-button:hover {
+    background-color: #469a52; /* Lighter green on hover */
+  }
+  
+  .register-button:active {
+    background-color: #316936; /* Darker green on click */
+}
+
+.flash{
+    margin-bottom: 1rem;
+}
