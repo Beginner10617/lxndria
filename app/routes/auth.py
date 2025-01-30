@@ -28,6 +28,12 @@ def send_reset_password_email(user):
     msg.body = 'Hi '+user.name+'! To reset your password for '+WEBAPP_NAME+', visit the following link:\n' + reset_url + '\nPlease note that these links will expire in 24 hours.'
     mail.send(msg)
 
+def make_directory_for_user(directory):
+    path = os.getenv('UPLOAD_FOLDER')+directory+"/Profile_picture/"
+    os.makedirs(path, exist_ok=True)
+    os.makedirs(path+"Profile_picture/", exist_ok=True)
+    os.makedirs(path+"Problems/", exist_ok=True)
+    os.makedirs(path+"Discussions/", exist_ok=True)
 
 @auth_bp.route('/verify_email/<token>')
 def verify_email(token):
@@ -39,13 +45,12 @@ def verify_email(token):
         # Mark the user's email as verified
         if email in pending_users:
             user = pending_users.pop(email)
+            flash('Your email has been verified!', 'success')
+            directory = user.username
+            make_directory_for_user(directory)
             db.session.add(user)
             print('User added', user.username)
             db.session.commit()
-            flash('Your email has been verified!', 'success')
-            directory = user.username
-            path = "/app/static/User-content/"+directory
-            os.makedirs(path)
             return redirect(url_for('routes.auth.login'))
     except jwt.ExpiredSignatureError:
         flash('The verification link has expired', 'error')

@@ -5,10 +5,11 @@ from flask_login import login_required
 from app.forms import EditAccountForm
 from werkzeug.utils import secure_filename
 from app import db
+from dotenv import load_dotenv
 import os
-
 account_bp = Blueprint('account', __name__)
 
+load_dotenv()
 @account_bp.route('/account')
 def account():
     if not current_user.is_authenticated:
@@ -34,7 +35,7 @@ def edit_account():
             file = form.profile_pic.data
             filename = secure_filename(file.filename)
             directory = current_profile.username
-            path = "app/static/User-content/Wasi/"  # This should be the path where you want to save
+            path = os.getenv('UPLOAD_FOLDER')+current_profile.username+"/Profile_picture/"  # This should be the path where you want to save
             print(path)
             file.save(os.path.join(path, filename))
             current_profile.profile_pic = path[len('app/static/'):]+filename
