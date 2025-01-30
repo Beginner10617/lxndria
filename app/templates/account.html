@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/profile.css')}}">
+  <title>Account</title>
+</head>
+
+<header class="banner">
+    <div class="logo-container">
+      <img src="{{url_for('static', filename='Images/logo.png')}}" alt="Logo" class="logo">
+      <span class="site-name"><a href="/">Lxndria</span></div></a>
+    </div>
+      <div class="menu-container">
+        <button class="menu-button" onclick="toggleMenu()">☰</button>
+        <ul class="menu-list" id="menuList">
+            <a href="/account"><li>Account</li></a>
+            <a href="/help"><li>Help</li></a>
+            <a href="/logout"><li>Logout</li></a>
+        </ul>
+    </div>
+    <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+    
+  </header>
+
+<body>
+    <div class="profile-container">
+        <!-- Main Profile Section -->
+        <div class="profile-main">
+          <div class="profile-header">
+            <img src="{{url_for('static', filename='/images/default-profile.jpg')}}" alt="Profile Picture" class="profile-pic">
+            <div class="profile-info">
+              <h1>{{user.name}}</h1>
+              <p>@{{user.username}}</p>
+              <p>{{user.country}}</p>
+              <p class="profile-bio">{{user.bio}}</p>
+            </div>
+          </div>
+          <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-number">{{user.problems_posted}}</div>
+                <div class="stat-text">Problems Posted</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{user.solutions}}</div>
+                <div class="stat-text">Solutions</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{user.discussions}}</div>
+                <div class="stat-text">Discussions</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{user.upvotes}}</div>
+                <div class="stat-text">Upvotes</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{user.comments}}</div>
+                <div class="stat-text">Comments</div>
+              </div>
+            </div>
+          <div class="profile-content">
+          </div>
+        </div>
+    
+        <!-- Right Sidebar -->
+        <div class="profile-sidebar">
+          <div class="profile-options">
+            <button>Edit Profile</button>
+            <button>Change Password</button>
+            <button>Privacy Settings</button>
+          </div>
+        </div>
+      </div> 
+</body>
+</html>

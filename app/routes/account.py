@@ -1,4 +1,5 @@
 from .auth import current_user
+from app.models import Profile
 from flask import Blueprint, render_template, redirect, url_for
 account_bp = Blueprint('account', __name__)
 
@@ -8,4 +9,5 @@ def account():
     if not current_user.is_authenticated:
         print('Not authenticated')
         return redirect(url_for('routes.auth.login'))
-    return render_template('account.html')
+    profile = Profile.query.filter_by(username=current_user.username).first()
+    return render_template('account.html', user=profile)
