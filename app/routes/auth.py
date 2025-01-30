@@ -29,7 +29,7 @@ def send_reset_password_email(user):
     mail.send(msg)
 
 def make_directory_for_user(directory):
-    path = os.getenv('UPLOAD_FOLDER')+directory+"/Profile_picture/"
+    path = os.getenv('UPLOAD_FOLDER')+directory+"/"
     os.makedirs(path, exist_ok=True)
     os.makedirs(path+"Profile_picture/", exist_ok=True)
     os.makedirs(path+"Problems/", exist_ok=True)
