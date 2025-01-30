@@ -37,8 +37,7 @@ class Profile(db.Model):
     
     profile_pic = db.Column(db.String(255), default="/images/default-profile.jpg")  
     bio = db.Column(db.Text, default="This user has not set a bio yet.")
-    country = db.Column(db.String(80), default="Unknown")
-
+    
     problems_posted = db.Column(db.Integer, default=0)
     solutions = db.Column(db.Integer, default=0)
     discussions = db.Column(db.Integer, default=0)

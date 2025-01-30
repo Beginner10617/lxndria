@@ -123,3 +123,30 @@ body{
   }
 
   
+  .input-group {
+    margin-bottom: 1rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #cccccc; /* Slightly muted text */
+  }
+  
+  input {
+    width: 90%;
+    padding: 0.75rem;
+    border: 1px solid #333; /* Dark border */
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #2b2b2b; /* Input background */
+    color: #f1f1f1; /* Light text */
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: #6366f1; /* Accent color */
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* Subtle glow */
+  }
+  

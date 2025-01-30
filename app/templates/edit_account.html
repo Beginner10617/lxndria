@@ -63,12 +63,28 @@
     
         <!-- Right Sidebar -->
         <div class="profile-sidebar">
-          <div class="profile-options">
-            <a href="/account/edit"><button>Edit Profile</button></a>
-            <a href="/reset-password-2"><button >Change Password</button></a>
-            <button>Contribute</button>
-          </div>
+
+            <h2>Edit Account</h2>
+
+            <form action="/account/edit" enctype="multipart/form-data" method="POST">
+                {{ form.hidden_tag() }}
+                <div class="input-group">
+                <label for="username">Name</label>
+                {{ form.name(class="form-control", placeholder=user.name) }}
+                </div>
+                <div class="input-group">
+                <label for="Email">Bio</label>
+                {{ form.bio(class="form-control", placeholder=user.bio) }}
+              </div>
+              <div class="input-group">
+                <label for="Profile Picture">Profile Picture:</label>
+                {{ form.profile_pic(class="form-control") }}
+                </div>
+
+            <div class="profile-options">  
+                <button type="submit">Submit</button>
+            </div>
+            </form>
         </div>
-      </div> 
 </body>
 </html>

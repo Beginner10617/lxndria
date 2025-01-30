@@ -43,6 +43,9 @@ def verify_email(token):
             print('User added', user.username)
             db.session.commit()
             flash('Your email has been verified!', 'success')
+            directory = user.username
+            path = "/app/static/User-content/"+directory
+            os.makedirs(path)
             return redirect(url_for('routes.auth.login'))
     except jwt.ExpiredSignatureError:
         flash('The verification link has expired', 'error')
@@ -127,6 +130,14 @@ def reset_password_request():
             flash('No account found with that email.', 'error')
     return render_template('reset_password_request.html', form=form)
 
+@auth_bp.route('/reset-password-2', methods=['GET', 'POST'])
+@login_required
+@limiter.limit("5 per minute")
+def reset_password_request_2():
+    if current_user.is_authenticated:
+        send_reset_password_email(current_user)
+        flash('Password reset link sent to your email.', 'success')
+    return redirect(url_for('routes.account.account'))
 
 @auth_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
