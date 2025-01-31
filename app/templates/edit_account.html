@@ -14,10 +14,11 @@
       <div class="menu-container">
         <button class="menu-button" onclick="toggleMenu()">☰</button>
         <ul class="menu-list" id="menuList">
-            <a href="/account"><li>Account</li></a>
-            <a href="/help"><li>Help</li></a>
-            <a href="/logout"><li>Logout</li></a>
-        </ul>
+          <a href="/account"><li>Account</li></a>
+          <a href="/account/contribute/problem"><li>Post a Problem</li></a>
+          <a href="/account/contribute/discussion"><li>Post a Discussion</li></a>
+          <a href="/help"><li>Help</li></a>
+      </ul>
     </div>
     <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
     
