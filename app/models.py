@@ -69,7 +69,7 @@ class Problem(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     answer = db.Column(db.String(100), nullable=False)
-
+    
     author = db.Column(db.String(80), db.ForeignKey('user.username'))
     user = db.relationship('User', backref=db.backref('problems', cascade="all, delete-orphan"))
 
@@ -93,3 +93,19 @@ class Problem(db.Model):
                 return content[:500] + "..."
             else:
                 return content
+            
+class UserStats(db.Model):
+    __tablename__ = "user_stats"
+    __table_args__ = {"extend_existing": True}
+
+    username = db.Column(db.String(80), db.ForeignKey('user.username'), primary_key=True)
+    user = db.relationship('User', backref=db.backref('stats', uselist=False, cascade="all, delete-orphan"))
+
+    problems_posted = db.Column(db.Integer, default=0)
+    solutions = db.Column(db.Integer, default=0)
+    discussions = db.Column(db.Integer, default=0)
+    upvotes = db.Column(db.Integer, default=0)
+    comments = db.Column(db.Integer, default=0)
+    
+    def __repr__(self):
+        return f"<Stats for {self.username}>"

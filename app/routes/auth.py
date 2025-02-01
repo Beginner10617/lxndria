@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from flask_mail import Message
 from flask import url_for, flash, redirect, Blueprint, request, render_template
 from app import mail, db, limiter, login_manager
-from app.models import User
+from app.models import User, UserStats
 from app.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetForm
 from flask_login import current_user, login_user, logout_user, login_required
 
@@ -48,6 +48,7 @@ def verify_email(token):
             flash('Your email has been verified!', 'success')
             directory = user.username
             make_directory_for_user(directory)
+            db.add(UserStats(username=user.username))
             db.session.add(user)
             print('User added', user.username)
             db.session.commit()

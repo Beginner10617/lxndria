@@ -52,11 +52,6 @@ class PostProblemForm(FlaskForm):
         ,('Probability', 'Probability')
         ], validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
-    answer_type = SelectField('Answer Type', choices=[
-        ('mcq', 'mcq')
-        ,('input ', 'input')
-        ], default='mcq', validators=[DataRequired()])
-    options = FieldList(FormField(MCQOptionForm), min_entries=2)
     expected_answer = StringField('Expected Answer')
     submit = SubmitField('Post')
 
@@ -66,33 +61,22 @@ class PostProblemForm(FlaskForm):
         if not super().validate():
             print("Super validation failed")
             return False
-
-        if self.answer_type.data == "mcq":
             
-            possible_correct_answers = [opt.option_text.data for opt in self.options]
-            if len(possible_correct_answers) != len(set(possible_correct_answers)):
-                self.options.errors.append("Options must be unique.")
-                print("Options must be unique.")
-                return False
-            correct_answers = [opt.is_correct.data for opt in self.options if opt.is_correct.data]
-            if len(correct_answers) != 1:
-                print(correct_answers)
-                self.answer_type.errors.append("MCQ must have exactly one correct answer.")
-                print("MCQ must have exactly one correct answer.")
-                return False
-            
-        if self.answer_type.data == "input":
-            if not self.expected_answer.data:
-                self.expected_answer.errors.append("Please provide an expected answer.")
-                print("Please provide an expected answer.")
-                return False
-            if not is_number(self.expected_answer.data):
-                self.expected_answer.errors.append("Expected answer must be a valid number.")
-                print("Expected answer must be a valid number.")
-                return False
+        if not self.expected_answer.data:
+            self.expected_answer.errors.append("Please provide an expected answer.")
+            print("Please provide an expected answer.")
+            return False
+        if not is_number(self.expected_answer.data):
+            self.expected_answer.errors.append("Expected answer must be a valid number.")
+            print("Expected answer must be a valid number.")
+            return False
 
         return True
     
+class SubmissionForm(FlaskForm):
+    answer = StringField('Answer', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
 
 def is_number(s):
     try:

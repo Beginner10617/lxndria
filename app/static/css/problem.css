@@ -64,3 +64,14 @@ body{
     font-size: 1rem;
     transition: background-color 0.3s;
 }
+.option-item{
+    display: flex;
+    align-items: center;
+    width: 150px;
+    padding: 0.75rem;
+    border: 1px solid #333; /* Dark border */
+    border-radius: 5px;
+    font-size: 1.5rem;
+    background-color: #333; /* Input background */
+    color: #f1f1f1; /* Light text */
+}

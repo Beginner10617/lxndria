@@ -39,26 +39,8 @@
 
       </div>
     <div class="right">
-      {{ form.answer_type(class="form-control", id="answer_Type", onchange="toggleAnswerType()", ) }}
-        
 
-    <div id="mcqOptions">
-            <div class="option">
-
-              <div id="optionsContainer">
-                {% for option in form.options %}
-                <div class="option-item">
-                  {{ option.is_correct(class="correct-option", onchange="toggleOptions()", value="correct_option_" ~ loop.index) }} 
-                  {{ option.option_text(placeholder="Option " ~ loop.index) }}
-                </div>
-                {% endfor %}
-              </div>
-        </div>
-        <button type="button" onclick="addOption()">Add Option</button>
-        <button type="button" onclick="removeOption()">Remove Option</button>
-    </div>
-
-    <div id="inputField" class="inputField" style="display: none;">
+    <div id="inputField" class="inputField">
       {{form.expected_answer(class="form-control", placeholder="Answer")}}
     </div>
 
