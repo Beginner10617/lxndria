@@ -149,4 +149,17 @@ body{
     border-color: #6366f1; /* Accent color */
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* Subtle glow */
   }
-  
+
+  .problem-post{
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    color: #e0e0e0;
+  }
+  .problem-post .date{
+    margin-top: 10px;
+    color: #666;
+  }

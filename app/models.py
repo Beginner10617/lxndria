@@ -1,6 +1,9 @@
 from .extensions import db, UserMixin, bcrypt
 from datetime import datetime
-
+from dotenv import load_dotenv
+from sqlalchemy import CheckConstraint
+import os
+load_dotenv()
 class User(db.Model, UserMixin): # create a User class to store user information
     __tablename__ = "user"
     __table_args__ = {"extend_existing": True}  # Allow modifications to the table
@@ -53,3 +56,40 @@ class Profile(db.Model):
     @property
     def name(self):
         return self.user.name if self.user else None
+    
+class Problem(db.Model):
+    __tablename__ = "problem"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(100), nullable=False)
+    topic = db.Column(db.String(30), nullable=False)
+    attempts = db.Column(db.Integer, default=0)
+    solved = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    answer = db.Column(db.String(100), nullable=False)
+
+    author = db.Column(db.String(80), db.ForeignKey('user.username'))
+    user = db.relationship('User', backref=db.backref('problems', cascade="all, delete-orphan"))
+
+    __table_args__ = (
+        CheckConstraint("topic IN ('Algebra', 'Geometry', 'Number Theory', 'Calculus', 'Logic', 'Classical Mechanics', 'Electricity and Magnetism', 'Computer Science', 'Quantitative Finance', 'Chemistry', 'Probability')", name="valid_topic_check"),
+    )
+
+    def __repr__(self):
+        return f"<Problem {self.title}>"
+    @property
+    def content(self):
+        path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
+        with open(path, 'r') as file:
+            return file.read()
+    @property
+    def reducedContent(self):
+        path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
+        with open(path, 'r') as file:
+            content = file.read()
+            if len(content) > 500:
+                return content[:500] + "..."
+            else:
+                return content

@@ -1,0 +1,66 @@
+body{
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    color: #e0e0e0;
+}
+.problem-container{
+    display: flex;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    color: #e0e0e0;
+}
+.problem-content{
+    flex: 1;
+    padding: 10px;
+    font-size: 1.5rem;
+}
+.problem{
+    font-size: 1.5rem;
+    color: #fff;
+    align-items: center;
+    width : 100%;
+}
+.problem h1{
+    margin-bottom: 10px;
+    background-color: #333;
+}
+.answer{
+    align-self: center;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+.answer input[type="text"]{
+    width: 150px;
+    padding: 0.75rem;
+    border: 1px solid #333; /* Dark border */
+    border-radius: 5px;
+    font-size: 1.5rem;
+    background-color: #2b2b2b; /* Input background */
+    color: #f1f1f1; /* Light text */
+}
+.answer input[type="text"]:focus{
+    outline: none;
+    border: 1px solid #6366f1; /* Blue border */
+}
+.answer button{
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}

@@ -1,9 +1,12 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 from app.forms import PostProblemForm, MCQOptionForm
+from app.models import Problem, db
+from dotenv import load_dotenv
+import os
 
 contributions_bp = Blueprint('contributions', __name__)
-
+load_dotenv()
 @contributions_bp.route('/account/contribute/problem', methods=['GET', 'POST'])
 @login_required
 def contribute():
@@ -14,7 +17,7 @@ def contribute():
         topic = form.topic.data
         content = form.content.data
         answer_type = form.answer_type.data
-        expected_answer = form.expected_answer.data if answer_type == "input" else []
+        expected_answer = form.expected_answer.data if answer_type.strip() == "input" else []
         options = []
         if answer_type == "mcq":
             # Collect options only for MCQ
@@ -23,7 +26,13 @@ def contribute():
                 for option in form.options if option.option_text.data
             ]
             expected_answer = [opt["text"] for opt in options if opt["correct"]][0]
-        print(expected_answer)
+        print(expected_answer, answer_type)
+        problem = Problem(title=title, topic=topic, answer=expected_answer, author=current_user.username)
+        db.session.add(problem)
+        db.session.commit()
+        path = os.getenv('UPLOAD_FOLDER')+f"/{current_user.username}/Problems/{problem.id}.txt"
+        with open(path, "w") as f:
+            f.write(content)
         return redirect(url_for('routes.main.index'))
 
     return render_template('contribute.html', form=form)

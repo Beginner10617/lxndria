@@ -4,6 +4,7 @@ from .main import main_bp
 from .account import account_bp
 from .help import help_bp
 from .contribute import contributions_bp
+from .problem import problem_bp
 
 routes_bp = Blueprint('routes', __name__)
 
@@ -13,3 +14,4 @@ routes_bp.register_blueprint(main_bp)
 routes_bp.register_blueprint(account_bp)
 routes_bp.register_blueprint(help_bp)
 routes_bp.register_blueprint(contributions_bp)
+routes_bp.register_blueprint(problem_bp)

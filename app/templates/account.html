@@ -70,6 +70,15 @@
             <a href="/logout"><button>Logout</button></a>
           </div>
         </div>
-      </div> 
+      </div>
+      {% for problem in problems %}
+      <a href="/account/problem/{{problem.id}}"> 
+        <div class="problem-post">
+              <h2>{{problem.title}}</h2>
+              <p>{{problem.reducedContent}}</p>
+              <div class="date">Posted on {{problem.created_at.strftime('%B %d, %Y')}}</div>
+        </div>
+      </a>
+      {% endfor %}
 </body>
 </html>

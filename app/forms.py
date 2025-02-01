@@ -68,8 +68,15 @@ class PostProblemForm(FlaskForm):
             return False
 
         if self.answer_type.data == "mcq":
+            
+            possible_correct_answers = [opt.option_text.data for opt in self.options]
+            if len(possible_correct_answers) != len(set(possible_correct_answers)):
+                self.options.errors.append("Options must be unique.")
+                print("Options must be unique.")
+                return False
             correct_answers = [opt.is_correct.data for opt in self.options if opt.is_correct.data]
             if len(correct_answers) != 1:
+                print(correct_answers)
                 self.answer_type.errors.append("MCQ must have exactly one correct answer.")
                 print("MCQ must have exactly one correct answer.")
                 return False

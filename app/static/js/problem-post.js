@@ -6,14 +6,7 @@ function toggleAnswerType() {
 document.addEventListener("DOMContentLoaded", function() {
     toggleAnswerType(); // Ensures correct fields are shown based on the selected option
 });
-document.addEventListener("DOMContentLoaded", function () {
-    let checkboxes = document.querySelectorAll(".correct-option");
 
-    checkboxes.forEach((checkbox) => {
-      checkbox.type = "radio"; // Convert checkboxes to radio buttons
-      checkbox.name = "correct_option"; // Ensure all radio buttons belong to the same group
-    });
-  });
 function addOption() {
     const container = document.getElementById("optionsContainer");
     const index = container.children.length;
@@ -21,7 +14,7 @@ function addOption() {
     optionDiv.classList.add("option");
     optionDiv.innerHTML = `
     <div class="option-item">
-        <input type="radio" onclick="toggleOptions()" class="correct-option" id="correct_option_"  value="${index}">
+        <input type="checkbox" onclick="toggleOptions()" class="correct-option" id="correct_option_"  value="${index}">
         <input type="text" name="options[]" placeholder="Option ${index + 1}">
     </div>
     `;

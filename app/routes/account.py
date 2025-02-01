@@ -1,5 +1,5 @@
 from .auth import current_user
-from app.models import Profile, User
+from app.models import Profile, User, Problem
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required
 from app.forms import EditAccountForm
@@ -16,7 +16,8 @@ def account():
         print('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     profile = Profile.query.filter_by(username=current_user.username).first()
-    return render_template('account.html', user=profile)
+    problems = Problem.query.filter_by(author=current_user.username).order_by(Problem.created_at.desc()).all()
+    return render_template('account.html', user=profile, problems=problems)
 
 @account_bp.route('/account/edit', methods=['GET', 'POST'])
 @login_required
