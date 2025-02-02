@@ -46,6 +46,11 @@
         <div class="problem-content">
             {{problem.content}}
         </div>
+
+    <div class="author">
+        <h2>Author</h2>
+        <a href="/account/{{problem.author}}"><p>{{problem.author}}</p></a>
+    </div>
     </div>
     {% if solved == 0 %}
     <form method="POST">
@@ -69,6 +74,5 @@
     </div>
     {% endif %}
     </div>
-</div>
 
 </body>

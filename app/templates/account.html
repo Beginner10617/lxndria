@@ -63,6 +63,7 @@
         </div>
     
         <!-- Right Sidebar -->
+        {% if user.id == current_user.id %}
         <div class="profile-sidebar">
           <div class="profile-options">
             <a href="/account/edit"><button>Edit Profile</button></a>
@@ -70,6 +71,7 @@
             <a href="/logout"><button>Logout</button></a>
           </div>
         </div>
+        {% endif %}
       </div>
       {% for problem in problems %}
       <a href="/problem/{{problem.id}}"> 

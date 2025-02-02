@@ -45,3 +45,17 @@ def edit_account():
         
         return redirect(url_for('routes.account.account'))
     return render_template('edit_account.html', form=form, user = current_profile)
+
+@account_bp.route('/account/<string:username>')
+def view_account(username):
+    if not current_user.is_authenticated:
+        print('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
+    if not Profile.query.filter_by(username=username).first():
+        return redirect(url_for('routes.account.account'))
+    if username == current_user.username:
+        return redirect(url_for('routes.account.account'))
+    profile = Profile.query.filter_by(username=username).first()
+    problems = Problem.query.filter_by(author=username).order_by(Problem.created_at.desc()).all()
+    stats = UserStats.query.filter_by(username=username).first()
+    return render_template('account.html', user=profile, problems=problems, stats=stats)
