@@ -48,7 +48,7 @@ def verify_email(token):
             flash('Your email has been verified!', 'success')
             directory = user.username
             make_directory_for_user(directory)
-            db.add(UserStats(username=user.username))
+            db.session.add(UserStats(username=user.username))
             db.session.add(user)
             print('User added', user.username)
             db.session.commit()

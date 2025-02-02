@@ -1,1 +1,2 @@
-1
+How many numbers from 1 to 1992 are there whose units digit is not 2 in base 3?
+ <<Answer: gAAAAABnnvIyXMPieAj0w3wTbguc0JdC7Bi9FFJWr_Tlw1LTWvupxoeSkBDIosHjLAFlGDXsR2ElPFkajRnP1erH35W01o5Riw==>>

@@ -89,8 +89,9 @@ body, h1, p {
     border-bottom: 1px solid #eee;
 }
 .menu-list li:hover {
-    background-color: #f0f0f0;
+    background-color: #000;
 }
 .show {
     display: block;
 }
+

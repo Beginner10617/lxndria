@@ -68,7 +68,6 @@ class Problem(db.Model):
     solved = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-    answer = db.Column(db.String(100), nullable=False)
     
     author = db.Column(db.String(80), db.ForeignKey('user.username'))
     user = db.relationship('User', backref=db.backref('problems', cascade="all, delete-orphan"))
@@ -83,16 +82,32 @@ class Problem(db.Model):
     def content(self):
         path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
         with open(path, 'r') as file:
-            return file.read()
+            content = file.read()
+        for line in content.split("\n"):
+            if "<<Answer: " in line:
+                return content.replace(line, "")
     @property
     def reducedContent(self):
         path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
         with open(path, 'r') as file:
-            content = file.read()
+            Fullcontent = file.read()
+            content = ''
+            for line in Fullcontent.split("\n"):
+                if "<<Answer: " not in line:
+                    content += line
             if len(content) > 500:
                 return content[:500] + "..."
             else:
                 return content
+            
+    @property
+    def encrypted_answer(self):
+        path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
+        with open(path, 'r') as file:
+            content = file.read()
+        for line in content.split("\n"):
+            if "<<Answer: " in line:
+                return line.replace("<<Answer: ", "").replace(">>", "")
             
 class UserStats(db.Model):
     __tablename__ = "user_stats"

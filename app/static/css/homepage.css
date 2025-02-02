@@ -1,0 +1,57 @@
+.intro{
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    color: #e0e0e0;    
+}
+.intro h1{
+    font-size: 2.25rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: bold;
+    text-align: center;
+    background-color: #333;
+  }
+  .intro p{
+    font-size: 1.25rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: bold;
+    text-align: center;
+    background-color: #333;
+  }
+.table{
+    display: flex;
+    max-width: 750px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    color: #e0e0e0;
+    flex-direction: column;
+  }
+.table th{
+    font-size: 1.5rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: bold;
+}
+.table tr{
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    justify-content: space-between;
+}
+  .table tr:first-child{
+    background-color: #444;
+  }
+  .table tr:last-child{
+    border-bottom: none;
+  }
+  .table td{
+    width :x 250px;
+    font-size: 1.25rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: bold;
+  }

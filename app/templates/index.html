@@ -2,6 +2,7 @@
 <html>
 <head>
   <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/homepage.css')}}">
   <title>Home Page</title>
 </head>
 
@@ -26,5 +27,26 @@
 <body>
   
   <!-- Content -->
+   <div class="intro">
+        <h1>Welcome to Lxndria</h1>
+        <p>Here you can post problems and discussions for others to see and help you with. You can also help others by answering their questions and discussing topics with them.</p>
+  </div>
+  <div class="table">
+    
+    <table>
+      <tr>
+        <th>Problem</th>
+        <th>Topic</th>
+        <th>Posted On</th>
+      </tr>
+      {% for problem in problems %}
+      <tr>
+        <td><a href="/problem/{{problem.id}}">{{problem.title}}</a></td>
+        <td>{{problem.topic}}</td>
+        <td>{{problem.created_at.strftime('%B %d, %Y')}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
 </body>
 </html>

@@ -38,23 +38,23 @@
           </div>
           <div class="profile-stats">
             <div class="stat-item">
-                <div class="stat-number">{{user.problems_posted}}</div>
+                <div class="stat-number">{{stats.problems_posted}}</div>
                 <div class="stat-text">Problems Posted</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">{{user.solutions}}</div>
+                <div class="stat-number">{{stats.solutions}}</div>
                 <div class="stat-text">Solutions</div>
               </div>
               <div class="stat-item">
-                <div class="stat-number">{{user.discussions}}</div>
+                <div class="stat-number">{{stats.discussions}}</div>
                 <div class="stat-text">Discussions</div>
               </div>
               <div class="stat-item">
-                <div class="stat-number">{{user.upvotes}}</div>
+                <div class="stat-number">{{stats.upvotes}}</div>
                 <div class="stat-text">Upvotes</div>
               </div>
               <div class="stat-item">
-                <div class="stat-number">{{user.comments}}</div>
+                <div class="stat-number">{{stats.comments}}</div>
                 <div class="stat-text">Comments</div>
               </div>
             </div>
@@ -72,7 +72,7 @@
         </div>
       </div>
       {% for problem in problems %}
-      <a href="/account/problem/{{problem.id}}"> 
+      <a href="/problem/{{problem.id}}"> 
         <div class="problem-post">
               <h2>{{problem.title}}</h2>
               <p>{{problem.reducedContent}}</p>

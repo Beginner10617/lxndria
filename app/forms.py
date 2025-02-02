@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, BooleanField, FieldList, FormField
 from wtforms.validators import DataRequired, Length, EqualTo
 from flask_wtf.file import FileField, FileAllowed
+from .extensions import is_number
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=80)])
     name = StringField('Name', validators=[DataRequired()])
@@ -77,10 +78,3 @@ class SubmissionForm(FlaskForm):
     answer = StringField('Answer', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-
-def is_number(s):
-    try:
-        float(s)  # Convert to float; works for int and float values
-        return True
-    except ValueError:
-        return False

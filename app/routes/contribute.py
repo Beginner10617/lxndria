@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 from app.forms import PostProblemForm, MCQOptionForm
-from app.models import Problem, db
+from app.models import Problem, db, UserStats
 from dotenv import load_dotenv
+from app.extensions import encrypt_answer
 import os
 
 contributions_bp = Blueprint('contributions', __name__)
@@ -17,12 +18,15 @@ def contribute():
         topic = form.topic.data
         content = form.content.data
         expected_answer = form.expected_answer.data   
-        problem = Problem(title=title, topic=topic, answer=expected_answer, author=current_user.username)
+        problem = Problem(title=title, topic=topic, author=current_user.username)
+        user_stats = UserStats.query.filter_by(username=current_user.username).first()
+        user_stats.problems_posted += 1
         db.session.add(problem)
         db.session.commit()
         path = os.getenv('UPLOAD_FOLDER')+f"/{current_user.username}/Problems/{problem.id}.txt"
+        print(encrypt_answer(expected_answer))
         with open(path, "w") as f:
-            f.write(content)
+            f.write(content + "\n <<Answer: " + encrypt_answer(expected_answer)+">>")
         return redirect(url_for('routes.main.index'))
 
     return render_template('contribute.html', form=form)
