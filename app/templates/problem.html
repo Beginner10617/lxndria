@@ -47,6 +47,7 @@
             {{problem.content}}
         </div>
     </div>
+    {% if solved == 0 %}
     <form method="POST">
         {{submission.hidden_tag()}}
         <div class="answer">
@@ -54,6 +55,19 @@
         <button id="submit">Submit</button>
         </div>
     </form>
+    {% elif solved == -1 %}
+    <div class="answer">
+        <h2>Answer</h2>
+        <p>{{answer}}</p>
+        <div class="wrong-message">☹️Incorrect</div>
+    </div>
+    {% elif solved == +1 %}
+    <div class="answer">
+        <h2>Answer</h2>
+        <p>{{answer}}</p>
+        <div class="correct-message">🎉Correct!</div>
+    </div>
+    {% endif %}
     </div>
 </div>
 

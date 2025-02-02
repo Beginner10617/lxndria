@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Problem
+from app.models import Problem, ProblemAttempts
 from app.forms import SubmissionForm
 from app.extensions import decrypt_answer
 from app import db
@@ -16,6 +16,15 @@ def problem(problem_id):
     problem = Problem.query.filter_by(id=problem_id).first()
     if problem.author == current_user.username:
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
+    attempts = ProblemAttempts.query.filter_by(problem_id=problem.id, username=current_user.username)
+
+    if attempts.count(): # User has attempted the problem more than 3 times
+        for attempt in attempts:
+            if attempt.is_correct: # User has already solved the problem
+                return render_template('problem.html', problem=problem, submission=submission, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()))
+        return render_template('problem.html', problem=problem, submission=submission, solved = -1, answer = decrypt_answer(problem.encrypted_answer.strip()))
+    
+        
     if submission.validate_on_submit():
         print('Submitted')
         answer = submission.answer.data
@@ -24,14 +33,19 @@ def problem(problem_id):
         if answer == correct_answer:
             problem.solved += 1
             problem.attempts += 1
+            new_attempt = ProblemAttempts(username=current_user.username, problem_id=problem.id, is_correct=True)
+            db.session.add(new_attempt)
             db.session.commit()
-            return redirect(url_for('routes.main.index'))
+            return render_template('problem.html', problem=problem, submission=submission, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()))
         else:
             problem.attempts += 1
+            new_attempt = ProblemAttempts(username=current_user.username, problem_id=problem.id, is_correct=False)
+            db.session.add(new_attempt)
             db.session.commit()
-            return redirect(url_for('routes.main.index'))
+            return render_template('problem.html', problem=problem, submission=submission, solved = -1, answer = decrypt_answer(problem.encrypted_answer.strip()))
+    
         
-    return render_template('problem.html', problem=problem, submission=submission)
+    return render_template('problem.html', problem=problem, submission=submission, solved = 0)
 
 @problem_bp.route('/problem/<int:problem_id>/owner')
 @login_required

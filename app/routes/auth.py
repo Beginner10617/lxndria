@@ -7,33 +7,11 @@ from app import mail, db, limiter, login_manager
 from app.models import User, UserStats
 from app.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetForm
 from flask_login import current_user, login_user, logout_user, login_required
+from app.extensions import send_verification_email, send_reset_password_email, make_directory_for_user
 
 auth_bp = Blueprint('auth', __name__)
-WEBAPP_NAME = os.getenv('WEBAPP_NAME')
 pending_users = {}
 load_dotenv()
-
-def send_verification_email(user):
-    token_for_verification = jwt.encode({'email': user.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, 'secret_key', algorithm='HS256')
-    verify_url = url_for('routes.auth.verify_email', token=token_for_verification, _external=True)
-    token_for_deletion = jwt.encode({'email': user.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, 'secret_key', algorithm='HS256')
-    msg = Message('Email Verification', sender=os.getenv('EMAIL_ID'), recipients=[user.email])
-    msg.body = 'Hi '+user.name+'! To verify your email for '+WEBAPP_NAME+', visit the following link:\n' + verify_url + '\nPlease note that these links will expire in 24 hours.'
-    mail.send(msg)
-
-def send_reset_password_email(user):
-    token_for_reset = jwt.encode({'email': user.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, 'secret_key', algorithm='HS256')
-    reset_url = url_for('routes.auth.reset_password', token=token_for_reset, _external=True)
-    msg = Message('Password Reset', sender=os.getenv('EMAIL_ID'), recipients=[user.email])
-    msg.body = 'Hi '+user.name+'! To reset your password for '+WEBAPP_NAME+', visit the following link:\n' + reset_url + '\nPlease note that these links will expire in 24 hours.'
-    mail.send(msg)
-
-def make_directory_for_user(directory):
-    path = os.getenv('UPLOAD_FOLDER')+directory+"/"
-    os.makedirs(path, exist_ok=True)
-    os.makedirs(path+"Profile_picture/", exist_ok=True)
-    os.makedirs(path+"Problems/", exist_ok=True)
-    os.makedirs(path+"Discussions/", exist_ok=True)
 
 @auth_bp.route('/verify_email/<token>')
 def verify_email(token):

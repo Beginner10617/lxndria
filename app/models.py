@@ -124,3 +124,20 @@ class UserStats(db.Model):
     
     def __repr__(self):
         return f"<Stats for {self.username}>"
+
+class ProblemAttempts(db.Model):
+    __tablename__ = "problem_attempts"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+    
+    username = db.Column(db.String(80), db.ForeignKey('user.username'))
+    user = db.relationship('User', backref=db.backref('attempts', cascade="all, delete-orphan"))
+
+    is_correct = db.Column(db.Boolean, default=False)
+
+    attemptedAt = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Attempt on Problem {self.problem_id}>"
