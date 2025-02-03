@@ -41,11 +41,11 @@ def verify_email(token):
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        username = form.username.data
-        name = form.name.data
-        password = form.password.data
+        username = form.username.data.strip()
+        name = form.name.data.strip()
+        password = form.password.data.strip()
         email = form.email.data
-        confirm_password = form.confirm_password.data
+        confirm_password = form.confirm_password.data.strip()
 
         # Check if password is valid
         if len(password) < 8:
@@ -84,8 +84,8 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
+        username = form.username.data.strip()
+        password = form.password.data.strip()
         user = User.query.filter_by(username=username).first()
         if user and user.verify_password(password):
             print('Login successful')

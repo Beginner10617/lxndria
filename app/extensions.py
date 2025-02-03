@@ -17,13 +17,18 @@ WEBAPP_NAME = os.getenv('WEBAPP_NAME')
 csrf = CSRFProtect()
 login_manager = LoginManager()
 # Get Redis URL from environment variables (set it later in Render)
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
+REDIS_URL = os.getenv("REDIS_URL")
 
 # Set up Flask-Limiter with Redis
-limiter = Limiter(
-    get_remote_address,
-    storage_uri=REDIS_URL
-)
+if REDIS_URL:
+    limiter = Limiter(
+        get_remote_address,
+        storage_uri=REDIS_URL
+    )
+else:
+    limiter = Limiter(
+        get_remote_address
+    )
 db = SQLAlchemy()
 mail = Mail()
 bcrypt = Bcrypt()

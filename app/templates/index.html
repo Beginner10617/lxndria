@@ -39,14 +39,27 @@
         <th>Topic</th>
         <th>Posted On</th>
       </tr>
-      {% for problem in problems %}
+      {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
+      {% if index >= problems|length %}
+        {% set stop=true %}
+      {% else %}
+        {% set problem = problems[index] %}
+      
       <tr>
         <td><a href="/problem/{{problem.id}}">{{problem.title}}</a></td>
         <td>{{problem.topic}}</td>
         <td>{{problem.created_at.strftime('%B %d, %Y')}}</td>
       </tr>
+      {% endif %}
       {% endfor %}
     </table>
+    <div class="pagination">
+      {% if page > 0 %}
+        <a href="/?page={{page-1}}">Previous</a>
+      {% endif %}
+      {% if not stop %}
+        <a href="/?page={{page+1}}">Next</a>
+      {% endif %}
   </div>
 </body>
 </html>
