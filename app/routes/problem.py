@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Problem, ProblemAttempts
+from app.models import Problem, ProblemAttempts, UserStats
 from app.forms import SubmissionForm
 from app.extensions import decrypt_answer
 from app import db
@@ -56,3 +56,17 @@ def owner(problem_id):
     print('Problem ID:', problem_id)
     problem = Problem.query.filter_by(id=problem_id).first()
     return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()))
+
+@problem_bp.route('/problem/<int:problem_id>/delete')
+@login_required
+def delete(problem_id):
+    if not current_user.is_authenticated:
+        print('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
+    problem = Problem.query.filter_by(id=problem_id).first()
+    user_stats = UserStats.query.filter_by(username=current_user.username).first()
+    if problem.author == current_user.username:
+        db.session.delete(problem)
+        user_stats.problems_posted -= 1
+        db.session.commit()
+        return redirect(url_for('routes.main.index'))

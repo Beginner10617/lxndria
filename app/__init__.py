@@ -1,5 +1,5 @@
 from .config import Config
-from .extensions import csrf, login_manager, limiter, db, mail
+from .extensions import csrf, login_manager, limiter, db, mail, migrate
 from .routes import routes_bp
 from flask import Flask
 
@@ -14,6 +14,7 @@ def create_app():
     login_manager.init_app(app)
     limiter.init_app(app)
     db.init_app(app)
+    migrate.init_app(app, db)
     mail.init_app(app)
 
     # Register the blueprints

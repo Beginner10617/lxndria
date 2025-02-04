@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from flask_bcrypt import Bcrypt
 from flask import url_for 
+from flask_migrate import Migrate
 from datetime import datetime, timedelta
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
@@ -32,6 +33,7 @@ else:
 db = SQLAlchemy()
 mail = Mail()
 bcrypt = Bcrypt()
+migrate = Migrate()
 
 def is_number(s):
     try:

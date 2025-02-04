@@ -11,6 +11,13 @@
                 fontCache: 'global'
             }
         };
+        function confirmDeletion(event, problemId) {
+        event.preventDefault(); // Prevent the default navigation
+        let confirmation = confirm("Are you sure you want to delete this problem?");
+        if (confirmation) {
+            window.location.href = "/problem/" + problemId + "/delete"; // Redirect if confirmed
+        }
+    };
     </script>
     <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>   
     <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
@@ -50,7 +57,15 @@
         <div class="answer">
             <h2>Answer</h2>
             <p>{{answer}}</p>
+
+            <div class="actions">
+                <button id="edit">Edit</button>
+                <button id="delete" onclick="confirmDeletion(event, '{{problem.id}}')">Delete</button>
+
+            </div>
         </div>
-</div>
+
+    </div>
+
 
 </body>
