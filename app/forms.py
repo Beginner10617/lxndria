@@ -77,4 +77,3 @@ class PostProblemForm(FlaskForm):
 class SubmissionForm(FlaskForm):
     answer = StringField('Answer', validators=[DataRequired()])
     submit = SubmitField('Submit')
-

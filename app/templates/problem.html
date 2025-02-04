@@ -64,16 +64,17 @@
     <div class="answer">
         <h2>Answer</h2>
         <p>{{answer}}</p>
-        <div class="wrong-message">☹️Incorrect</div>
+        <div class="wrong-message"><b>☹️Incorrect</b></div>
     </div>
     {% elif solved == +1 %}
     <div class="answer">
         <h2>Answer</h2>
         <p>{{answer}}</p>
-        <div class="correct-message">🎉Correct!</div>
+        <div class="correct-message"><b>🎉Correct!</b></div>
+        <div class="problem-stat">Correct by {{solved_percent}}%</div>
     </div>
     {% endif %}
     </div>
-    
+
 
 </body>
