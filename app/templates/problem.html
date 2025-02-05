@@ -1,17 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Include MathJax for LaTeX rendering -->
+    <script type="text/javascript" async
+      src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Include highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
     <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            },
-            svg: {
-                fontCache: 'global'
-            }
-        };
+        function renderMarkdown() {
+            
+            let problemContentElement = document.querySelector(".problem-content");
+            if (!problemContentElement) return;
+            
+            let inputText = problemContentElement.innerHTML.trim();
+            let htmlContent = marked.parse(inputText);
+            document.getElementById("output").innerHTML = htmlContent;
+            
+            // Trigger MathJax to render LaTeX
+            MathJax.typesetPromise();
+            
+            // Highlight code blocks
+            document.querySelectorAll("pre code").forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        }
+        window.onload = renderMarkdown;
     </script>
+
     <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>   
     <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/problem.css')}}">
@@ -43,7 +65,7 @@
         <h1>
             {{problem.title}}
         </h1>
-        <div class="problem-content">
+        <div class="problem-content" id="output">
             {{problem.content}}
         </div>
 

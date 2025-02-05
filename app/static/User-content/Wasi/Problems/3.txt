@@ -1,2 +1,13 @@
-nwe
- <<Answer: gAAAAABnnunaF9vvbtqrjH_l-E_AAJf_MC6AywEBwlxu_RCBiRHbz0OvZStduEhC6A4sEZg4qQTgleRsHuA-0kquBgcM6aRSEg==>>
+Inline math: \( E = mc^2 \)
+Block math:
+\[
+\sum_{i=1}^{n} i = \frac{n(n+1)}{2}
+\]
+**this in bold**
+`This is my code`
+
+
+
+
+
+ <<Answer: gAAAAABnoyNo-6xXs0JaX-eBnDfFEjmbh4NJ_AGu9KEKAZ7hI4efwXiz_TR0NpbqweAV5a1ZeY1THzqMKFOC5uZS2s_YPFNulQ==>>

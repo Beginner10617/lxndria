@@ -17,8 +17,20 @@ body{
 }
 .problem-content{
     flex: 1;
+    background-color: #333;
     padding: 10px;
     font-size: 1.5rem;
+}
+#output, #output p {
+    background-color: #333 !important;
+    color: #e0e0e0; /* Ensure text is visible */
+    padding: 10px;
+    border-radius: 5px;
+}
+/* Override highlight.js default styling */
+#output pre, #output code {
+    background-color: #333 !important;
+    color: #f1f1f1 !important;
 }
 .problem{
     font-size: 1.5rem;
@@ -105,4 +117,18 @@ body{
 }
 .incorrect-message{
     font-size: 1.2rem;
+}
+pre {
+    background-color: #333 !important;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto; /* Allows horizontal scrolling when needed */
+    white-space: pre-wrap; /* Wraps long lines properly */
+    word-wrap: break-word;
+}
+
+pre code {
+    display: block; /* Ensures it takes the full width */
+    background-color: transparent !important;
+    white-space: pre;
 }

@@ -77,7 +77,7 @@ def delete(problem_id):
         db.session.commit()
         db.session.commit()
         problem_file = os.getenv('UPLOAD_FOLDER')+f"/{current_user.username}/Problems/{problem.id}.txt"
-        os.remove(problem_file)
+        os.remove(problem_file) 
         return redirect(url_for('routes.main.index'))
 
 @problem_bp.route('/problem/<int:problem_id>/edit', methods=['GET', 'POST'])
