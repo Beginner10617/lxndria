@@ -14,6 +14,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 
     <script>
+        function confirmDeletion(event, solutionId, href_start) {
+        event.preventDefault(); // Prevent the default navigation
+        let confirmation = confirm("Are you sure you want to delete this solution?");
+        if (confirmation) {
+            window.location.href = href_start + solutionId + "/delete"; // Redirect if confirmed
+        }
+    }
         function renderMarkdown() {
             
             let problemContentElement = document.querySelector(".problem-content");
@@ -71,7 +78,7 @@
 
     <div class="author">
         <h2>Author</h2>
-        <a href="/account/{{problem.author}}"><p>{{problem.author}}</p></a>
+        <a href="/account/{{problem.author}}"><p>{{problem.user.name}}</p></a>
     </div>
     </div>
     {% if solved == 0 %}
@@ -98,5 +105,33 @@
     {% endif %}
     </div>
 
+    {% if solved != 0 %}
+
+    <div class="solution">
+    <!--Solution posting/reading area--->
+        {% if solved == 1 and not posted_solution%}
+        <form method="POST">
+            {{solution.hidden_tag()}}
+            <div class="solution-content">
+                {{solution.solution(class="form-control", placeholder="Solution")}}
+                <button id="submit">Submit</button>
+            </div>
+        </form>
+        {% elif posted_solution %}
+            {% for solution in all_solutions %}
+            
+            <div class="problem-content" id="output">
+                <p>{{solution.solution}}</p>
+                <h2><a href="/account/{{solution.username}}">{{solution.user.name}}</a></h2>
+            {% if solution.username == current_user.username %}
+                <a href="/problem/{{problem.id}}/{{solution.id}}/edit"><button id="edit">Edit</button></a>
+                <button id="delete" onclick="confirmDeletion(event, '{{problem.id}}/{{solution.id}}', '/problem/')">Delete</button>
+            {%endif%}
+        </div>
+            {% endfor %}
+        {% endif %}
+        <!---Display solutions by other users+commentings--->
+    {% endif %}
+</div>
 
 </body>

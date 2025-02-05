@@ -22,7 +22,7 @@
     background-color: #333;
   }
 .table{
-    display: flex;
+    display: table;
     max-width: 750px;
     margin: 20px auto;
     padding: 20px;
@@ -34,12 +34,13 @@
   }
 .table th{
     font-size: 1.5rem;
+    padding: 5px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: bold;
 }
 .table tr{
-    display: flex;
-    padding: 10px;
+    display: table-row;
+    padding: 5px;
     border-bottom: 1px solid #e0e0e0;
     justify-content: space-between;
 }
@@ -52,6 +53,7 @@
   .table td{
     width :x 250px;
     font-size: 1.25rem;
+    padding: 5px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: bold;
   }

@@ -72,13 +72,16 @@ class Problem(db.Model):
     author = db.Column(db.String(80), db.ForeignKey('user.username'))
     user = db.relationship('User', backref=db.backref('problems', cascade="all, delete-orphan"))
 
+    content = db.Column(db.Text, nullable=False)
+    encrypted_answer = db.Column(db.Text, nullable=False)
+    
     __table_args__ = (
         CheckConstraint("topic IN ('Algebra', 'Geometry', 'Number Theory', 'Calculus', 'Logic', 'Classical Mechanics', 'Electricity and Magnetism', 'Computer Science', 'Quantitative Finance', 'Chemistry', 'Probability')", name="valid_topic_check"),
     )
 
     def __repr__(self):
         return f"<Problem {self.title}>"
-    @property
+    '''@property
     def content(self):
         path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
         with open(path, 'r') as file:
@@ -86,21 +89,15 @@ class Problem(db.Model):
         for line in content.split("\n"):
             if "<<Answer: " in line:
                 return content.replace(line, "")
+    '''
     @property
     def reducedContent(self):
-        path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
-        with open(path, 'r') as file:
-            Fullcontent = file.read()
-            content = ''
-            for line in Fullcontent.split("\n"):
-                if "<<Answer: " not in line:
-                    content += line
-            if len(content) > 500:
-                return content[:500] + "..."
-            else:
-                return content
+        FullContent = self.content
+        if len(FullContent) > 500:
+            return FullContent[:500] + "..."
+        return FullContent
             
-    @property
+    '''@property
     def encrypted_answer(self):
         path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
         with open(path, 'r') as file:
@@ -108,7 +105,7 @@ class Problem(db.Model):
         for line in content.split("\n"):
             if "<<Answer: " in line:
                 return line.replace("<<Answer: ", "").replace(">>", "")
-            
+    '''        
 class UserStats(db.Model):
     __tablename__ = "user_stats"
     __table_args__ = {"extend_existing": True}
@@ -141,3 +138,19 @@ class ProblemAttempts(db.Model):
 
     def __repr__(self):
         return f"<Attempt on Problem {self.problem_id}>"
+
+class Solutions(db.Model):
+    __tablename__ = "solutions"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+    username = db.Column(db.String(80), db.ForeignKey('user.username'))
+    user = db.relationship('User', backref=db.backref('solutions', cascade="all, delete-orphan"))
+    solution = db.Column(db.Text, nullable=False)
+    upvotes = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Solution for Problem {self.problem_id}>"

@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from app.models import Problem, ProblemAttempts, UserStats
-from app.forms import SubmissionForm, PostProblemForm
-from app.extensions import decrypt_answer, encrypt_answer
+from app.models import Problem, ProblemAttempts, UserStats, Solutions
+from app.forms import SubmissionForm, PostProblemForm, SolutionForm
+from app.extensions import decrypt_answer, encrypt_answer, is_number
 from app import db
 from dotenv import load_dotenv
 import os
@@ -21,11 +21,13 @@ def problem(problem_id):
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
     attempts = ProblemAttempts.query.filter_by(problem_id=problem.id, username=current_user.username)
 
-    if attempts.count(): # User has attempted the problem more than 3 times
+    if attempts.count(): # User has attempted the problem 
+        print('Attempted the problem %d times' % attempts.count())
         for attempt in attempts:
+            print('Attempt:', attempt.is_correct)
             if attempt.is_correct: # User has already solved the problem
-                return render_template('problem.html', problem=problem, submission=submission, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts))
-        return render_template('problem.html', problem=problem, submission=submission, solved = -1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts))
+                return redirect(url_for('routes.problem.correct', problem_id=problem.id))
+        return redirect(url_for('routes.problem.incorrect', problem_id=problem.id))
     
         
     if submission.validate_on_submit():
@@ -33,19 +35,20 @@ def problem(problem_id):
         answer = submission.answer.data
         print(problem.encrypted_answer.strip())
         correct_answer = decrypt_answer(problem.encrypted_answer.strip())
-        if answer == correct_answer:
+            
+        if answer == correct_answer and is_number(answer):
             problem.solved += 1
             problem.attempts += 1
             new_attempt = ProblemAttempts(username=current_user.username, problem_id=problem.id, is_correct=True)
             db.session.add(new_attempt)
             db.session.commit()
-            return render_template('problem.html', problem=problem, submission=submission, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts))
-        else:
+            return redirect(url_for('routes.problem.correct', problem_id=problem.id))
+        elif is_number(answer):
             problem.attempts += 1
             new_attempt = ProblemAttempts(username=current_user.username, problem_id=problem.id, is_correct=False)
             db.session.add(new_attempt)
             db.session.commit()
-            return render_template('problem.html', problem=problem, submission=submission, solved = -1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts))
+            return redirect(url_for('routes.problem.incorrect', problem_id=problem.id))
     
         
     return render_template('problem.html', problem=problem, submission=submission, solved = 0)
@@ -76,8 +79,6 @@ def delete(problem_id):
             db.session.delete(attempt)
         db.session.commit()
         db.session.commit()
-        problem_file = os.getenv('UPLOAD_FOLDER')+f"/{current_user.username}/Problems/{problem.id}.txt"
-        os.remove(problem_file) 
         return redirect(url_for('routes.main.index'))
 
 @problem_bp.route('/problem/<int:problem_id>/edit', methods=['GET', 'POST'])
@@ -99,12 +100,97 @@ def edit(problem_id):
             problem.topic = form.topic.data
             problem.attempts = 0
             problem.solved = 0
-            content = form.content.data
-            expected_answer = form.expected_answer.data
-            problem_file = os.getenv('UPLOAD_FOLDER')+f"/{current_user.username}/Problems/{problem.id}.txt"
-            with open(problem_file, "w") as f:
-                f.write(content + "\n <<Answer: " + encrypt_answer(expected_answer)+">>")
-    
+            problem.content = form.content.data
+            problem.encrypted_answer = encrypt_answer(form.expected_answer.data)
+
+            
             db.session.commit()
             return redirect(url_for('routes.problem.problem', problem_id=problem.id))
         return render_template('edit-problem.html', form=form)
+    
+
+@problem_bp.route('/problem/<int:problem_id>/correct')
+@login_required
+def correct(problem_id):
+    if not current_user.is_authenticated:
+        print('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
+    # User has already solved the problem
+    solution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    problem = Problem.query.filter_by(id=problem_id).first()
+    if solution is None:
+        return redirect(url_for('routes.problem.solution', problem_id=problem_id))
+    # User has solved the problem and submitted a solution
+    all_solutions = Solutions.query.filter_by(problem_id=problem_id)
+    return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions)
+
+@problem_bp.route('/problem/<int:problem_id>/incorrect')
+@login_required
+def incorrect(problem_id):
+    if not current_user.is_authenticated:
+        print('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
+    # User has attempted the problem but not solved it
+    solution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    problem = Problem.query.filter_by(id=problem_id).first()
+    # User has solved the problem and submitted a solution
+    all_solutions = Solutions.query.filter_by(problem_id=problem_id)
+    return render_template('problem.html', problem=problem, solved = -1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions)
+
+@problem_bp.route('/problem/<int:problem_id>/solution', methods=['GET', 'POST'])
+@login_required
+def solution(problem_id):
+    if not current_user.is_authenticated:
+        print('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
+    if request.method == 'GET':
+        problem = Problem.query.filter_by(id=problem_id).first()
+        form=SolutionForm()
+        return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), solution=form)
+    if request.method == 'POST':
+        form = SolutionForm()
+        if form.validate_on_submit():
+            problem = Problem.query.filter_by(id=problem_id).first()
+            solution = Solutions(problem_id=problem.id, username=current_user.username, solution=form.solution.data)
+            user_stats = UserStats.query.filter_by(username=current_user.username).first()
+            user_stats.solutions += 1
+            db.session.add(solution)
+            db.session.commit()
+            
+            return redirect(url_for('routes.problem.problem', problem_id=problem.id))
+        return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), solution=form)
+    
+@problem_bp.route('/problem/<int:problem_id>/<int:solution_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_solution(problem_id, solution_id):
+    if not current_user.is_authenticated:
+        print('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
+    problem = Problem.query.filter_by(id=problem_id).first()
+    if request.method == 'GET':
+        solution = Solutions.query.filter_by(id=solution_id).first()
+        form=SolutionForm(obj=solution)
+    if request.method == 'POST':
+        form = SolutionForm()
+        if form.validate_on_submit():
+            solution = Solutions.query.filter_by(id=solution_id).first()
+            solution.solution = form.solution.data
+            db.session.commit()
+            return redirect(url_for('routes.problem.correct', problem_id=problem.id))
+    return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), solution=form, editing = 1)
+
+
+@problem_bp.route('/problem/<int:problem_id>/<int:solution_id>/delete')
+@login_required
+def delete_solution(problem_id, solution_id):
+    if not current_user.is_authenticated:
+        print('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
+    solution = Solutions.query.filter_by(id=solution_id).first()
+    problem = Problem.query.filter_by(id=problem_id).first()
+    if solution.username == current_user.username:
+        user_stats = UserStats.query.filter_by(username=current_user.username).first()
+        user_stats.solutions -= 1
+        db.session.delete(solution)
+        db.session.commit()
+        return redirect(url_for('routes.problem.correct', problem_id=problem.id))

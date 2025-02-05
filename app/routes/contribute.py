@@ -18,15 +18,11 @@ def contribute():
         topic = form.topic.data
         content = form.content.data
         expected_answer = form.expected_answer.data   
-        problem = Problem(title=title, topic=topic, author=current_user.username)
+        problem = Problem(title=title, topic=topic, author=current_user.username, content=content, encrypted_answer=encrypt_answer(expected_answer))
         user_stats = UserStats.query.filter_by(username=current_user.username).first()
         user_stats.problems_posted += 1
         db.session.add(problem)
         db.session.commit()
-        path = os.getenv('UPLOAD_FOLDER')+f"/{current_user.username}/Problems/{problem.id}.txt"
-        print(encrypt_answer(expected_answer))
-        with open(path, "w") as f:
-            f.write(content + "\n <<Answer: " + encrypt_answer(expected_answer)+">>")
         return redirect(url_for('routes.main.index'))
 
     return render_template('contribute.html', form=form)
