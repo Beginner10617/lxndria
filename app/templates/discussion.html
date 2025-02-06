@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Include MathJax for LaTeX rendering -->
+    <script type="text/javascript" async
+      src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Include highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+    <script>
+        function confirmDeletion(event, DiscussionId, href_start) {
+        event.preventDefault(); // Prevent the default navigation
+        let confirmation = confirm("Are you sure you want to delete this Discussion?");
+        if (confirmation) {
+            window.location.href = href_start + DiscussionId + "/delete"; // Redirect if confirmed
+        }
+    }
+        function renderMarkdown() {
+            
+            let problemContentElement = document.querySelector(".discussion-content");
+            if (!problemContentElement) return;
+            
+            let inputText = problemContentElement.innerHTML.trim();
+            let htmlContent = marked.parse(inputText);
+            document.getElementById("output").innerHTML = htmlContent;
+            
+            // Trigger MathJax to render LaTeX
+            MathJax.typesetPromise();
+            
+            // Highlight code blocks
+            document.querySelectorAll("pre code").forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        }
+        window.onload = renderMarkdown;
+    </script>
+
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>   
+    <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/discussion.css')}}">
+    <title>
+        {{discussion.title}}
+    </title> 
+</head>
+<header class="banner">
+    <div class="logo-container">
+      <img src="{{url_for('static', filename='Images/logo.png')}}" alt="Logo" class="logo">
+      <span class="site-name"><a href="/">Lxndria</span></div></a>
+    </div>
+      <div class="menu-container">
+        <button class="menu-button" onclick="toggleMenu()">☰</button>
+        <ul class="menu-list" id="menuList">
+            <a href="/account"><li>Account</li></a>
+            <a href="/account/contribute/problem"><li>Post a Problem</li></a>
+            <a href="/account/contribute/discussion"><li>Post a Discussion</li></a>
+            <a href="/help"><li>Help</li></a>
+        </ul>
+    </div>
+    <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+    
+  </header>
+  <body>
+    <div class="discussion-container">
+        <div class="discussion-header">
+            <h1>{{discussion.title}}</h1>
+        </div>
+        <div class="discussion-content" id="output">
+            {{discussion.content}}
+        </div>
+        <div class="discussion-footer">
+            <a href="/account/{{discussion.author}}"><p>By {{discussion.user.name}}</p></a>
+        </div>
+    </div>
+  </body>
+</html>

@@ -154,3 +154,26 @@ class Solutions(db.Model):
 
     def __repr__(self):
         return f"<Solution for Problem {self.problem_id}>"
+
+class Discussion(db.Model):
+    __tablename__ = "discussion"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    upvotes = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+
+    author = db.Column(db.String(80), db.ForeignKey('user.username'))
+    user = db.relationship('User', backref=db.backref('discussions', cascade="all, delete-orphan"))
+
+    def __repr__(self):
+        return f"<Discussion {self.title}>"
+    @property
+    def reducedContent(self):
+        FullContent = self.content
+        if len(FullContent) > 500:
+            return FullContent[:500] + "..."
+        return FullContent

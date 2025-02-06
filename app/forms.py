@@ -81,3 +81,8 @@ class SubmissionForm(FlaskForm):
 class SolutionForm(FlaskForm):
     solution = TextAreaField('Solution', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class PostDiscussionForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Post')

@@ -150,9 +150,9 @@ body{
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* Subtle glow */
   }
 
-  .problem-post{
+  .problem-post, .discussion-post {
     max-width: 1000px;
-    margin: 20px auto;
+    margin: 10px auto;
     padding: 20px;
     background-color: #333;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -163,3 +163,47 @@ body{
     margin-top: 10px;
     color: #666;
   }
+
+  .discussion-post .date{
+    margin-top: 10px;
+    color: #666;
+  }
+.Tabs{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0px;
+}
+  .Tabs button{
+    background-color: #333;
+    color: #e0e0e0;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 5px 5px 0 0;
+    transition: background-color 0.3s;
+  }
+  
+  .Tabs button.active {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+  
+  .Tabs button:hover {
+    background-color: #444;
+  }
+  
+  .Tabs button:not(:last-child) {
+    margin-right: 10px;
+  }
+  
+  .TabContent {
+    display: none;
+    padding: 20px;
+    background-color: #121212;
+    border-radius: 0 0 5px 5px;
+  }
+  
+  .TabContent.active {
+    display: block;
+}
