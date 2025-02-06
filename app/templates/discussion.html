@@ -76,6 +76,12 @@
         <div class="discussion-footer">
             <a href="/account/{{discussion.author}}"><p>By {{discussion.user.name}}</p></a>
         </div>
+        {% if current_user and current_user.username == discussion.author %}
+        <div class="discussion-footer">
+            <a href="/discussion/{{discussion.id}}/edit"><button>Edit</button></a>
+            <a onclick="confirmDeletion(event, '{{discussion.id}}', '/discussion/')"><button>Delete</button></a>
+        </div>
+        {% endif %}
     </div>
   </body>
 </html>
