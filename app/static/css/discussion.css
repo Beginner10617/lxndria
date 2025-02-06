@@ -90,7 +90,7 @@
     margin: 5px;
     padding: 10px;
     margin-bottom: 10px;
-    margin-top: 5px;
+    margin-top: 10px;
     background-color: #007bff;
     color: #ffffff;
     border: none;
@@ -98,4 +98,17 @@
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s;
+}
+
+.discussion-content a{
+    color: #007bff;
+}
+.discussion-content a:hover{
+    color: #0056b3;
+}
+
+.discussion-content img{
+    max-width: 100%;
+    height: auto;
+    margin: 10px;
 }

@@ -176,3 +176,28 @@ pre code {
     font-size: 1rem;
     transition: background-color 0.3s;
 }
+
+.solution-content a{
+    color: #007bff;
+}
+.solution-content a:hover{
+    color: #0056b3;
+}
+.problem-content a{
+    color: #007bff;
+}
+.problem-content a:hover{
+    color: #0056b3;
+}
+
+.solution-content img{
+    max-width: 100%;
+    height: auto;
+    margin: 10px;
+}
+
+.problem-content img{
+    max-width: 100%;
+    height: auto;
+    margin: 10px;
+}
