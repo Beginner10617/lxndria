@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
+  <script>
+    function openTab(event, tabName){
+      document.querySelectorAll('.table').forEach(tab => {
+        tab.style.display = 'none';
+    });
+
+    // Show the selected tab content
+    document.getElementById(tabName).style.display = 'block';
+    }
+    window.onload = function(){
+      openTab(event, 'Problems');
+    }
+  </script>
+
   <link rel="stylesheet" href="{{url_for('static', filename='css/homepage.css')}}">
   <title>Home Page</title>
 </head>
 
-<header class="banner">
-  <div class="logo-container">
-    <img src="{{url_for('static', filename='Images/logo.png')}}" alt="Logo" class="logo">
-    <span class="site-name"><a href="/">Lxndria</span></div></a>
-  </div>
-    <div class="menu-container">
-      <button class="menu-button" onclick="toggleMenu()">☰</button>
-      <ul class="menu-list" id="menuList">
-        <a href="/account"><li>Account</li></a>
-        <a href="/account/contribute/problem"><li>Post a Problem</li></a>
-        <a href="/account/contribute/discussion"><li>Post a Discussion</li></a>
-        <a href="/help"><li>Help</li></a>
-    </ul>
-  </div>
-  <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
-  
-</header>
+
+{%include 'banner.html'%}
 
 <body>
   
@@ -31,7 +29,14 @@
         <h1>Welcome to Lxndria</h1>
         <p>Here you can post problems and discussions for others to see and help you with. You can also help others by answering their questions and discussing topics with them.</p>
   </div>
-  <div class="table">
+
+  <div class="Tabs">
+    <button class="tab" onclick="openTab(event, 'Problems')">Problems</button>
+    <button class="tab" onclick="openTab(event, 'Discussions')">Discussions</button>
+  </div>
+  
+  <!---PROBLEMS TABLE---->
+  <div class="table" id="Problems">
     
     <table>
       <tr>
@@ -60,6 +65,42 @@
       {% if not stop %}
         <a href="/?page={{page+1}}">Next</a>
       {% endif %}
+  </div>
+  </div>
+
+
+  <!----DISCUSSION TABLE----->
+
+  <div class="table" id="Discussions" style="display: none;">
+    
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Posted On</th>
+      </tr>
+      {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
+      {% if index >= discussions|length %}
+        {% set stop=true %}
+      {% else %}
+        {% set discussion = discussions[index] %}
+      
+      <tr>
+        <td><a href="/discussion/{{discussion.id}}">{{discussion.title}}</a></td>
+        <td>{{discussion.user.name}}</td>
+        <td>{{discussion.created_at.strftime('%B %d, %Y')}}</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </table>
+    <div class="pagination">
+      {% if page > 0 %}
+        <a href="/?page={{page-1}}">Previous</a>
+      {% endif %}
+      {% if not stop %}
+        <a href="/?page={{page+1}}">Next</a>
+      {% endif %}
+  </div>
   </div>
 </body>
 </html>

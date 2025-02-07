@@ -1,15 +1,16 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from app.models import User, Problem
+from app.models import User, Problem, Discussion
 
 main_bp = Blueprint('main', __name__)
 @main_bp.route('/')
 def index():
     pageNumber = request.args.get('page', default=0, type=int)
     rows = request.args.get('rows', default=10, type=int)
-    all_problems = Problem.query.all()
+    all_problems = Problem.query.order_by(Problem.created_at.desc()).all()
+    all_discussions = Discussion.query.order_by(Discussion.created_at.desc()).all()
     print(all_problems)
-    return render_template('index.html', problems=all_problems, page=pageNumber, row_per_page=rows)
+    return render_template('index.html', problems=all_problems, page=pageNumber, row_per_page=rows, discussions=all_discussions)
 
 @main_bp.route('/admin')
 @login_required

@@ -10,32 +10,16 @@
     // Show the selected tab content
     document.getElementById(tabName).style.display = 'block';
     }
-    
+    window.onload = function(){
+      openTab(event, 'Problems');
+    }
   </script>
 
 
-  <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
   <link rel="stylesheet" href="{{url_for('static', filename='css/profile.css')}}">
   <title>Account</title>
 </head>
-
-<header class="banner">
-    <div class="logo-container">
-      <img src="{{url_for('static', filename='Images/logo.png')}}" alt="Logo" class="logo">
-      <span class="site-name"><a href="/">Lxndria</span></div></a>
-    </div>
-      <div class="menu-container">
-        <button class="menu-button" onclick="toggleMenu()">☰</button>
-        <ul class="menu-list" id="menuList">
-            <a href="/account"><li>Account</li></a>
-            <a href="/account/contribute/problem"><li>Post a Problem</li></a>
-            <a href="/account/contribute/discussion"><li>Post a Discussion</li></a>
-            <a href="/help"><li>Help</li></a>
-        </ul>
-    </div>
-    <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
-    
-  </header>
+{%include 'banner.html'%}
 
 <body>
     <div class="profile-container">
@@ -106,7 +90,7 @@
       </div>
       
       <div class="TabContent" display="none" id = "Discussions">
-        
+
       {% for discussion in discussions %}
       <a href="/discussion/{{discussion.id}}"> 
         <div class="discussion-post" id="Discussions">
