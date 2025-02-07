@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 from app.forms import PostProblemForm, MCQOptionForm
-from app.models import Problem, db, UserStats
+from app.models import Problem, db, Profile
 from dotenv import load_dotenv
 from app.extensions import encrypt_answer
 import os
@@ -19,8 +19,8 @@ def contribute():
         content = form.content.data
         expected_answer = form.expected_answer.data   
         problem = Problem(title=title, topic=topic, author=current_user.username, content=content, encrypted_answer=encrypt_answer(expected_answer))
-        user_stats = UserStats.query.filter_by(username=current_user.username).first()
-        user_stats.problems_posted += 1
+        profile = Profile.query.filter_by(username=current_user.username).first()
+        profile.problems_posted += 1
         db.session.add(problem)
         db.session.commit()
         return redirect(url_for('routes.main.index'))

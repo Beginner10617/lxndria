@@ -10,6 +10,12 @@
     border-radius: 8px;
     color: #e0e0e0;
 }
+.discussion-container h1
+{
+    font-size: 2rem;
+    margin: 10px;
+    background-color: #333;
+}
 .discussion-container input[type="text"]{
     font-size: 1.5rem;
     width: 30%;
@@ -111,4 +117,10 @@
     max-width: 100%;
     height: auto;
     margin: 10px;
+}
+hr {
+    border: none;
+    height: 2px;
+    background-color: #ccc;
+    margin: 20px 0;
 }

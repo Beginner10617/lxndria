@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from app.models import Problem, ProblemAttempts, UserStats, Solutions
-from app.forms import SubmissionForm, PostProblemForm, SolutionForm
+from app.models import Problem, ProblemAttempts, Profile, Solutions, Comments
+from app.forms import SubmissionForm, PostProblemForm, SolutionForm, CommentForm
 from app.extensions import decrypt_answer, encrypt_answer, is_number
 from app import db
 from dotenv import load_dotenv
@@ -53,16 +53,32 @@ def problem(problem_id):
         
     return render_template('problem.html', problem=problem, submission=submission, solved = 0)
 
-@problem_bp.route('/problem/<int:problem_id>/owner')
+@problem_bp.route('/problem/<int:problem_id>/owner', methods=['GET', 'POST'])
 @login_required
 def owner(problem_id):
+
     if not current_user.is_authenticated:
         print('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     print('Problem ID:', problem_id)
     problem = Problem.query.filter_by(id=problem_id).first()
-    return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()))
-
+    solutions = Solutions.query.filter_by(problem_id=problem.id)
+    OwnSolution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    if OwnSolution is not None:
+        posted_solution = True
+        return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), all_solutions=solutions, posted_solution=posted_solution)
+    else :
+        posted_solution = False
+    form = SolutionForm()
+    if form.validate_on_submit():
+        solution = Solutions(problem_id=problem.id, username=current_user.username, solution=form.solution.data)
+        profile = Profile.query.filter_by(username=current_user.username).first()
+        profile.solutions += 1
+        db.session.add(solution)
+        db.session.commit()
+        return redirect(url_for('routes.problem.owner', problem_id=problem.id))
+    return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), all_solutions=solutions, posted_solution=posted_solution, solution=form)
+    
 @problem_bp.route('/problem/<int:problem_id>/delete')
 @login_required
 def delete(problem_id):
@@ -70,11 +86,11 @@ def delete(problem_id):
         print('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
-    user_stats = UserStats.query.filter_by(username=current_user.username).first()
+    profile = Profile.query.filter_by(username=current_user.username).first()
     problem_attempts = ProblemAttempts.query.filter_by(problem_id=problem.id)
     if problem.author == current_user.username:
         db.session.delete(problem)
-        user_stats.problems_posted -= 1
+        profile.problems_posted -= 1
         for attempt in problem_attempts:
             db.session.delete(attempt)
         db.session.commit()
@@ -122,7 +138,10 @@ def correct(problem_id):
         return redirect(url_for('routes.problem.solution', problem_id=problem_id))
     # User has solved the problem and submitted a solution
     all_solutions = Solutions.query.filter_by(problem_id=problem_id)
-    return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions)
+    form = CommentForm()
+    comments = Comments.query.filter_by(parent_id = 'S'+str(solution.id)).all()
+    return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), 
+        solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, comments=comments)
 
 @problem_bp.route('/problem/<int:problem_id>/incorrect')
 @login_required
@@ -152,8 +171,8 @@ def solution(problem_id):
         if form.validate_on_submit():
             problem = Problem.query.filter_by(id=problem_id).first()
             solution = Solutions(problem_id=problem.id, username=current_user.username, solution=form.solution.data)
-            user_stats = UserStats.query.filter_by(username=current_user.username).first()
-            user_stats.solutions += 1
+            profile = Profile.query.filter_by(username=current_user.username).first()
+            profile.solutions += 1
             db.session.add(solution)
             db.session.commit()
             
@@ -189,8 +208,8 @@ def delete_solution(problem_id, solution_id):
     solution = Solutions.query.filter_by(id=solution_id).first()
     problem = Problem.query.filter_by(id=problem_id).first()
     if solution.username == current_user.username:
-        user_stats = UserStats.query.filter_by(username=current_user.username).first()
-        user_stats.solutions -= 1
+        profile = Profile.query.filter_by(username=current_user.username).first()
+        profile.solutions -= 1
         db.session.delete(solution)
         db.session.commit()
         return redirect(url_for('routes.problem.correct', problem_id=problem.id))

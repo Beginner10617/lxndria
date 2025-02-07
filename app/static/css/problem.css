@@ -170,6 +170,16 @@ pre code {
     background-color: #333;
     color: #fff;
 }
+hr{
+    border: none;
+    height: 2px;
+    background-color: #ccc;
+    margin: 20px 0;
+}
+.solution h1{
+    margin-bottom: 10px;
+    background-color: #333;
+}
 
 .solution button{
     display: block;

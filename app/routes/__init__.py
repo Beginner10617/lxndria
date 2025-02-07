@@ -6,6 +6,7 @@ from .help import help_bp
 from .contribute import contributions_bp
 from .problem import problem_bp
 from .discussion import discussion_bp
+from .comments import comments_bp
 
 routes_bp = Blueprint('routes', __name__)
 
@@ -17,3 +18,4 @@ routes_bp.register_blueprint(help_bp)
 routes_bp.register_blueprint(contributions_bp)
 routes_bp.register_blueprint(problem_bp)
 routes_bp.register_blueprint(discussion_bp) 
+routes_bp.register_blueprint(comments_bp)

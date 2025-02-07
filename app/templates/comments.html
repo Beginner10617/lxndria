@@ -1,0 +1,15 @@
+<div id="comments-section"></div>
+   
+<link rel="stylesheet" href="{{url_for('static', filename='css/comments.css')}}">
+
+<form id="comment-form">
+    {{ form.hidden_tag() }}  <!-- CSRF Token -->
+        
+        <div id="content">
+            {{ form.content(class="form-control", rows=40, cols=160, placeholder="Write a comment...") }}
+        </div>
+    <button type="submit">Post Comment</button>
+</form>
+
+<script>
+</script>

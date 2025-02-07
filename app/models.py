@@ -106,21 +106,6 @@ class Problem(db.Model):
             if "<<Answer: " in line:
                 return line.replace("<<Answer: ", "").replace(">>", "")
     '''        
-class UserStats(db.Model):
-    __tablename__ = "user_stats"
-    __table_args__ = {"extend_existing": True}
-
-    username = db.Column(db.String(80), db.ForeignKey('user.username'), primary_key=True)
-    user = db.relationship('User', backref=db.backref('stats', uselist=False, cascade="all, delete-orphan"))
-
-    problems_posted = db.Column(db.Integer, default=0)
-    solutions = db.Column(db.Integer, default=0)
-    discussions = db.Column(db.Integer, default=0)
-    upvotes = db.Column(db.Integer, default=0)
-    comments = db.Column(db.Integer, default=0)
-    
-    def __repr__(self):
-        return f"<Stats for {self.username}>"
 
 class ProblemAttempts(db.Model):
     __tablename__ = "problem_attempts"
@@ -171,6 +156,28 @@ class Discussion(db.Model):
 
     def __repr__(self):
         return f"<Discussion {self.title}>"
+    @property
+    def reducedContent(self):
+        FullContent = self.content
+        if len(FullContent) > 500:
+            return FullContent[:500] + "..."
+        return FullContent
+    
+class Comments(db.Model):
+    __tablename__ = "comments"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    parent_id = db.Column(db.VARCHAR(10), nullable=False)
+    username = db.Column(db.String(80), db.ForeignKey('user.username'))
+    user = db.relationship('User', backref=db.backref('comments', cascade="all, delete-orphan"))
+    content = db.Column(db.Text, nullable=False)
+    upvotes = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Comment on Discussion {self.discussion_id}>"
     @property
     def reducedContent(self):
         FullContent = self.content

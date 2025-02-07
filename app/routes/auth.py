@@ -1,10 +1,8 @@
 import jwt, os
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
-from flask_mail import Message
-from flask import url_for, flash, redirect, Blueprint, request, render_template
+from flask import url_for, flash, redirect, Blueprint, render_template
 from app import mail, db, limiter, login_manager
-from app.models import User, UserStats
+from app.models import User
 from app.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.extensions import send_verification_email, send_reset_password_email, make_directory_for_user
@@ -26,7 +24,6 @@ def verify_email(token):
             flash('Your email has been verified!', 'success')
             directory = user.username
             make_directory_for_user(directory)
-            db.session.add(UserStats(username=user.username))
             db.session.add(user)
             print('User added', user.username)
             db.session.commit()

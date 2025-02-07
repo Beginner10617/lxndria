@@ -1,5 +1,5 @@
 from .auth import current_user
-from app.models import Profile, User, Problem, UserStats, Discussion
+from app.models import Profile, User, Problem, Discussion
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required
 from app.forms import EditAccountForm
@@ -17,9 +17,8 @@ def account():
         return redirect(url_for('routes.auth.login'))
     profile = Profile.query.filter_by(username=current_user.username).first()
     problems = Problem.query.filter_by(author=current_user.username).order_by(Problem.created_at.desc()).all()
-    stats = UserStats.query.filter_by(username=current_user.username).first()
     discussions = Discussion.query.filter_by(author=current_user.username).order_by(Discussion.created_at.desc()).all()
-    return render_template('account.html', user=profile, problems=problems, stats=stats, discussions=discussions)
+    return render_template('account.html', user=profile, problems=problems, stats=profile, discussions=discussions)
 
 @account_bp.route('/account/edit', methods=['GET', 'POST'])
 @login_required
@@ -58,6 +57,5 @@ def view_account(username):
         return redirect(url_for('routes.account.account'))
     profile = Profile.query.filter_by(username=username).first()
     problems = Problem.query.filter_by(author=username).order_by(Problem.created_at.desc()).all()
-    stats = UserStats.query.filter_by(username=username).first()
     discussions = Discussion.query.filter_by(author=username).order_by(Discussion.created_at.desc()).all()
-    return render_template('account.html', user=profile, problems=problems, stats=stats, discussions=discussions)
+    return render_template('account.html', user=profile, problems=problems, stats=profile, discussions=discussions)

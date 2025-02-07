@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
-from app.forms import PostDiscussionForm
-from app.models import Discussion, db, UserStats
+from app.forms import PostDiscussionForm, CommentForm
+from app.models import Discussion, db, Profile, Comments
 
 discussion_bp = Blueprint('discussion', __name__)
 
@@ -12,8 +12,8 @@ def post_discussion():
     if form.validate_on_submit():
         discussion = Discussion(title=form.title.data, content=form.content.data, user=current_user)
         db.session.add(discussion)
-        user_stats = UserStats.query.filter_by(username=current_user.username).first()
-        user_stats.discussions += 1
+        profile = Profile.query.filter_by(username=current_user.username).first()
+        profile.discussions += 1
         db.session.commit()
         flash("Discussion posted successfully!", "success")
         return redirect(url_for('routes.discussion.view_discussion', discussion_id=discussion.id))
@@ -22,7 +22,9 @@ def post_discussion():
 @discussion_bp.route('/discussion/<int:discussion_id>')
 def view_discussion(discussion_id):
     discussion = Discussion.query.get(discussion_id)
-    return render_template('discussion.html', discussion=discussion)
+    form = CommentForm()
+    comments = Comments.query.filter_by(parent_id = 'D'+str(discussion_id)).all()
+    return render_template('discussion.html', discussion=discussion, comments=comments, form=form)
 
 @discussion_bp.route('/discussion/<int:discussion_id>/delete', methods=['POST', 'GET'])
 @login_required
@@ -30,8 +32,8 @@ def delete_discussion(discussion_id):
     discussion = Discussion.query.get(discussion_id)
     if discussion.user == current_user:
         db.session.delete(discussion)
-        user_stats = UserStats.query.filter_by(username=current_user.username).first()
-        user_stats.discussions -= 1
+        profile = Profile.query.filter_by(username=current_user.username).first()
+        profile.discussions -= 1
         db.session.commit()
         flash("Discussion deleted successfully!", "success")
     else:

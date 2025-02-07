@@ -1,0 +1,9 @@
+#comment-form textarea{
+    font-size: 1rem;
+    margin:10px;
+    width: 95%;
+    height: 50px;
+    background-color: #2b2b2b;
+    color: #f1f1f1;
+    padding: 10px;
+}

@@ -90,9 +90,10 @@
 
     {% if solved != 0 %}
 
-    <div class="solution">
     <!--Solution posting/reading area--->
         {% if solved == 1 and not posted_solution%}
+
+    <div class="solution">
         <form method="POST">
             {{solution.hidden_tag()}}
             <div class="solution-content">
@@ -100,9 +101,11 @@
                 <button id="submit">Submit</button>
             </div>
         </form>
+    </div>
         {% elif posted_solution %}
             {% for solution in all_solutions %}
             
+    <div class="solution">
             <div class="problem-content" id="output">
                 <p>{{solution.solution}}</p>
                 <a href="/account/{{solution.username}}"><h2>{{solution.user.name}}</h2></a>
@@ -111,10 +114,15 @@
                 <button id="delete" onclick="confirmDeletion(event, '{{problem.id}}/{{solution.id}}', '/problem/')">Delete</button>
             {%endif%}
             </div>
-            {% endfor %}
+            <hr>
+        <h1>Comments</h1>
+        {%include 'comments.html'%}
+    
+        </div>
+        {% endfor %}
         {% endif %}
         <!---Display solutions by other users+commentings--->
     {% endif %}
-</div>
+
 
 </body>
