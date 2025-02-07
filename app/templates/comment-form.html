@@ -1,0 +1,13 @@
+   
+<link rel="stylesheet" href="{{url_for('static', filename='css/comments.css')}}">
+
+<form id="comment-form" action="{{ url_for('routes.comments.handle_comment')}}" method="POST">
+    {{ form.hidden_tag() }}  <!-- CSRF Token -->
+    <input type="hidden" name="post_type" value="{{ post_type }}">
+    <input type="hidden" name="post_id" value="{{ post_id }}">
+
+        <div id="content">
+            {{ form.content(class="form-control", rows=40, cols=160, placeholder="Write a comment...") }}
+        </div>
+    <button type="submit">Post Comment</button>
+</form>

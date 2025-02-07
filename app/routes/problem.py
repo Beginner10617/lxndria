@@ -66,7 +66,11 @@ def owner(problem_id):
     OwnSolution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
     if OwnSolution is not None:
         posted_solution = True
-        return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), all_solutions=solutions, posted_solution=posted_solution)
+        form = CommentForm()    
+        solution_ids = ['S'+str(solution.id) for solution in solutions]
+        comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
+        return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), 
+            all_solutions=solutions, posted_solution=posted_solution, form=form, comments=comments)
     else :
         posted_solution = False
     form = SolutionForm()
@@ -77,7 +81,8 @@ def owner(problem_id):
         db.session.add(solution)
         db.session.commit()
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
-    return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), all_solutions=solutions, posted_solution=posted_solution, solution=form)
+    return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), 
+        all_solutions=solutions, posted_solution=posted_solution, solution=form)
     
 @problem_bp.route('/problem/<int:problem_id>/delete')
 @login_required
@@ -139,7 +144,11 @@ def correct(problem_id):
     # User has solved the problem and submitted a solution
     all_solutions = Solutions.query.filter_by(problem_id=problem_id)
     form = CommentForm()
-    comments = Comments.query.filter_by(parent_id = 'S'+str(solution.id)).all()
+    solution_ids = ['S'+str(solution.id) for solution in all_solutions]
+    comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
+    print('Comments:', comments)
+    for comment in comments:
+        print('Comment:', comment.content)
     return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), 
         solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, comments=comments)
 
@@ -149,12 +158,13 @@ def incorrect(problem_id):
     if not current_user.is_authenticated:
         print('Not authenticated')
         return redirect(url_for('routes.auth.login'))
-    # User has attempted the problem but not solved it
-    solution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    form = CommentForm()
     problem = Problem.query.filter_by(id=problem_id).first()
-    # User has solved the problem and submitted a solution
-    all_solutions = Solutions.query.filter_by(problem_id=problem_id)
-    return render_template('problem.html', problem=problem, solved = -1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions)
+    all_solutions = Solutions.query.filter_by(problem_id=problem_id) 
+    solution_ids = ['S'+str(solution.id) for solution in all_solutions]
+    comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
+    return render_template('problem.html', problem=problem, solved = -1, answer = decrypt_answer(problem.encrypted_answer.strip()),
+        solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, comments=comments)
 
 @problem_bp.route('/problem/<int:problem_id>/solution', methods=['GET', 'POST'])
 @login_required

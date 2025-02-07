@@ -103,7 +103,10 @@
         </form>
     </div>
         {% elif posted_solution %}
-            {% for solution in all_solutions %}
+        <div class="solution-header">
+        <h1>Solutions</h1>
+        </div>
+        {% for solution in all_solutions %}
             
     <div class="solution">
             <div class="problem-content" id="output">
@@ -116,8 +119,9 @@
             </div>
             <hr>
         <h1>Comments</h1>
-        {%include 'comments.html'%}
-    
+        {% with post_id=solution.id, post_type="S" %}
+            {% include 'comments.html' %}
+        {% endwith %}
         </div>
         {% endfor %}
         {% endif %}

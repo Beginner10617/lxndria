@@ -219,3 +219,10 @@ hr{
     height: auto;
     margin: 10px;
 }
+.solution-header
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}

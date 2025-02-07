@@ -1,15 +1,35 @@
-<div id="comments-section"></div>
-   
-<link rel="stylesheet" href="{{url_for('static', filename='css/comments.css')}}">
+<div id="comment-form-container">
+{% include 'comment-form.html' %}
+</div>
+{% for comment in comments %}
+    {% if comment.parent_id == post_type ~ post_id|string%}
+    <div class="comment">
+        <p><strong>{{ comment.username }}</strong>: {{ comment.content }}</p>
+        {%if current_user.username == comment.username%}
 
-<form id="comment-form">
-    {{ form.hidden_tag() }}  <!-- CSRF Token -->
-        
-        <div id="content">
-            {{ form.content(class="form-control", rows=40, cols=160, placeholder="Write a comment...") }}
-        </div>
-    <button type="submit">Post Comment</button>
-</form>
+        {%else%}
+        <button class="reply-button" data-username="{{ comment.username }}">Reply</button>
+        {%endif%}
+    </div>
+    {% endif %}
+{% endfor %}
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const replyButtons = document.querySelectorAll(".reply-button");
+        const commentFormContainer = document.getElementById("comment-form-container");
+        const commentInput = commentFormContainer.querySelector("textarea"); // Find the input field
+
+        replyButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const username = this.getAttribute("data-username");
+                commentInput.value = `@${username} `; // Pre-fill with username
+
+                // Move the form below the clicked comment
+                this.parentElement.appendChild(commentFormContainer);
+                commentFormContainer.style.display = "block";
+                commentInput.focus(); // Focus input field
+            });
+        });
+    });
 </script>

@@ -88,6 +88,5 @@ class PostDiscussionForm(FlaskForm):
     submit = SubmitField('Post')
 
 class CommentForm(FlaskForm):
-    parent_id = StringField('Parent ID')
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Post')

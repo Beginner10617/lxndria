@@ -177,7 +177,7 @@ class Comments(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
     def __repr__(self):
-        return f"<Comment on Discussion {self.discussion_id}>"
+        return f"<Comment on Discussion {self.parent_id}>"
     @property
     def reducedContent(self):
         FullContent = self.content

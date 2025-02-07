@@ -67,7 +67,9 @@
         {% endif %}
         <hr>
         <h1>Comments</h1>
-        {%include 'comments.html'%}
+        {% with post_id=discussion.id, post_type="D" %}
+            {% include 'comments.html' %}
+        {% endwith %}
     </div>
 
   </body>
