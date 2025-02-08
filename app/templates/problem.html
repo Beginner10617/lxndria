@@ -113,8 +113,10 @@
                 <p>{{solution.solution}}</p>
                 <a href="/account/{{solution.username}}"><h2>{{solution.user.name}}</h2></a>
             {% if solution.username == current_user.username %}
+            <div class="solution-buttons">
                 <a href="/problem/{{problem.id}}/{{solution.id}}/edit"><button id="edit">Edit</button></a>
                 <button id="delete" onclick="confirmDeletion(event, '{{problem.id}}/{{solution.id}}', '/problem/')">Delete</button>
+            </div>
             {%else%}
                 <a href="/problem/{{problem.id}}/{{solution.id}}/like"><button id="like">⬆</button></a>
                 {{solution.upvotes}}

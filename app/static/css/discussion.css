@@ -79,15 +79,6 @@
     background-color: #333 !important;
     color: #f1f1f1 !important;
 }
-.discussion-footer{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 10px;
-    padding: 10px;
-    color: #e0e0e0;
-    font-size: 1.5rem;
-}
 .discussion-footer p{
     background-color: #333;
 }
@@ -123,4 +114,14 @@ hr {
     height: 2px;
     background-color: #ccc;
     margin: 20px 0;
+}
+
+
+.discussion-footer{
+    display: flex;
+    justify-content: left;
+    margin-bottom: 10px;
+}
+.discussion-footer button{
+    margin-right: 10px;
 }

@@ -1,19 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script>
-    function openTab(event, tabName){
+<script>
+    function openTab(event, tabName) {
+      // Hide all tables
       document.querySelectorAll('.table').forEach(tab => {
         tab.style.display = 'none';
-    });
+      });
 
-    // Show the selected tab content
-    document.getElementById(tabName).style.display = 'block';
+      // Show the selected tab content
+      let activeTab = document.getElementById(tabName);
+      if (activeTab) {
+        activeTab.style.display = 'block';
+        document.body.setAttribute('data-active-tab', tabName);
+      }
     }
-    window.onload = function(){
-      openTab(event, 'Problems');
+
+    window.onload = function () {
+      openTab(new Event('load'), 'Problems');
+    };
+
+    function search() {
+      let input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("search");
+      filter = input.value.toUpperCase();
+      if(document.body.getAttribute('data-active-tab') === 'Problems') {
+        table = document.getElementById("problems-table");
+      } else {
+        table = document.getElementById("discussions-table");
+      }
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
     }
-  </script>
+
+</script>
 
   <link rel="stylesheet" href="{{url_for('static', filename='css/homepage.css')}}">
   <title>Home Page</title>
@@ -29,16 +59,15 @@
         <h1>Welcome to Lxndria</h1>
         <p>Here you can post problems and discussions for others to see and help you with. You can also help others by answering their questions and discussing topics with them.</p>
   </div>
-
-  <div class="Tabs">
-    <button class="tab" onclick="openTab(event, 'Problems')">Problems</button>
-    <button class="tab" onclick="openTab(event, 'Discussions')">Discussions</button>
-  </div>
   
   <!---PROBLEMS TABLE---->
-  <div class="table" id="Problems">
-    
-    <table>
+  <div class="Table">
+
+    {%include 'main_table_header.html'%}
+    <div class ="table" id="Problems">
+
+    <table id="problems-table">
+
       <tr>
         <th>Problem</th>
         <th>Topic</th>
@@ -72,8 +101,9 @@
   <!----DISCUSSION TABLE----->
 
   <div class="table" id="Discussions" style="display: none;">
+    <table id="discussions-table">
+
     
-    <table>
       <tr>
         <th>Title</th>
         <th>Author</th>
@@ -102,5 +132,6 @@
       {% endif %}
   </div>
   </div>
+</div>
 </body>
 </html>

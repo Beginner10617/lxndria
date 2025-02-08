@@ -30,3 +30,19 @@ def handle_comment():
             return redirect(url_for("article_view", article_id=post_id))
     
     return redirect(request.referrer or url_for("post_view", post_id=post_id))
+
+@comments_bp.route("/comment/<int:comment_id>/delete")
+def delete_comment(comment_id):
+    comment = Comments.query.get(comment_id)
+    if comment is None:
+        flash("Comment not found", "danger")
+        return redirect(request.referrer or url_for("index"))
+
+    if comment.username != current_user.username:
+        flash("You do not have permission to delete this comment", "danger")
+        return redirect(request.referrer or url_for("index"))
+
+    db.session.delete(comment)
+    db.session.commit()
+    flash("Comment deleted", "success")
+    return redirect(request.referrer or url_for("index"))

@@ -6,7 +6,7 @@
     <div class="comment">
         <p><strong>{{ comment.username }}</strong>: {{ comment.content }}</p>
         {%if current_user.username == comment.username%}
-
+            <button onclick="confirmDeletion(event, '{{comment.id}}', '/comment/')">Delete</button>
         {%else%}
         <button class="reply-button" data-username="{{ comment.username }}">Reply</button>
         {%endif%}
@@ -32,4 +32,12 @@
             });
         });
     });
+
+    function confirmDeletion(event, commentId, href_start) {
+        event.preventDefault(); // Prevent the default navigation
+        let confirmation = confirm("Are you sure you want to delete this comment?");
+        if (confirmation) {
+            window.location.href = href_start + commentId + "/delete"; // Redirect if confirmed
+        }
+    }
 </script>

@@ -226,3 +226,11 @@ hr{
     align-items: center;
     margin-bottom: 10px;
 }
+.solution-buttons{
+    display: flex;
+    justify-content: left;
+    margin-bottom: 10px;
+}
+.solution-buttons button{
+    margin-right: 10px;
+}
