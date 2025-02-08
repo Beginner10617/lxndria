@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from app.models import Problem, ProblemAttempts, Profile, Solutions, Comments
+from app.models import Problem, ProblemAttempts, Profile, Solutions, Comments, Upvotes
 from app.forms import SubmissionForm, PostProblemForm, SolutionForm, CommentForm
 from app.extensions import decrypt_answer, encrypt_answer, is_number
 from app import db
@@ -12,9 +12,9 @@ problem_bp = Blueprint('problem', __name__)
 @problem_bp.route('/problem/<int:problem_id>', methods=['GET', 'POST'])
 def problem(problem_id):
     submission = SubmissionForm()
-    print('Problem ID:', problem_id)
+   #('Problem ID:', problem_id)
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
     if problem.author == current_user.username:
@@ -22,18 +22,18 @@ def problem(problem_id):
     attempts = ProblemAttempts.query.filter_by(problem_id=problem.id, username=current_user.username)
 
     if attempts.count(): # User has attempted the problem 
-        print('Attempted the problem %d times' % attempts.count())
+       #('Attempted the problem %d times' % attempts.count())
         for attempt in attempts:
-            print('Attempt:', attempt.is_correct)
+           #('Attempt:', attempt.is_correct)
             if attempt.is_correct: # User has already solved the problem
                 return redirect(url_for('routes.problem.correct', problem_id=problem.id))
         return redirect(url_for('routes.problem.incorrect', problem_id=problem.id))
     
         
     if submission.validate_on_submit():
-        print('Submitted')
+       #('Submitted')
         answer = submission.answer.data
-        print(problem.encrypted_answer.strip())
+       #(problem.encrypted_answer.strip())
         correct_answer = decrypt_answer(problem.encrypted_answer.strip())
             
         if answer == correct_answer and is_number(answer):
@@ -58,9 +58,9 @@ def problem(problem_id):
 def owner(problem_id):
 
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
-    print('Problem ID:', problem_id)
+   #('Problem ID:', problem_id)
     problem = Problem.query.filter_by(id=problem_id).first()
     solutions = Solutions.query.filter_by(problem_id=problem.id)
     OwnSolution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
@@ -88,7 +88,7 @@ def owner(problem_id):
 @login_required
 def delete(problem_id):
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
     profile = Profile.query.filter_by(username=current_user.username).first()
@@ -106,7 +106,7 @@ def delete(problem_id):
 @login_required
 def edit(problem_id):
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     if request.method == 'GET':
         problem = Problem.query.filter_by(id=problem_id).first()
@@ -134,7 +134,7 @@ def edit(problem_id):
 @login_required
 def correct(problem_id):
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     # User has already solved the problem
     solution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
@@ -146,9 +146,7 @@ def correct(problem_id):
     form = CommentForm()
     solution_ids = ['S'+str(solution.id) for solution in all_solutions]
     comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
-    print('Comments:', comments)
-    for comment in comments:
-        print('Comment:', comment.content)
+   
     return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), 
         solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, comments=comments)
 
@@ -156,7 +154,7 @@ def correct(problem_id):
 @login_required
 def incorrect(problem_id):
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     form = CommentForm()
     problem = Problem.query.filter_by(id=problem_id).first()
@@ -170,7 +168,7 @@ def incorrect(problem_id):
 @login_required
 def solution(problem_id):
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     if request.method == 'GET':
         problem = Problem.query.filter_by(id=problem_id).first()
@@ -193,7 +191,7 @@ def solution(problem_id):
 @login_required
 def edit_solution(problem_id, solution_id):
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
     if request.method == 'GET':
@@ -213,7 +211,7 @@ def edit_solution(problem_id, solution_id):
 @login_required
 def delete_solution(problem_id, solution_id):
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     solution = Solutions.query.filter_by(id=solution_id).first()
     problem = Problem.query.filter_by(id=problem_id).first()
@@ -223,3 +221,25 @@ def delete_solution(problem_id, solution_id):
         db.session.delete(solution)
         db.session.commit()
         return redirect(url_for('routes.problem.correct', problem_id=problem.id))
+    
+@problem_bp.route('/problem/<int:problem_id>/<int:solution_id>/like')
+@login_required
+def like_solution(problem_id, solution_id):
+    if not current_user.is_authenticated:
+       #('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
+    solution = Solutions.query.filter_by(id=solution_id).first()
+    upvote = Upvotes.query.filter_by(solution_id=solution_id, username=current_user.username).first()
+    profile = Profile.query.filter_by(username=solution.username).first()
+    if upvote is None and solution.username != current_user.username:
+        upvote = Upvotes(solution_id=solution_id, username=current_user.username)
+        db.session.add(upvote)
+        solution.upvotes += 1
+        profile.upvotes += 1
+        db.session.commit()
+    else:
+        db.session.delete(upvote)
+        solution.upvotes -= 1
+        profile.upvotes -= 1
+        db.session.commit()
+    return redirect(url_for('routes.problem.problem', problem_id=problem_id))

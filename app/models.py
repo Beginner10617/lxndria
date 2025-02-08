@@ -28,7 +28,7 @@ class User(db.Model, UserMixin): # create a User class to store user information
         return bcrypt.check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        # print out the username each time a user is created
+        ## out the username each time a user is created
         return '<User %r>' % self.username
 
 class Profile(db.Model):
@@ -147,7 +147,6 @@ class Discussion(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    upvotes = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
@@ -172,7 +171,6 @@ class Comments(db.Model):
     username = db.Column(db.String(80), db.ForeignKey('user.username'))
     user = db.relationship('User', backref=db.backref('comments', cascade="all, delete-orphan"))
     content = db.Column(db.Text, nullable=False)
-    upvotes = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
@@ -184,3 +182,34 @@ class Comments(db.Model):
         if len(FullContent) > 500:
             return FullContent[:500] + "..."
         return FullContent
+    
+class Upvotes(db.Model):
+    __tablename__ = "upvotes"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(80), db.ForeignKey('user.username')) # Username of the user who upvoted
+    user = db.relationship('User', backref=db.backref('upvotes', cascade="all, delete-orphan"))
+    solution_id = db.Column(db.Integer, db.ForeignKey('solutions.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Upvote by {self.username}>"
+
+def SyncUserStats(username):
+    user = User.query.filter_by(username=username).first()
+    user_profile = Profile.query.filter_by(username=username).first()
+    problems = Problem.query.filter_by(author=username).all()
+    solutions = Solutions.query.filter_by(username=username).all()
+    discussions = Discussion.query.filter_by(author=username).all()
+    comments = Comments.query.filter_by(username=username).all()
+    
+    for solution in solutions:
+        user_profile.upvotes += solution.upvotes
+
+    user_profile.problems_posted = len(problems)
+    user_profile.solutions = len(solutions)
+    user_profile.discussions = len(discussions)
+    user_profile.comments = len(comments)
+
+    db.session.commit()

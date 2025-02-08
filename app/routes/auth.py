@@ -25,7 +25,7 @@ def verify_email(token):
             directory = user.username
             make_directory_for_user(directory)
             db.session.add(user)
-            print('User added', user.username)
+           #('User added', user.username)
             db.session.commit()
             return redirect(url_for('routes.auth.login'))
     except jwt.ExpiredSignatureError:
@@ -85,7 +85,7 @@ def login():
         password = form.password.data.strip()
         user = User.query.filter_by(username=username).first()
         if user and user.verify_password(password):
-            print('Login successful')
+           #('Login successful')
             login_user(user)
             return redirect(url_for('routes.main.index'))
         flash('Invalid username or password', 'error')
@@ -142,7 +142,7 @@ def reset_password(token):
                     return redirect(url_for('routes.auth.reset_password_token', token=token))
                 user.set_password(password)
                 db.session.commit()
-                print('Password reset successfully')
+               #('Password reset successfully')
                 flash('Password reset successfully.', 'success')
                 return redirect(url_for('routes.auth.login'))
             return render_template('reset_password.html', form=form, token=token)

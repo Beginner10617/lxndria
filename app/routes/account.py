@@ -13,7 +13,7 @@ load_dotenv()
 @account_bp.route('/account')
 def account():
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     profile = Profile.query.filter_by(username=current_user.username).first()
     problems = Problem.query.filter_by(author=current_user.username).order_by(Problem.created_at.desc()).all()
@@ -31,14 +31,14 @@ def edit_account():
             user.name = form.name.data
         if form.bio.data:
             current_profile.bio = form.bio.data
-        print(form.profile_pic.data)
+       #(form.profile_pic.data)
         if form.profile_pic.data:
-            print(form.profile_pic.data)
+           #(form.profile_pic.data)
             file = form.profile_pic.data
             filename = secure_filename(file.filename)
             directory = current_profile.username
             path = os.getenv('UPLOAD_FOLDER')+current_profile.username+"/Profile_picture/"  # This should be the path where you want to save
-            print(path)
+           #(path)
             file.save(os.path.join(path, filename))
             current_profile.profile_pic = path[len('app/static/'):]+filename
         db.session.commit()
@@ -49,7 +49,7 @@ def edit_account():
 @account_bp.route('/account/<string:username>')
 def view_account(username):
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     if not Profile.query.filter_by(username=username).first():
         return redirect(url_for('routes.account.account'))

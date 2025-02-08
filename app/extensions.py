@@ -68,4 +68,4 @@ def make_directory_for_user(directory):
     path = os.getenv('UPLOAD_FOLDER')+directory+"/"
     os.makedirs(path, exist_ok=True)
     os.makedirs(path+"Profile_picture/", exist_ok=True)
-    
+   

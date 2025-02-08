@@ -60,16 +60,16 @@ class PostProblemForm(FlaskForm):
         if extra_validators is None:
             extra_validators = {}
         if not super().validate():
-            print("Super validation failed")
+           #("Super validation failed")
             return False
             
         if not self.expected_answer.data:
             self.expected_answer.errors.append("Please provide an expected answer.")
-            print("Please provide an expected answer.")
+           #("Please provide an expected answer.")
             return False
         if not is_number(self.expected_answer.data):
             self.expected_answer.errors.append("Expected answer must be a valid number.")
-            print("Expected answer must be a valid number.")
+           #("Expected answer must be a valid number.")
             return False
 
         return True

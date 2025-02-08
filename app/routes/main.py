@@ -9,14 +9,14 @@ def index():
     rows = request.args.get('rows', default=10, type=int)
     all_problems = Problem.query.order_by(Problem.created_at.desc()).all()
     all_discussions = Discussion.query.order_by(Discussion.created_at.desc()).all()
-    print(all_problems)
+   #(all_problems)
     return render_template('index.html', problems=all_problems, page=pageNumber, row_per_page=rows, discussions=all_discussions)
 
 @main_bp.route('/admin')
 @login_required
 def admin():
     if not current_user.is_authenticated:
-        print('Not authenticated')
+       #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     
     if current_user.username == 'admin':
