@@ -9,8 +9,12 @@ import os
 contributions_bp = Blueprint('contributions', __name__)
 load_dotenv()
 @contributions_bp.route('/account/contribute/problem', methods=['GET', 'POST'])
-@login_required
+
 def contribute():
+
+    if not current_user.is_authenticated:
+        flash("You need to login to add problems!", "danger")
+        return redirect(url_for('routes.auth.login'))
     form = PostProblemForm(request.form, min_entries=6)
     # Ensure opt is not needed anymore; it's handled in PostProblemForm options.
     if form.validate_on_submit():

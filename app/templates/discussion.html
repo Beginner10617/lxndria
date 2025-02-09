@@ -3,14 +3,13 @@
     <head>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
-    <!-- Include MathJax for LaTeX rendering -->
     <script type="text/javascript" async
       src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script type="text/javascript" async
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-    <!-- Include highlight.js for syntax highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 
     <script>
@@ -56,13 +55,22 @@
         <div class="discussion-content" id="output">
             {{discussion.content}}
         </div>
-        <div class="discussion-footer">
-            <a href="/account/{{discussion.author}}"><p>By {{discussion.user.name}}</p></a>
-        </div>
         {% if current_user and current_user.username == discussion.author %}
         <div class="discussion-footer">
-            <a href="/discussion/{{discussion.id}}/edit"><button>Edit</button></a>
-            <a onclick="confirmDeletion(event, '{{discussion.id}}', '/discussion/')"><button>Delete</button></a>
+            <a href="/discussion/{{discussion.id}}/edit"><button><i class="far fa-edit"></i></button></a>
+            <a onclick="confirmDeletion(event, '{{discussion.id}}', '/discussion/')"><button><i class="fas fa-trash-alt"></i> </button></a>
+        </div>
+        {% else %}
+        <div class="discussion-footer">
+
+            <div class="author">
+                <a href="/account/{{discussion.author}}"><h2>By {{discussion.user.name}}</h2></a>
+            </div>
+            {%if bookmarked%}
+            <a href="/discussion/{{discussion.id}}/bookmark"><button><i class="fas fa-bookmark"></i></button></a>
+            {%else%}
+            <a href="/discussion/{{discussion.id}}/bookmark"><button><i class="far fa-bookmark"></i></button></a>
+            {%endif%}
         </div>
         {% endif %}
         <hr>
@@ -70,6 +78,8 @@
         {% with post_id=discussion.id, post_type="D" %}
             {% include 'comments.html' %}
         {% endwith %}
+
+  {%include 'flash.html'%}
     </div>
 
   </body>

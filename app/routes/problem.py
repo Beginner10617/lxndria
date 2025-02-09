@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from app.models import Problem, ProblemAttempts, Profile, Solutions, Comments, Upvotes
+from app.models import Problem, ProblemAttempts, Profile, Solutions, Comments, Upvotes, Bookmarks
 from app.forms import SubmissionForm, PostProblemForm, SolutionForm, CommentForm
 from app.extensions import decrypt_answer, encrypt_answer, is_number
 from app import db
@@ -17,10 +17,17 @@ def problem(problem_id):
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
+    
     if problem.author == current_user.username:
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
     attempts = ProblemAttempts.query.filter_by(problem_id=problem.id, username=current_user.username)
-
+    # Increment the view count of the problem
+    try:
+        problem.views += 1
+    except:
+        problem.views = 1
+    db.session.commit()
+    
     if attempts.count(): # User has attempted the problem 
        #('Attempted the problem %d times' % attempts.count())
         for attempt in attempts:
@@ -49,9 +56,8 @@ def problem(problem_id):
             db.session.add(new_attempt)
             db.session.commit()
             return redirect(url_for('routes.problem.incorrect', problem_id=problem.id))
-    
-        
-    return render_template('problem.html', problem=problem, submission=submission, solved = 0)
+    bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    return render_template('problem.html', problem=problem, submission=submission, solved = 0, bookmarked=bookmark)
 
 @problem_bp.route('/problem/<int:problem_id>/owner', methods=['GET', 'POST'])
 @login_required
@@ -146,9 +152,11 @@ def correct(problem_id):
     form = CommentForm()
     solution_ids = ['S'+str(solution.id) for solution in all_solutions]
     comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
-   
+    bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    
     return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), 
-        solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, comments=comments)
+        solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, 
+        comments=comments, bookmarked=bookmark)
 
 @problem_bp.route('/problem/<int:problem_id>/incorrect')
 @login_required
@@ -161,8 +169,11 @@ def incorrect(problem_id):
     all_solutions = Solutions.query.filter_by(problem_id=problem_id) 
     solution_ids = ['S'+str(solution.id) for solution in all_solutions]
     comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
+    bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    
     return render_template('problem.html', problem=problem, solved = -1, answer = decrypt_answer(problem.encrypted_answer.strip()),
-        solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, comments=comments)
+        solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, 
+        comments=comments, bookmarked=bookmark)
 
 @problem_bp.route('/problem/<int:problem_id>/solution', methods=['GET', 'POST'])
 @login_required
@@ -241,5 +252,20 @@ def like_solution(problem_id, solution_id):
         db.session.delete(upvote)
         solution.upvotes -= 1
         profile.upvotes -= 1
+        db.session.commit()
+    return redirect(url_for('routes.problem.problem', problem_id=problem_id))
+
+@problem_bp.route('/problem/<int:problem_id>/bookmark')
+def bookmark_problem(problem_id):
+    if not current_user.is_authenticated:
+       #('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
+    bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    if bookmark is None:
+        bookmark = Bookmarks(problem_id=problem_id, username=current_user.username)
+        db.session.add(bookmark)
+        db.session.commit()
+    else:
+        db.session.delete(bookmark)
         db.session.commit()
     return redirect(url_for('routes.problem.problem', problem_id=problem_id))

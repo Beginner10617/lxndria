@@ -59,10 +59,19 @@
         <div class="problem-content" id="output">
             {{problem.content}}
         </div>
+    
+    <div class="problem-footer">
+        <div class="author">
+            <h2><a href="/account/{{problem.author}}">{{problem.user.name}}</a></h2>
+        </div>
 
-    <div class="author">
-        <h2><a href="/account/{{problem.author}}">{{problem.user.name}}</a></h2>
+        {%if bookmarked%}
+        <a href="/problem/{{problem.id}}/bookmark"><button><i class="fas fa-bookmark"></i></button></a>
+        {%else%}
+        <a href="/problem/{{problem.id}}/bookmark"><button><i class="far fa-bookmark"></i></button></a>
+        {%endif%}
     </div>
+
     </div>
     {% if solved == 0 %}
     <form method="POST">
@@ -118,7 +127,9 @@
                 <button id="delete" onclick="confirmDeletion(event, '{{problem.id}}/{{solution.id}}', '/problem/')">Delete</button>
             </div>
             {%else%}
+            <div class="solution-footer">
                 <a href="/problem/{{problem.id}}/{{solution.id}}/like"><button id="like">⬆</button></a>
+            </div>
                 {{solution.upvotes}}
             {%endif%}
             </div>
@@ -133,5 +144,6 @@
         <!---Display solutions by other users+commentings--->
     {% endif %}
 
+    {%include 'flash.html'%}
 
 </body>

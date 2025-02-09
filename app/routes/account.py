@@ -1,5 +1,5 @@
 from .auth import current_user
-from app.models import Profile, User, Problem, Discussion
+from app.models import Profile, User, Problem, Discussion, Bookmarks
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required
 from app.forms import EditAccountForm
@@ -18,7 +18,8 @@ def account():
     profile = Profile.query.filter_by(username=current_user.username).first()
     problems = Problem.query.filter_by(author=current_user.username).order_by(Problem.created_at.desc()).all()
     discussions = Discussion.query.filter_by(author=current_user.username).order_by(Discussion.created_at.desc()).all()
-    return render_template('account.html', user=profile, problems=problems, stats=profile, discussions=discussions)
+    bookmarks = Bookmarks.query.filter_by(username=current_user.username).order_by(Bookmarks.created_at.desc()).all()
+    return render_template('account.html', user=profile, problems=problems, stats=profile, discussions=discussions, bookmarks=bookmarks)
 
 @account_bp.route('/account/edit', methods=['GET', 'POST'])
 @login_required

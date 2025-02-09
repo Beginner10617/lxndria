@@ -68,6 +68,7 @@ class Problem(db.Model):
     solved = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    views = db.Column(db.Integer, default=0)
     
     author = db.Column(db.String(80), db.ForeignKey('user.username'))
     user = db.relationship('User', backref=db.backref('problems', cascade="all, delete-orphan"))
@@ -96,6 +97,17 @@ class Problem(db.Model):
         if len(FullContent) > 500:
             return FullContent[:500] + "..."
         return FullContent
+    
+    @property
+    def difficulty(self):
+        if self.attempts == 0:
+            return "TBD"
+        elif self.solved/self.attempts > os.getenv('EASY_THRESHOLD', 0.7):
+            return "Easy"
+        elif self.solved/self.attempts > os.getenv('MEDIUM_THRESHOLD', 0.3):
+            return "Medium"
+        else:
+            return "Hard"
             
     '''@property
     def encrypted_answer(self):
@@ -149,6 +161,7 @@ class Discussion(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    views = db.Column(db.Integer, default=0)
 
     author = db.Column(db.String(80), db.ForeignKey('user.username'))
     user = db.relationship('User', backref=db.backref('discussions', cascade="all, delete-orphan"))
@@ -195,6 +208,27 @@ class Upvotes(db.Model):
 
     def __repr__(self):
         return f"<Upvote by {self.username}>"
+
+class Bookmarks(db.Model):
+    __tablename__ = "bookmarks"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(80), db.ForeignKey('user.username')) # Username of the user who bookmarked
+    user = db.relationship('User', backref=db.backref('bookmarks', cascade="all, delete-orphan"))
+    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'), nullable=True)
+    problem = db.relationship('Problem', backref=db.backref('bookmarks', cascade="all, delete-orphan"))
+    discussion_id = db.Column(db.Integer, db.ForeignKey('discussion.id'), nullable=True)
+    discussion = db.relationship('Discussion', backref=db.backref('bookmarks', cascade="all, delete-orphan"))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        CheckConstraint("problem_id IS NOT NULL OR discussion_id IS NOT NULL", name="valid_bookmark_check"),
+    )
+
+    def __repr__(self):
+        return f"<Bookmark by {self.username}>"
+
 
 def SyncUserStats(username):
     user = User.query.filter_by(username=username).first()

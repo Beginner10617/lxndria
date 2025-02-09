@@ -71,6 +71,7 @@
       <tr>
         <th>Problem</th>
         <th>Topic</th>
+        <th>Difficulty</th>
         <th>Posted On</th>
       </tr>
       {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
@@ -82,6 +83,7 @@
       <tr>
         <td><a href="/problem/{{problem.id}}">{{problem.title}}</a></td>
         <td>{{problem.topic}}</td>
+        <td>{{problem.difficulty}}</td>
         <td>{{problem.created_at.strftime('%B %d, %Y')}}</td>
       </tr>
       {% endif %}
@@ -132,6 +134,8 @@
       {% endif %}
   </div>
   </div>
+
+  {%include 'flash.html'%}
 </div>
 </body>
 </html>

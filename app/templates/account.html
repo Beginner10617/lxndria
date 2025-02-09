@@ -73,6 +73,9 @@
       <div class="Tabs">
         <button class="tab" onclick="openTab(event, 'Problems')">Problems</button>
         <button class="tab" onclick="openTab(event, 'Discussions')">Discussions</button>
+        {% if user.username == current_user.username %}
+        <button class="tab" onclick="openTab(event, 'Bookmark')">Bookmark</button>
+        {% endif %}
       </div>
 
       <div class="TabContent" display="block" id = "Problems">
@@ -101,5 +104,25 @@
       </a>
       {% endfor %}
       </div>
+
+      <div class="TabContent" display="block" id = "Bookmark">
+        {% for bookmark in bookmarks %}
+        {% if bookmark.problem_id %}
+          {% set data = bookmark.problem %}
+          <a href="/problem/{{data.id}}"> 
+        {% else %}
+          {% set data = bookmark.discussion %}
+          <a href="/discussion/{{data.id}}"> 
+        {% endif %}
+        <div class="problem-post">
+          <h2>{{data.title}}</h2>
+          <p>{{data.reducedContent}}</p>
+          <div class="date">Posted on {{data.created_at.strftime('%B %d, %Y')}}</div>
+    </div>
+  </a>
+        {% endfor %}
+  
+        </div>
+  {%include 'flash.html'%}
 </body>
 </html>

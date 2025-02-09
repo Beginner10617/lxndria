@@ -100,7 +100,9 @@
                 <button id="delete" onclick="confirmDeletion(event, '{{problem.id}}/{{solution.id}}', '/problem/')">Delete</button>
             </div>
             {%else%}
+            <div class="solution-footer">
                 <a href="/problem/{{problem.id}}/{{solution.id}}/like"><button id="like">⬆</button></a>
+            </div>
                 {{solution.upvotes}}
             {%endif%}
             </div>
@@ -109,11 +111,12 @@
             {% with post_id=solution.id, post_type="S" %}
                 {% include 'comments.html' %}
             {% endwith %}
+
         </div>
             {% endfor %}
         {% endif %}
-        <!---Display solutions by other users+commentings--->
    
+        {%include 'flash.html'%}
     
 
 </body>

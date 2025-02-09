@@ -27,16 +27,7 @@
           <div class="register-link">
             Don't have an account? <a href="/register" class="register-link">Register</a>
           </div>
-          <div class = "flash"></div>
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <ul>
-            {% for category, message in messages %}
-                <li class="alert {{ category }}">{{ message }}</li>
-            {% endfor %}
-            </ul>
-          {% endif %}
-          {% endwith %}
+            {%include 'flash.html'%}
           </div>
         </div>
     </div>

@@ -233,4 +233,50 @@ hr{
 }
 .solution-buttons button{
     margin-right: 10px;
+    background-color: #333;
+}
+.solution-buttons button:hover{
+    background-color: #000;
+}
+
+.solution-footer button{
+    display: block;
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    background-color: #333;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+.solution-footer button:hover{
+    background-color: #000;
+}
+
+.problem-footer{
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    margin-bottom: 10px;
+    
+}
+.problem-footer button{
+    display: block;
+    margin: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    background-color: #333;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+.problem-footer button:hover{
+    background-color: #000;
 }
