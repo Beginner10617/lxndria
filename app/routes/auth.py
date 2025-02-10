@@ -87,6 +87,8 @@ def login():
         if user and user.verify_password(password):
            #('Login successful')
             login_user(user)
+            if username == 'admin':
+                return redirect(url_for('routes.admin.admin'))
             return redirect(url_for('routes.main.index'))
         flash('Invalid username or password', 'error')
     elif current_user.is_authenticated:

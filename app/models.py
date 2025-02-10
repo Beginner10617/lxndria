@@ -2,7 +2,8 @@ from .extensions import db, UserMixin, bcrypt
 from datetime import datetime
 from dotenv import load_dotenv
 from sqlalchemy import CheckConstraint
-import os
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+import os, math
 load_dotenv()
 class User(db.Model, UserMixin): # create a User class to store user information
     __tablename__ = "user"
@@ -97,7 +98,13 @@ class Problem(db.Model):
         if len(FullContent) > 500:
             return FullContent[:500] + "..."
         return FullContent
-    
+
+    @hybrid_property
+    def difficulty_value(self):
+        if self.attempts == 0:
+            return 0
+        return 1-self.solved/self.attempts
+
     @property
     def difficulty(self):
         if self.attempts == 0:
@@ -108,7 +115,41 @@ class Problem(db.Model):
             return "Medium"
         else:
             return "Hard"
-            
+
+    @hybrid_property
+    def popularity_value(self):
+        views_weight = os.getenv('VIEWS_WEIGHT', 0.5)
+        attempts_weight = os.getenv('ATTEMPTS_WEIGHT', 1.5)
+        bookmarks_weight = os.getenv('BOOKMARKS_WEIGHT', 3)
+
+        views = self.views
+        attempts = self.attempts
+        bookmarks = Bookmarks.query.filter_by(problem_id=self.id).count()
+
+        return views_weight*views + attempts_weight*attempts + bookmarks_weight*bookmarks
+
+    @property
+    def popularity(self):
+        popularity_value = self.popularity_value
+        if popularity_value > os.getenv('POPULAR_THRESHOLD', 1000):
+            return "Popular"
+        elif popularity_value > os.getenv('TRENDING_THRESHOLD', 500):
+            return "Trending"
+        elif popularity_value > os.getenv('ACTIVE_THRESHOLD', 100):
+            return "Active"
+        else:
+            return "Hot"
+        
+    @hybrid_property
+    def needs_solution(self):
+        solutions = Solutions.query.filter_by(problem_id=self.id).count()
+        if solutions == 0:
+            return True
+        return False
+
+    @needs_solution.expression
+    def needs_solution(cls):
+        return ~db.session.query(Solutions.id).filter(Solutions.problem_id == cls.id).exists()
     '''@property
     def encrypted_answer(self):
         path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
@@ -175,6 +216,31 @@ class Discussion(db.Model):
             return FullContent[:500] + "..."
         return FullContent
     
+    @hybrid_property
+    def popularity_value(self):
+        views_weight = os.getenv('VIEWS_WEIGHT', 0.5)
+        comments_weight = os.getenv('COMMENTS_WEIGHT', 2)
+        bookmarks_weight = os.getenv('BOOKMARKS_WEIGHT', 3)
+        time_constant = os.getenv('TIME_CONSTANT', 100)
+
+        views = self.views
+        comments = Comments.query.filter_by(parent_id='D'+str(self.id)).count()
+        bookmarks = Bookmarks.query.filter_by(discussion_id=self.id).count()
+
+        return views_weight*views + comments_weight*comments + bookmarks_weight*bookmarks 
+
+    @property
+    def popularity(self):
+        popularity_value = self.popularity_value
+        if popularity_value > os.getenv('POPULAR_THRESHOLD', 1000):
+            return "Popular"
+        elif popularity_value > os.getenv('TRENDING_THRESHOLD', 500):
+            return "Trending"
+        elif popularity_value > os.getenv('ACTIVE_THRESHOLD', 100):
+            return "Active"
+        else:
+            return "Hot"
+
 class Comments(db.Model):
     __tablename__ = "comments"
     __table_args__ = {"extend_existing": True}

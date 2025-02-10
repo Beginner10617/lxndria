@@ -16,9 +16,7 @@
       }
     }
 
-    window.onload = function () {
-      openTab(new Event('load'), 'Problems');
-    };
+    
 
     function search() {
       let input, filter, table, tr, td, i, txtValue;
@@ -26,7 +24,11 @@
       filter = input.value.toUpperCase();
       if(document.body.getAttribute('data-active-tab') === 'Problems') {
         table = document.getElementById("problems-table");
-      } else {
+      } 
+      else if(document.body.getAttribute('data-active-tab') === 'Need-Solution') {
+        table = document.getElementById("need-solution-table");
+      }
+      else {
         table = document.getElementById("discussions-table");
       }
       tr = table.getElementsByTagName("tr");
@@ -64,15 +66,18 @@
   <div class="Table">
 
     {%include 'main_table_header.html'%}
+    {%if table=='problems'%}
     <div class ="table" id="Problems">
-
+    {%else%}
+    <div class ="table" id="Problems" style="display: none;">
+    {%endif%}
     <table id="problems-table">
 
       <tr>
         <th>Problem</th>
         <th>Topic</th>
-        <th>Difficulty</th>
-        <th>Posted On</th>
+        <th><a href="/?sort=Difficulty&convention={{sort_convention}}&table=problems">Difficulty</a></th>
+        <th><a href="/?sort=Popularity&convention={{sort_convention}}&table=problems">Popularity</a></th>
       </tr>
       {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
       {% if index >= problems|length %}
@@ -84,32 +89,35 @@
         <td><a href="/problem/{{problem.id}}">{{problem.title}}</a></td>
         <td>{{problem.topic}}</td>
         <td>{{problem.difficulty}}</td>
-        <td>{{problem.created_at.strftime('%B %d, %Y')}}</td>
+        <td>{{problem.popularity}}</td>
       </tr>
       {% endif %}
       {% endfor %}
     </table>
     <div class="pagination">
       {% if page > 0 %}
-        <a href="/?page={{page-1}}">Previous</a>
+        <a href="/?page={{page-1}}&table=problems">Previous</a>
       {% endif %}
       {% if not stop %}
-        <a href="/?page={{page+1}}">Next</a>
+        <a href="/?page={{page+1}}&table=problems">Next</a>
       {% endif %}
   </div>
   </div>
 
 
   <!----DISCUSSION TABLE----->
-
+  {%if table=='discussions'%}
+  <div class="table" id="Discussions">
+  {%else%}
   <div class="table" id="Discussions" style="display: none;">
+  {%endif%}
     <table id="discussions-table">
 
     
       <tr>
         <th>Title</th>
         <th>Author</th>
-        <th>Posted On</th>
+        <th><a href="/?sort=Popularity&convention={{sort_convention}}&table=discussions">Popularity</a></th>
       </tr>
       {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
       {% if index >= discussions|length %}
@@ -120,21 +128,53 @@
       <tr>
         <td><a href="/discussion/{{discussion.id}}">{{discussion.title}}</a></td>
         <td>{{discussion.user.name}}</td>
-        <td>{{discussion.created_at.strftime('%B %d, %Y')}}</td>
+        <td>{{discussion.popularity}}</td>
       </tr>
       {% endif %}
       {% endfor %}
     </table>
     <div class="pagination">
       {% if page > 0 %}
-        <a href="/?page={{page-1}}">Previous</a>
+        <a href="/?page={{page-1}}&table=discussions">Previous</a>
       {% endif %}
       {% if not stop %}
-        <a href="/?page={{page+1}}">Next</a>
+        <a href="/?page={{page+1}}&table=discussions">Next</a>
       {% endif %}
   </div>
   </div>
 
+  {%if table=='need-solution'%}
+  <div class="table" id="Need-Solution">
+  {%else%}
+  <div class="table" id="Need-Solution" style="display: none;">
+  {%endif%}
+    <table id="need-solution-table">
+      <tr>
+        <th>Title</th>
+        <th>Topic</th>
+        <th><a href="/?sort=Difficulty&convention={{sort_convention}}&table=need-solution">Difficulty</th>
+      </tr>
+      {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
+      {% if index >= need_solution|length %}
+        {% set stop=true %}
+      {% else %}
+        {% set problem = need_solution[index] %}
+      
+      <tr>
+        <td><a href="/problem/{{problem.id}}">{{problem.title}}</a></td>
+        <td>{{problem.topic}}</td>
+        <td>{{problem.difficulty}}</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </table>
+    <div class="pagination">
+      {% if page > 0 %}
+        <a href="/?page={{page-1}}&table=need-solution">Previous</a>
+      {% endif %}
+      {% if not stop %}
+        <a href="/?page={{page+1}}&table=need-solution">Next</a>
+      {% endif %}
   {%include 'flash.html'%}
 </div>
 </body>
