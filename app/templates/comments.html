@@ -6,8 +6,11 @@
 {% for comment in comments %}
     {% if comment.parent_id == post_type ~ post_id|string%}
     <div class="comment">
-        <p><strong>{{ comment.username }}</strong>: {{ comment.content }}</p>
-        {%if current_user.username == comment.username%}
+        <p><strong>{{ comment.username }}</strong>: 
+            {{ comment.content }}</p>
+        
+        
+            {%if current_user.username == comment.username%}
             <button onclick="confirmDeletion(event, '{{comment.id}}', '/comment/')"><i class="fas fa-trash-alt"></i></button>
         {%else%}
         <button class="reply-button" data-username="{{ comment.username }}"><i class="fas fa-reply"></i></button>

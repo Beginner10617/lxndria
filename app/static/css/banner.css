@@ -48,7 +48,7 @@ body, h1, p {
   
   .menu-container {
     position: relative;
-    display: inline-block;
+    display: flex;
 }
 .menu-button {
     padding: 15px;
@@ -61,13 +61,30 @@ body, h1, p {
     width:  35px; /* Set a fixed width */
     height: 35px; /* Set a fixed height */
     text-align: center;
-    font-size: 2rem;
+    font-size: 1.5rem;
     line-height: 1; /* Adjusts vertical alignment */
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.menu-button:hover {
+.notif-button{
+    padding: 15px;
+    margin-right: 10px;
+    background-color: #444;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%; /* Makes the button circular */
+    width:  35px; /* Set a fixed width */
+    height: 35px; /* Set a fixed height */
+    text-align: center;
+    font-size: 1.4rem;
+    line-height: 1; /* Adjusts vertical alignment */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.menu-button:hover, .notif-button:hover {
     background-color: #555;
 }
 .menu-list {
@@ -83,10 +100,31 @@ body, h1, p {
     display: none;
     width: 150px;
 }
+.notif-list {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #707070;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+    width: 150px;
+}
+.notif-list li{
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
 .menu-list li {
     padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
+}
+.notif-list li:hover {
+    background-color: #000;
 }
 .menu-list li:hover {
     background-color: #000;

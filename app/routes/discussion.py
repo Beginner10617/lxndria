@@ -38,7 +38,7 @@ def view_discussion(discussion_id):
     else:
         bookmarked = None
     form = CommentForm()
-    comments = Comments.query.filter_by(parent_id = 'D'+str(discussion_id)).all()
+    comments = Comments.query.filter_by(parent_id = 'D'+str(discussion_id)).order_by(Comments.created_at).all()
     return render_template('discussion.html', discussion=discussion, comments=comments, form=form, bookmarked=bookmarked)
 
 @discussion_bp.route('/discussion/<int:discussion_id>/delete', methods=['POST', 'GET'])

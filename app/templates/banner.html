@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
 <header class="banner">
     <div class="logo-container">
@@ -8,7 +8,12 @@
       <span class="site-name"><a href="/">Lxndria</span></div></a>
     </div>
       <div class="menu-container">
-        <button class="menu-button" onclick="toggleMenu()">☰</button>
+        <button class="notif-button" onclick="toggleNotif()"><i class="far fa-bell"></i></button>
+        <ul class="notif-list" id="notifList">
+            {% include 'notification-box.html' %}
+        </ul>
+        <button class="menu-button" onclick="toggleMenu()"><i class="fas fa-bars"></i>
+        </button>
         <ul class="menu-list" id="menuList">
             <a href="/account"><li>Account</li></a>
             <a href="/account/contribute/problem"><li>Post a Problem</li></a>
