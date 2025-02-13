@@ -23,6 +23,7 @@ def upgrade():
         batch_op.alter_column('id',
                existing_type=sa.VARCHAR(length=10),
                type_=sa.Integer(),
+               postgresql_using="id::integer",
                existing_nullable=False,
                autoincrement=True)
 
