@@ -8,7 +8,5 @@ def get_notifs():
     if current_user.is_authenticated:
 
         notifs = Notifications.query.filter_by(username=current_user.username, read=False).order_by(Notifications.created_at.desc()).all()
-        for i in notifs:
-            print(i)
         return jsonify([notif.serialize for notif in notifs])
     

@@ -119,7 +119,7 @@
             
     <div class="solution">
             <div class="problem-content" id="output">
-                <p>{{solution.solution}}</p>
+                <p id="solution-{{solution.id}}">{{solution.solution}}</p>
                 <a href="/account/{{solution.username}}"><h2>{{solution.user.name}}</h2></a>
             {% if solution.username == current_user.username %}
             <div class="solution-buttons">

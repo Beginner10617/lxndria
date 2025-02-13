@@ -39,20 +39,26 @@ def handle_comment():
                 return redirect(request.referrer or url_for("index"))
             user_to_notify.append(solution.username)
             user_to_notify.append(solution.problem.author)
+        user_tagged = []
+        user_tagged += [text[1:] for text in form.content.data.split() if text.startswith("@") ]
+        user_tagged = list(set(user_to_notify))  # Remove duplicates
 
-        user_to_notify += [text[1:] for text in form.content.data.split() if text.startswith("@") ]
-        user_to_notify = list(set(user_to_notify))  # Remove duplicates
-
-        for user in user_to_notify:
+        for user in user_to_notify + user_tagged:
             if user == current_user.username:
                 continue
             if User.query.filter_by(username=user).first() is None:
                 flash(f"User {user} not found", "danger")
                 continue
-            new_notification = Notifications(
-                parent_id='C' + str(new_comment.id),
-                username=user
-            )
+            if user in user_to_notify:    
+                new_notification = Notifications(
+                    parent_id='C' + str(new_comment.id),
+                    username=user
+                )
+            else:
+                new_notification = Notifications(
+                    parent_id='C' + str(new_comment.id)+'T',
+                    username=user
+                )
             db.session.add(new_notification)
 
         db.session.commit()

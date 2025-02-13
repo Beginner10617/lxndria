@@ -340,12 +340,34 @@ class Notifications(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "parent_id": self.parent_id,
             "message": self.message,
             "read": self.read,
-            "created_at": self.created_at
+            "created_at": self.created_at,
+            "url": url_of_notif(self.parent_id)
         }
     def __repr__(self):
         return f"<Notification for {self.username}>"
+
+def url_of_notif(id):
+    if id[-1] == 'F':
+        return "#"
+    elif id[0] == 'C':
+        print(id)
+        if id[-1] == 'T':
+            comment = Comments.query.get(int(id[1:-1]))
+        else:
+            comment = Comments.query.get(int(id[1:]))
+        content_type = comment.parent_id[0]
+        print(comment.id)
+        if content_type == 'S':
+            solution = Solutions.query.get(int(comment.parent_id[1:]))
+            problem = Problem.query.get(solution.problem_id)
+            return f"/problem/{problem.id}#comment-{comment.id}"
+        elif content_type == 'D':
+            discussion = Discussion.query.get(int(comment.parent_id[1:]))
+            return f"/discussion/{discussion.id}#comment-{comment.id}"
+    
 
 def flag_message(id):
     if id[0] == 'P':

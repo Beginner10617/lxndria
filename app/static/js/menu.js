@@ -24,12 +24,11 @@ async function fetchNotifications() {
         notifications.forEach(notification => {
             const div = document.createElement("div");
             div.className = "notification-item";
-            div.innerText = notification.message;
-/*
-            div.innerHTML = `<a href="${notification.discussion_url}#comment-${notification.comment_id}" class="notification-link">
+
+            div.innerHTML = `<a href="${notification.url}" class="notification-link">
                                 ${notification.message}
                             </a>`;
-*/
+
             popup.appendChild(div);
         });
 
@@ -48,5 +47,24 @@ document.addEventListener("click", function(event) {
     if (!menuContainer.contains(event.target)) {
         document.getElementById("menuList").classList.remove("show");
         document.getElementById("notificationPopup").style.display = "none";
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URL(window.location.href);
+    const commentId = urlParams.hash.replace("#comment-", ""); // Extract comment ID
+
+    if (commentId) {
+        const commentElement = document.getElementById(`comment-${commentId}`);
+        if (commentElement) {
+            commentElement.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            // Highlight effect (fade in and out)
+            commentElement.style.transition = "background-color 0.5s ease-in-out";
+            commentElement.style.backgroundColor = "#999"; 
+            setTimeout(() => {
+                commentElement.style.backgroundColor = "transparent";
+            }, 2000);
+        }
     }
 });
