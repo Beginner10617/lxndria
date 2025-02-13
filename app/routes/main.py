@@ -51,3 +51,10 @@ def admin():
     if current_user.username == 'admin':
         return render_template('admin.html', total_users=User.query.count(), admin=True)
     return render_template('admin.html')
+
+
+
+# Just for fun :D
+@main_bp.route('/parody')
+def parody():
+    return render_template('parody.html')

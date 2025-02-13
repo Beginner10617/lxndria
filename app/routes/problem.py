@@ -192,6 +192,7 @@ def solution(problem_id):
             solution = Solutions(problem_id=problem.id, username=current_user.username, solution=form.solution.data)
             profile = Profile.query.filter_by(username=current_user.username).first()
             profile.solutions += 1
+            # Send notification to the author of the problem
             db.session.add(solution)
             db.session.commit()
             

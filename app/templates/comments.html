@@ -5,7 +5,7 @@
 </div>
 {% for comment in comments %}
     {% if comment.parent_id == post_type ~ post_id|string%}
-    <div class="comment">
+    <div class="comment" id="comment-{{ comment.id }}">
         <p><strong>{{ comment.username }}</strong>: 
             {{ comment.content }}</p>
         

@@ -9,9 +9,9 @@
     </div>
       <div class="menu-container">
         <button class="notif-button" onclick="toggleNotif()"><i class="far fa-bell"></i></button>
-        <ul class="notif-list" id="notifList">
-            {% include 'notification-box.html' %}
-        </ul>
+        <div class="notification-popup" id="notificationPopup">
+          <p>Loading...</p>
+      </div>
         <button class="menu-button" onclick="toggleMenu()"><i class="fas fa-bars"></i>
         </button>
         <ul class="menu-list" id="menuList">

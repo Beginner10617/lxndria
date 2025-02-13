@@ -37,7 +37,7 @@ migrate = Migrate()
 
 def is_number(s):
     try:
-        float(s)  # Convert to float; works for int and float values
+        float(s)
         return True
     except ValueError:
         return False

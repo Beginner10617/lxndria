@@ -1,6 +1,6 @@
 from flask import url_for, flash, redirect, Blueprint, request
 from app import mail, db, limiter, login_manager
-from app.models import Comments
+from app.models import Comments, Notifications, Discussion, Solutions, User
 from app.forms import CommentForm
 from flask_login import current_user
 
@@ -20,15 +20,44 @@ def handle_comment():
             username=current_user.username,
             content=form.content.data
         )
+
         db.session.add(new_comment)
         db.session.commit()
+        user_to_notify = [] # List of users to notify (usernames)
 
-        # Redirect back to the correct page
-        if post_type == "post":
-            return redirect(url_for("post_view", post_id=post_id))
-        elif post_type == "article":
-            return redirect(url_for("article_view", article_id=post_id))
-    
+        if post_type == "D":
+            discussion = Discussion.query.get(int(post_id))
+            if discussion is None:
+                flash("Discussion not found", "danger")
+                return redirect(request.referrer or url_for("index"))
+            user_to_notify.append(discussion.author)
+
+        elif post_type == "S":
+            solution = Solutions.query.get(int(post_id))
+            if solution is None:
+                flash("Solution not found", "danger")
+                return redirect(request.referrer or url_for("index"))
+            user_to_notify.append(solution.username)
+            user_to_notify.append(solution.problem.author)
+
+        user_to_notify += [text[1:] for text in form.content.data.split() if text.startswith("@") ]
+        user_to_notify = list(set(user_to_notify))  # Remove duplicates
+
+        for user in user_to_notify:
+            if user == current_user.username:
+                continue
+            if User.query.filter_by(username=user).first() is None:
+                flash(f"User {user} not found", "danger")
+                continue
+            new_notification = Notifications(
+                parent_id='C' + str(new_comment.id),
+                username=user
+            )
+            db.session.add(new_notification)
+
+        db.session.commit()
+
+        
     return redirect(request.referrer or url_for("post_view", post_id=post_id))
 
 @comments_bp.route("/comment/<int:comment_id>/delete")

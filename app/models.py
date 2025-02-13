@@ -183,6 +183,7 @@ class Solutions(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+    problem = db.relationship('Problem', backref=db.backref('solutions', cascade="all, delete-orphan"))
     username = db.Column(db.String(80), db.ForeignKey('user.username'))
     user = db.relationship('User', backref=db.backref('solutions', cascade="all, delete-orphan"))
     solution = db.Column(db.Text, nullable=False)
@@ -295,6 +296,78 @@ class Bookmarks(db.Model):
     def __repr__(self):
         return f"<Bookmark by {self.username}>"
 
+class Notifications(db.Model):
+    __tablename__ = "notifications"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    parent_id = db.Column(db.String(10), nullable=False)
+    username = db.Column(db.String(80), db.ForeignKey('user.username')) # Username of the user who bookmarked
+    user = db.relationship('User', backref=db.backref('notifications', cascade="all, delete-orphan"))
+    read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    '''
+    NOTIFICATIONS FOR:
+    Sxyz: Solution id xyz to your Problem
+    Cxyz: Comment id xyz on your Content
+    CxyzT: Tagged in Comment id xyz 
+    P/D/S/CxyzF: Problem/Discussion/Solution/Comment id xyz flagged
+    '''
+
+    @property
+    def message(self):
+        if self.parent_id[-1] == 'F':
+            return flag_message(self.id[:-1])
+        elif self.parent_id[0] == 'S':
+            solution = Solutions.query.get(int(self.id[1:]))
+            problem = Problem.query.get(solution.problem_id)
+            return f"{solution.user.name} posted soultion to your Problem {problem.title}"
+        elif self.parent_id[-1] == 'T':
+            comment = Comments.query.get(int(self.id[1:-1]))
+            return f"{comment.user.name} tagged you in a Comment"
+        elif self.parent_id[0] == 'C':
+            comment = Comments.query.get(int(self.parent_id[1:]))
+            content_type = comment.parent_id[0]
+            if content_type == 'S':
+                solution = Solutions.query.get(int(comment.parent_id[1:]))
+                problem = Problem.query.get(solution.problem_id)
+                return f"{comment.user.name} commented on the Problem {problem.title}"
+            elif content_type == 'D':
+                discussion = Discussion.query.get(int(comment.parent_id[1:]))
+                return f"{comment.user.name} commented on the Discussion {discussion.title}"
+    @property
+    def serialize(self):
+        return {
+            "id": self.id,
+            "message": self.message,
+            "read": self.read,
+            "created_at": self.created_at
+        }
+    def __repr__(self):
+        return f"<Notification for {self.username}>"
+
+def flag_message(id):
+    if id[0] == 'P':
+        problem = Problem.query.get(int(id[1:]))
+        return f"Problem {problem.title} was flagged"
+    elif id[0] == 'D':
+        discussion = Discussion.query.get(int(id[1:]))
+        return f"Discussion {discussion.title} was flagged"
+    elif id[0] == 'S':
+        solution = Solutions.query.get(int(id[1:]))
+        problem = Problem.query.get(solution.problem_id)
+        return f"Solution to Problem {problem.title} was flagged"
+    elif id[0] == 'C':
+        comment = Comments.query.get(int(id[1:]))
+        content_type = comment.parent_id[0]
+        if content_type == 'S':
+            solution = Solutions.query.get(int(comment.parent_id[1:]))
+            problem = Problem.query.get(solution.problem_id)
+            return f"Comment on Solution to Problem {problem.title} was flagged"
+        elif content_type == 'D':
+            discussion = Discussion.query.get(int(comment.parent_id[1:]))
+            return f"Comment on Discussion {discussion.title} was flagged"
 
 def SyncUserStats(username):
     user = User.query.filter_by(username=username).first()
