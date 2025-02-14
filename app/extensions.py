@@ -11,6 +11,8 @@ from datetime import datetime, timedelta
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
 import base64, os, jwt
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 load_dotenv()
 
@@ -68,4 +70,20 @@ def make_directory_for_user(directory):
     path = os.getenv('UPLOAD_FOLDER')+directory+"/"
     os.makedirs(path, exist_ok=True)
     os.makedirs(path+"Profile_picture/", exist_ok=True)
-   
+
+def time_ago(dt):
+    now = datetime.now()
+    diff = relativedelta(now, dt)
+
+    if diff.years > 0:
+        return f"{diff.years} year{'s' if diff.years > 1 else ''} ago"
+    elif diff.months > 0:
+        return f"{diff.months} month{'s' if diff.months > 1 else ''} ago"
+    elif diff.days > 0:
+        return f"{diff.days} day{'s' if diff.days > 1 else ''} ago"
+    elif diff.hours > 0:
+        return f"{diff.hours} hour{'s' if diff.hours > 1 else ''} ago"
+    elif diff.minutes > 0:
+        return f"{diff.minutes} minute{'s' if diff.minutes > 1 else ''} ago"
+    else:
+        return "Just now"

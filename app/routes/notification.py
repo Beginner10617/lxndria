@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect, url_for, render_template
 from app.models import Notifications
 from flask_login import current_user
 from app import db
@@ -40,3 +40,15 @@ def mark_read():
         notif.read = True
         db.session.commit()
     return jsonify({'success': 'Marked as read'})
+
+@notification_bp.route('/notifications')
+def get_notifications():
+    if not current_user.is_authenticated:
+        return redirect(url_for('routes.auth.login'))
+    notifs = Notifications.query.filter_by(username=current_user.username).order_by(Notifications.created_at.desc()).all()
+    notifications = []
+    for notif in notifs:
+        if notif.message == '404':
+            continue
+        notifications.append(notif)
+    return render_template('notifications.html', notifications=notifications)

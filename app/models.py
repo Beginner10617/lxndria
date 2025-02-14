@@ -333,6 +333,8 @@ class Notifications(db.Model):
             content_type = comment.parent_id[0]
             if content_type == 'S':
                 solution = Solutions.query.get(int(comment.parent_id[1:]))
+                if solution is None:
+                    return "404"
                 problem = Problem.query.get(solution.problem_id)
                 return f"{comment.user.name} commented on the Problem {problem.title}"
             elif content_type == 'D':
@@ -348,6 +350,9 @@ class Notifications(db.Model):
             "created_at": self.created_at,
             "url": url_of_notif(self.parent_id)
         }
+    @property
+    def url(self):
+        return url_of_notif(self.parent_id)
     def __repr__(self):
         return f"<Notification for {self.username}>"
 

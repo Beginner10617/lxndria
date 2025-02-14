@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function openTab(event, tabName) {
+  // Hide all tables
+  document.querySelectorAll('.table').forEach(tab => {
+    tab.style.display = 'none';
+  });
+
+  // Show the selected tab content
+  let activeTab = document.getElementById(tabName);
+  if (activeTab) {
+    activeTab.style.display = 'block';
+    document.body.setAttribute('data-active-tab', tabName);
+  }
+}
+
+</script>
+
+
+
+    {%include 'banner.html'%}
+    <title>Notifications</title>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/notifications.css')}}">
+</head>
+<body>
+    <div class="notifications-container">
+    <div class="Tabs">
+        <button class="tab" onclick="openTab(event, 'Unread')">Unread</button>
+        <button class="tab" onclick="openTab(event, 'All')">All</button>
+    </div>
+    <h1>Notifications</h1>
+    <hr>
+    <div class="table" id="Unread">
+    <table>
+    {%for notification in notifications%}
+        {% if notification.read == False %}
+        <tr>
+            <td>
+                <a href="{{notification.url}}">
+                {{notification.message}}</a></td>
+            <td>{{notification.created_at|time_ago}}</td>
+        </tr>
+        {%endif%}
+    {%endfor%}
+    </table>
+    </div>
+
+    <div class="table" id="All" style="display: none;">
+    <table>
+    {%for notification in notifications%}
+        
+        <tr>
+            <td>
+                <a href="{{notification.url}}">
+                {{notification.message}}</a></td>
+            <td>{{notification.created_at|time_ago}}</td>
+        </tr>
+        
+    {%endfor%}
+    </div>
+
+</body>
+</html>

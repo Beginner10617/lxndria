@@ -12,4 +12,5 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024 # 16 MB
+
     
