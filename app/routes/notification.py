@@ -16,6 +16,12 @@ def get_notifs():
 def mark_read():
     if not current_user.is_authenticated:
         return jsonify({'error': 'User not authenticated'})
+    if request.args.get("all"):
+        notifs = Notifications.query.filter_by(username=current_user.username, read=False).all()
+        for notif in notifs:
+            notif.read = True
+        db.session.commit()
+        return jsonify({'success': 'All marked as read'})
     hash_value = request.args.get("hash")
     print('hash=', hash_value)
     if hash_value.startswith("comment-"):

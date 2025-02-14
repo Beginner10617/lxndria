@@ -16,14 +16,17 @@ async function fetchNotifications() {
     const popup = document.getElementById("notificationPopup");
     const badge = document.getElementById("notificationBadge");
 
-    popup.innerHTML = "<p>Loading...</p>";
+    popup.innerHTML = `
+    <h2>Notifications</h2>
+    <p>Loading...</p>
+    `;
 
     try {
         const response = await fetch("/notifs");// fetch notifications for the current user (pop-up only)
         const notifications = await response.json();
         const unreadCount = notifications.length; // Count unread notifications
 
-        popup.innerHTML = "";
+        popup.innerHTML = "<h2>Notifications</h2>";
         notifications.forEach(notification => {
             const div = document.createElement("div");
             div.className = "notification-item";
@@ -37,9 +40,22 @@ async function fetchNotifications() {
 
 
         if (unreadCount === 0) {
-            popup.innerHTML = "<p>No new notifications</p>";
+            popup.innerHTML = `<h2>Notifications</h2>
+            <div class="notification-item">
+            No new notifications
+            </div>
+            <div class="notification-footer">
+            <button onclick="window.location.href='/notifications'">View all</button>
+            </div>
+            `;
             badge.style.display = "none"; // Hide badge if no unread notifs
         } else {
+            const div = document.createElement("div");
+            div.className = "notification-footer";
+            div.innerHTML = `<button onclick="readAll()">Mark all as read</button>
+                            <button onclick="window.location.href='/notifications'">View all</button>
+            `;
+            popup.appendChild(div);
             badge.style.display = "flex"; // Show badge with count
             badge.innerText = unreadCount;
         }
@@ -47,6 +63,17 @@ async function fetchNotifications() {
     } catch (error) {
         popup.innerHTML = "<p>Error loading notifications</p>";
     }
+}
+
+function readAll()
+{
+    fetch("/markread?all=true")
+        .then(response => response.json())
+        .then(data => {
+            console.log("Server response:", data);
+            fetchNotifications();
+        })
+        .catch(error => console.error("Error:", error));
 }
 
 // Close menu if clicked outside
