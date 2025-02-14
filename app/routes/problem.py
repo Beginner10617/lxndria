@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from app.models import Problem, ProblemAttempts, Profile, Solutions, Comments, Upvotes, Bookmarks
+from app.models import Problem, ProblemAttempts, Profile, Solutions, Comments, Upvotes, Bookmarks, Notifications
 from app.forms import SubmissionForm, PostProblemForm, SolutionForm, CommentForm
 from app.extensions import decrypt_answer, encrypt_answer, is_number
 from app import db
@@ -17,7 +17,7 @@ def problem(problem_id):
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
-    
+
     if problem.author == current_user.username:
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
     attempts = ProblemAttempts.query.filter_by(problem_id=problem.id, username=current_user.username)
@@ -70,25 +70,32 @@ def owner(problem_id):
     problem = Problem.query.filter_by(id=problem_id).first()
     solutions = Solutions.query.filter_by(problem_id=problem.id)
     OwnSolution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+
+    form = CommentForm()    
+    solution_ids = ['S'+str(solution.id) for solution in solutions]
+    comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
+    SolForm = SolutionForm()
+       
     if OwnSolution is not None:
         posted_solution = True
-        form = CommentForm()    
-        solution_ids = ['S'+str(solution.id) for solution in solutions]
-        comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
+        print('OwnSolution:', OwnSolution)
         return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), 
             all_solutions=solutions, posted_solution=posted_solution, form=form, comments=comments)
     else :
         posted_solution = False
-    form = SolutionForm()
-    if form.validate_on_submit():
-        solution = Solutions(problem_id=problem.id, username=current_user.username, solution=form.solution.data)
+        print('No solution yet')
+    
+    if SolForm.validate_on_submit():
+        print('solution posted', SolForm.solution.data)
+        solution = Solutions(problem_id=problem.id, username=current_user.username, solution=SolForm.solution.data)
         profile = Profile.query.filter_by(username=current_user.username).first()
         profile.solutions += 1
         db.session.add(solution)
         db.session.commit()
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
+    print('No solution submitted')
     return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), 
-        all_solutions=solutions, posted_solution=posted_solution, solution=form)
+        all_solutions=solutions, posted_solution=posted_solution, solution=SolForm, form=form, comments=comments)
     
 @problem_bp.route('/problem/<int:problem_id>/delete')
 @login_required
@@ -183,8 +190,17 @@ def solution(problem_id):
         return redirect(url_for('routes.auth.login'))
     if request.method == 'GET':
         problem = Problem.query.filter_by(id=problem_id).first()
-        form=SolutionForm()
-        return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), solution=form)
+        Solform=SolutionForm()
+
+        all_solutions = Solutions.query.filter_by(problem_id=problem_id)
+        form = CommentForm()
+        solution_ids = ['S'+str(solution.id) for solution in all_solutions]
+        comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
+        bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    
+
+        return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//(problem.attempts+1)), solution=Solform
+            , all_solutions=all_solutions, form=form, comments=comments, bookmarked=bookmark)
     if request.method == 'POST':
         form = SolutionForm()
         if form.validate_on_submit():
@@ -192,10 +208,19 @@ def solution(problem_id):
             solution = Solutions(problem_id=problem.id, username=current_user.username, solution=form.solution.data)
             profile = Profile.query.filter_by(username=current_user.username).first()
             profile.solutions += 1
-            # Send notification to the author of the problem
+            
             db.session.add(solution)
             db.session.commit()
-            
+
+            # Send notification to the author of the problem
+            if solution.username != problem.author:
+                new_notification = Notifications(
+                        parent_id='S' + str(solution.id),
+                        username=problem.author
+                    )
+                db.session.add(new_notification)
+                db.session.commit()
+                
             return redirect(url_for('routes.problem.problem', problem_id=problem.id))
         return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), solution=form)
     

@@ -14,9 +14,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 
     <script>
-        function confirmDeletion(event, problemId, href_start) {
+        function confirmDeletionProblem(event, problemId, href_start) {
         event.preventDefault(); // Prevent the default navigation
         let confirmation = confirm("Are you sure you want to delete this problem?");
+        if (confirmation) {
+            window.location.href = href_start + problemId + "/delete"; // Redirect if confirmed
+        }
+    }
+
+    function confirmDeletionSolution(event, problemId, href_start) {
+        event.preventDefault(); // Prevent the default navigation
+        let confirmation = confirm("Are you sure you want to delete this Solution?");
         if (confirmation) {
             window.location.href = href_start + problemId + "/delete"; // Redirect if confirmed
         }
@@ -66,13 +74,17 @@
 
             <div class="actions">
                 <a href="/problem/{{problem.id}}/edit"><button id="edit">Edit</button></a>
-                <button id="delete" onclick="confirmDeletion(event, '{{problem.id}}', '/problem/')">Delete</button>
+                <button id="delete" onclick="confirmDeletionProblem(event, '{{problem.id}}', '/problem/')">Delete</button>
 
             </div>
         </div>
 
     </div>
         <!--Solution posting/reading area--->
+        <div class="solution-header">
+            <h1>Solutions</h1>
+            </div>
+            
         {% if not posted_solution%}
 
     <div class="solution">
@@ -84,20 +96,19 @@
             </div>
         </form>
     </div>
-        {% elif posted_solution %}
-        <div class="solution-header">
-        <h1>Solutions</h1>
-        </div>
+        {%endif%}
             {% for solution in all_solutions %}
         
         <div class="solution">
             <div class="problem-content" id="output">
+                <div id="solution-{{solution.id}}">
                 <p>{{solution.solution}}</p>
                 <a href="/account/{{solution.username}}"><h2>{{solution.user.name}}</h2></a>
+            
             {% if solution.username == current_user.username %}
             <div class="solution-buttons">
                 <a href="/problem/{{problem.id}}/{{solution.id}}/edit"><button id="edit">Edit</button></a>
-                <button id="delete" onclick="confirmDeletion(event, '{{problem.id}}/{{solution.id}}', '/problem/')">Delete</button>
+                <button id="delete" onclick="confirmDeletionSolution(event, '{{problem.id}}/{{solution.id}}', '/problem/')">Delete</button>
             </div>
             {%else%}
             <div class="solution-footer">
@@ -105,6 +116,8 @@
             </div>
                 {{solution.upvotes}}
             {%endif%}
+            </div>
+                
             </div>
             <hr>
             <h1>Comments</h1>
@@ -114,7 +127,7 @@
 
         </div>
             {% endfor %}
-        {% endif %}
+        
    
         {%include 'flash.html'%}
     

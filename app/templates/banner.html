@@ -8,6 +8,7 @@
       <span class="site-name"><a href="/">Lxndria</span></div></a>
     </div>
       <div class="menu-container">
+        <span id="notificationBadge" class="badge" style="display: none;">0</span>
         <button class="notif-button" onclick="toggleNotif()"><i class="far fa-bell"></i></button>
         <div class="notification-popup" id="notificationPopup">
           <p>Loading...</p>
@@ -21,6 +22,7 @@
             <a href="/help"><li>Help</li></a>
         </ul>
     </div>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
     
   </header>

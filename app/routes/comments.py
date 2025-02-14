@@ -39,10 +39,8 @@ def handle_comment():
                 return redirect(request.referrer or url_for("index"))
             user_to_notify.append(solution.username)
             user_to_notify.append(solution.problem.author)
-        user_tagged = []
-        user_tagged += [text[1:] for text in form.content.data.split() if text.startswith("@") ]
-        user_tagged = list(set(user_to_notify))  # Remove duplicates
-
+        user_tagged = [text[1:] for text in form.content.data.split() if text.startswith("@") and text not in user_to_notify]
+        user_tagged = list(set(user_tagged))
         for user in user_to_notify + user_tagged:
             if user == current_user.username:
                 continue

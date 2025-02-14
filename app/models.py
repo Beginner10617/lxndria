@@ -320,11 +320,13 @@ class Notifications(db.Model):
         if self.parent_id[-1] == 'F':
             return flag_message(self.id[:-1])
         elif self.parent_id[0] == 'S':
-            solution = Solutions.query.get(int(self.id[1:]))
+            solution = Solutions.query.get(int(self.parent_id[1:]))
+            if solution is None:
+                return "404"
             problem = Problem.query.get(solution.problem_id)
-            return f"{solution.user.name} posted soultion to your Problem {problem.title}"
+            return f"{solution.user.name} posted solution to your Problem {problem.title}"
         elif self.parent_id[-1] == 'T':
-            comment = Comments.query.get(int(self.id[1:-1]))
+            comment = Comments.query.get(int(self.parent_id[1:-1]))
             return f"{comment.user.name} tagged you in a Comment"
         elif self.parent_id[0] == 'C':
             comment = Comments.query.get(int(self.parent_id[1:]))
@@ -367,6 +369,12 @@ def url_of_notif(id):
         elif content_type == 'D':
             discussion = Discussion.query.get(int(comment.parent_id[1:]))
             return f"/discussion/{discussion.id}#comment-{comment.id}"
+    elif id[0] == 'S':
+        solution = Solutions.query.get(int(id[1:]))
+        if solution is None:
+            return "404"
+        problem = Problem.query.get(solution.problem_id)
+        return f"/problem/{problem.id}#solution-{solution.id}"
     
 
 def flag_message(id):
@@ -408,3 +416,4 @@ def SyncUserStats(username):
     user_profile.comments = len(comments)
 
     db.session.commit()
+# Sync deleted datas 
