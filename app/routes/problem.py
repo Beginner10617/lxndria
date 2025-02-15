@@ -88,8 +88,6 @@ def owner(problem_id):
     if SolForm.validate_on_submit():
         print('solution posted', SolForm.solution.data)
         solution = Solutions(problem_id=problem.id, username=current_user.username, solution=SolForm.solution.data)
-        profile = Profile.query.filter_by(username=current_user.username).first()
-        profile.solutions += 1
         db.session.add(solution)
         db.session.commit()
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
@@ -104,14 +102,22 @@ def delete(problem_id):
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
-    profile = Profile.query.filter_by(username=current_user.username).first()
     problem_attempts = ProblemAttempts.query.filter_by(problem_id=problem.id)
     if problem.author == current_user.username:
-        db.session.delete(problem)
-        profile.problems_posted -= 1
         for attempt in problem_attempts:
             db.session.delete(attempt)
         db.session.commit()
+        solutions = Solutions.query.filter_by(problem_id=problem.id).all()
+        #print('Solutions:', solutions)
+        for solution in solutions:
+        #    print(solution.solution)
+            comments = Comments.query.filter_by(parent_id = 'S'+str(solution.id)).all()
+        #    print('Comments:', comments)
+            for comment in comments:
+        #        print(comment.content)
+                db.session.delete(comment)
+            db.session.delete(solution)
+        db.session.delete(problem)
         db.session.commit()
         return redirect(url_for('routes.main.index'))
 
@@ -206,8 +212,6 @@ def solution(problem_id):
         if form.validate_on_submit():
             problem = Problem.query.filter_by(id=problem_id).first()
             solution = Solutions(problem_id=problem.id, username=current_user.username, solution=form.solution.data)
-            profile = Profile.query.filter_by(username=current_user.username).first()
-            profile.solutions += 1
             
             db.session.add(solution)
             db.session.commit()
@@ -253,9 +257,11 @@ def delete_solution(problem_id, solution_id):
     solution = Solutions.query.filter_by(id=solution_id).first()
     problem = Problem.query.filter_by(id=problem_id).first()
     if solution.username == current_user.username:
-        profile = Profile.query.filter_by(username=current_user.username).first()
-        profile.solutions -= 1
         db.session.delete(solution)
+        db.session.commit()
+        comments = Comments.query.filter_by(parent_id = 'S'+str(solution_id)).all()
+        for comment in comments:
+            db.session.delete(comment)
         db.session.commit()
         return redirect(url_for('routes.problem.correct', problem_id=problem.id))
     

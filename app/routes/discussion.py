@@ -14,8 +14,6 @@ def post_discussion():
     if form.validate_on_submit():
         discussion = Discussion(title=form.title.data, content=form.content.data, user=current_user)
         db.session.add(discussion)
-        profile = Profile.query.filter_by(username=current_user.username).first()
-        profile.discussions += 1
         db.session.commit()
         flash("Discussion posted successfully!", "success")
         return redirect(url_for('routes.discussion.view_discussion', discussion_id=discussion.id))
@@ -47,8 +45,10 @@ def delete_discussion(discussion_id):
     discussion = Discussion.query.get(discussion_id)
     if discussion.user == current_user:
         db.session.delete(discussion)
-        profile = Profile.query.filter_by(username=current_user.username).first()
-        profile.discussions -= 1
+        db.session.commit()
+        comments = Comments.query.filter_by(parent_id = 'D'+str(discussion_id)).all()
+        for comment in comments:
+            db.session.delete(comment)
         db.session.commit()
         flash("Discussion deleted successfully!", "success")
     else:

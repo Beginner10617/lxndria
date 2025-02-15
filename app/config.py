@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 class Config:
     load_dotenv()
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI')
     MAIL_SERVER = os.getenv('EMAIL_SERVER')
     MAIL_PORT = 587
     MAIL_USE_TLS = True

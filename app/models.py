@@ -42,18 +42,30 @@ class Profile(db.Model):
     profile_pic = db.Column(db.String(255), default="/images/default-profile.jpg")  
     bio = db.Column(db.Text, default="This user has not set a bio yet.")
     
-    problems_posted = db.Column(db.Integer, default=0)
+    '''problems_posted = db.Column(db.Integer, default=0)
     solutions = db.Column(db.Integer, default=0)
     discussions = db.Column(db.Integer, default=0)
+    '''
     upvotes = db.Column(db.Integer, default=0)
-    comments = db.Column(db.Integer, default=0)
+    #comments = db.Column(db.Integer, default=0)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
     def __repr__(self):
         return f"<Profile for {self.username}>"
-    
+    @property
+    def problems_posted(self):
+        return Problem.query.filter_by(author=self.username).count()
+    @property
+    def solutions(self):
+        return Solutions.query.filter_by(username=self.username).count()
+    @property
+    def comments(self):
+        return Comments.query.filter_by(username=self.username).count()
+    @property
+    def discussions(self):
+        return Discussion.query.filter_by(author=self.username).count()
     @property
     def name(self):
         return self.user.name if self.user else None
@@ -404,21 +416,3 @@ def flag_message(id):
             discussion = Discussion.query.get(int(comment.parent_id[1:]))
             return f"Comment on Discussion {discussion.title} was flagged"
 
-def SyncUserStats(username):
-    user = User.query.filter_by(username=username).first()
-    user_profile = Profile.query.filter_by(username=username).first()
-    problems = Problem.query.filter_by(author=username).all()
-    solutions = Solutions.query.filter_by(username=username).all()
-    discussions = Discussion.query.filter_by(author=username).all()
-    comments = Comments.query.filter_by(username=username).all()
-    
-    for solution in solutions:
-        user_profile.upvotes += solution.upvotes
-
-    user_profile.problems_posted = len(problems)
-    user_profile.solutions = len(solutions)
-    user_profile.discussions = len(discussions)
-    user_profile.comments = len(comments)
-
-    db.session.commit()
-# Sync deleted datas 

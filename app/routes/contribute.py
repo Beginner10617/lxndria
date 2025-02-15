@@ -23,8 +23,6 @@ def contribute():
         content = form.content.data
         expected_answer = form.expected_answer.data   
         problem = Problem(title=title, topic=topic, author=current_user.username, content=content, encrypted_answer=encrypt_answer(expected_answer))
-        profile = Profile.query.filter_by(username=current_user.username).first()
-        profile.problems_posted += 1
         db.session.add(problem)
         db.session.commit()
         return redirect(url_for('routes.main.index'))

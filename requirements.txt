@@ -28,10 +28,12 @@ pyaes==1.6.1
 pycparser==2.22
 Pygments==2.19.1
 PyJWT==2.10.1
+python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 redis==5.2.1
 rich==13.9.4
 setuptools==75.8.0
+six==1.17.0
 SQLAlchemy==2.0.37
 typing_extensions==4.12.2
 Werkzeug==3.1.3
