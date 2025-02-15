@@ -10,9 +10,6 @@
     // Show the selected tab content
     document.getElementById(tabName).style.display = 'block';
     }
-    window.onload = function(){
-      openTab(event, 'Problems');
-    }
   </script>
 
 
@@ -78,7 +75,7 @@
         {% endif %}
       </div>
 
-      <div class="TabContent" display="block" id = "Problems">
+      <div class="TabContent" display="block" id = "Problems" style="display: block;">
       
       {% for problem in problems %}
       <a href="/problem/{{problem.id}}"> 
