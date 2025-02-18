@@ -5,6 +5,44 @@
         <title>Moderation</title>
     </head>
 <body>
-    
+    <script>
+        function openTab(event, tabName) {
+          // Hide all tables
+          document.querySelectorAll('.table').forEach(tab => {
+            tab.style.display = 'none';
+          });
+        
+          // Show the selected tab content
+          let activeTab = document.getElementById(tabName);
+          if (activeTab) {
+            activeTab.style.display = 'block';
+            document.body.setAttribute('data-active-tab', tabName);
+          }
+        }
+        
+    </script>
+        
+            <div class="mod-container">
+            <div class="Tabs">
+                <button class="tab" onclick="openTab(event, 'Reports')">Reports</button>
+                <button class="tab" onclick="openTab(event, 'Appeals')">Appeals</button>
+            </div>
+            <h1>Moderation Interface</h1>
+            <hr>
+            <div class="table" id="Reports">
+            <table>
+            {%for report in reports%}
+                // Display the report
+            {%endfor%}
+            </table>
+            </div>
+        
+            <div class="table" id="Appeals" style="display: none;">
+            <table>
+            {%for appeal in appeals%}
+                // Display the appeal
+            {%endfor%}
+            </div>
+        
 </body>
 </html>

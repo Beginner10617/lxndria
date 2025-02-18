@@ -439,6 +439,7 @@ def url_of_notif(id):
     elif id[0] == 'C':
         if id[-1] == 'T':
             comment = Comments.query.get(int(id[1:-1]))
+            print(comment.id)
         else:
             comment = Comments.query.get(int(id[1:]))
         content_type = comment.parent_id[0]

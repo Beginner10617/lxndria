@@ -72,7 +72,7 @@ def make_directory_for_user(directory):
     os.makedirs(path+"Profile_picture/", exist_ok=True)
 
 def time_ago(dt):
-    now = datetime.now()
+    now = datetime.utcnow()
     diff = relativedelta(now, dt)
 
     if diff.years > 0:

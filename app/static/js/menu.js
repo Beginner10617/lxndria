@@ -100,7 +100,13 @@ document.addEventListener("DOMContentLoaded", function() {
             setTimeout(() => {
                 commentElement.style.backgroundColor = "transparent";
             }, 2000);
+
         }
+
+        fetch(`/markread?hash=comment-${commentId}`)
+        .then(response => response.json())
+        .then(data => console.log("Server response:", data))
+        .catch(error => console.error("Error:", error));
     }
     if (solutionId) {
     
@@ -115,19 +121,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 solutionElement.style.backgroundColor = "transparent";
             }, 2000);
         }
+
+
+        fetch(`/markread?hash=solution-${solutionId}`)
+        .then(response => response.json())
+        .then(data => console.log("Server response:", data))
+        .catch(error => console.error("Error:", error));
+
     }
 });
-
-
 
 // Extract hash and send it to Flask
 window.onload = function () {
     const hash = window.location.hash.substring(1); // Remove "#"
+    console.log("Hash:", hash);
     if (hash) {
         fetch(`/markread?hash=${encodeURIComponent(hash)}`)
             .then(response => response.json())
             .then(data => console.log("Server response:", data))
             .catch(error => console.error("Error:", error));
+        console.log("Marked as read:", hash);
     }
     fetchNotifications();
 };
