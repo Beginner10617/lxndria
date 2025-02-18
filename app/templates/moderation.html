@@ -32,7 +32,15 @@
             <div class="table" id="Reports">
             <table>
             {%for report in reports%}
-                // Display the report
+                <tr>
+                    <td>
+                        <a href={{report.url}}>
+                        {{report.reason}}
+                        </a>
+                    </td>
+                    <td>{{report.created_at|time_ago}}</td>
+                    
+                </tr>
             {%endfor%}
             </table>
             </div>

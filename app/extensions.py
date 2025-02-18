@@ -87,3 +87,4 @@ def time_ago(dt):
         return f"{diff.minutes} minute{'s' if diff.minutes > 1 else ''} ago"
     else:
         return "Just now"
+    

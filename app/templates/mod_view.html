@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script type="text/javascript" async
+      src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    
+    <script>
+        
+        function renderMarkdown() {
+            
+            let problemContentElement = document.querySelector(".content");
+            if (!problemContentElement) return;
+            
+            let inputText = problemContentElement.innerHTML.trim();
+            let htmlContent = marked.parse(inputText);
+            document.getElementById("output").innerHTML = htmlContent;
+            
+            // Trigger MathJax to render LaTeX
+            MathJax.typesetPromise();
+            
+            // Highlight code blocks
+            document.querySelectorAll("pre code").forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        }
+        window.onload = renderMarkdown;
+    </script>
+
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>   
+    
+
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/moderation.css')}}">
+    <title>Moderation</title>
+</head>
+<body>
+    <div class="container">
+        <p>
+            REASON:<br><br>
+            {{reason}}
+        </p>
+        <hr>
+        <div id="output" class="content">
+            {{content}}
+        </div>
+        <div class="Buttons">
+            <a href="/moderation/decline/{{id}}">
+            <button class="decline">Decline</button>
+            </a>
+            <a href="/moderation/accept/{{id}}">
+            <button class="accept">Accept</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

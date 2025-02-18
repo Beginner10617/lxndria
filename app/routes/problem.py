@@ -17,7 +17,8 @@ def problem(problem_id):
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
-
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
     if problem.author == current_user.username:
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
     attempts = ProblemAttempts.query.filter_by(problem_id=problem.id, username=current_user.username)
@@ -70,7 +71,8 @@ def owner(problem_id):
     problem = Problem.query.filter_by(id=problem_id).first()
     solutions = Solutions.query.filter_by(problem_id=problem.id)
     OwnSolution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
-
+    if problem.author != current_user.username:
+        return redirect(url_for('routes.problem.problem', problem_id=problem.id))
     form = CommentForm()    
     solution_ids = ['S'+str(solution.id) for solution in solutions]
     comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
@@ -120,6 +122,7 @@ def delete(problem_id):
         db.session.delete(problem)
         db.session.commit()
         return redirect(url_for('routes.main.index'))
+    return redirect(url_for('routes.problem.problem', problem_id=problem.id))
 
 @problem_bp.route('/problem/<int:problem_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -129,6 +132,8 @@ def edit(problem_id):
         return redirect(url_for('routes.auth.login'))
     if request.method == 'GET':
         problem = Problem.query.filter_by(id=problem_id).first()
+        if problem.author != current_user.username:
+            return redirect(url_for('routes.problem.problem', problem_id=problem.id))
         form=PostProblemForm(obj=problem)
         form.expected_answer.data = decrypt_answer(problem.encrypted_answer.strip())
         return render_template('edit-problem.html', problem=problem, form=form)
@@ -136,6 +141,8 @@ def edit(problem_id):
         form = PostProblemForm()
         if form.validate_on_submit():
             problem = Problem.query.filter_by(id=problem_id).first()
+            if problem.author != current_user.username:
+                return redirect(url_for('routes.problem.problem', problem_id=problem.id))
             problem.title = form.title.data
             problem.topic = form.topic.data
             problem.attempts = 0
@@ -155,6 +162,11 @@ def correct(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
+    attempts = ProblemAttempts.query.filter_by(problem_id=problem_id, username=current_user.username)
+    if attempts.count() == 0:
+        return redirect(url_for('routes.problem.problem', problem_id=problem_id))
+    elif attempts.first().is_correct == False:
+        return redirect(url_for('routes.problem.incorrect', problem_id=problem_id))
     # User has already solved the problem
     solution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
     problem = Problem.query.filter_by(id=problem_id).first()
@@ -177,6 +189,11 @@ def incorrect(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
+    attempts = ProblemAttempts.query.filter_by(problem_id=problem_id, username=current_user.username)
+    if attempts.count() == 0:
+        return redirect(url_for('routes.problem.problem', problem_id=problem_id))
+    elif attempts.first().is_correct == True:
+        return redirect(url_for('routes.problem.correct', problem_id=problem_id))
     form = CommentForm()
     problem = Problem.query.filter_by(id=problem_id).first()
     all_solutions = Solutions.query.filter_by(problem_id=problem_id) 
@@ -208,6 +225,7 @@ def solution(problem_id):
         return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//(problem.attempts+1)), solution=Solform
             , all_solutions=all_solutions, form=form, comments=comments, bookmarked=bookmark)
     if request.method == 'POST':
+
         form = SolutionForm()
         if form.validate_on_submit():
             problem = Problem.query.filter_by(id=problem_id).first()

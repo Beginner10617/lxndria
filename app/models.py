@@ -192,6 +192,10 @@ class Solutions(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
+    @property
+    def content(self):
+        return self.solution
+
     @hybrid_property
     def flagged(self):
         return Flagged_Content.query.filter_by(parent_id='S' + str(self.id)).count() != 0
@@ -375,11 +379,11 @@ class Notifications(db.Model):
             "message": self.message,
             "read": self.read,
             "created_at": self.created_at,
-            "url": url_of_notif(self.parent_id)
+            "url": url_of_parent(self.parent_id)
         }
     @property
     def url(self):
-        return url_of_notif(self.parent_id)
+        return url_of_parent(self.parent_id)
     def __repr__(self):
         return f"<Notification for {self.username}>"
 
@@ -405,6 +409,37 @@ class Report(db.Model):
     reason = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    @hybrid_property 
+    def post_by(self):
+        if self.parent_id[0] == 'P':
+            return Problem.query.get(int(self.parent_id[1:])).author
+        elif self.parent_id[0] == 'D':
+            return Discussion.query.get(int(self.parent_id[1:])).author
+        elif self.parent_id[0] == 'S':
+            return Solutions.query.get(int(self.parent_id[1:])).username
+        elif self.parent_id[0] == 'C':
+            return Comments.query.get(int(self.parent_id[1:])).username
+
+    @post_by.expression
+    def post_by(cls):
+        problem_subq = db.select(Problem.author).where(cls.parent_id == db.func.concat('P', Problem.id)).scalar_subquery()
+        discussion_subq = db.select(Discussion.author).where(cls.parent_id == db.func.concat('D', Discussion.id)).scalar_subquery()
+        solutions_subq = db.select(Solutions.username).where(cls.parent_id == db.func.concat('S', Solutions.id)).scalar_subquery()
+        comments_subq = db.select(Comments.username).where(cls.parent_id == db.func.concat('C', Comments.id)).scalar_subquery()
+
+        return db.case(
+            (cls.parent_id.startswith('P'), problem_subq),
+            (cls.parent_id.startswith('D'), discussion_subq),
+            (cls.parent_id.startswith('S'), solutions_subq),
+            (cls.parent_id.startswith('C'), comments_subq),
+            else_="Unknown"
+        )
+    
+    @property
+    def url(self):
+        print(self.parent_id)
+        return '/mod_view/'+self.parent_id+'?report='+str(self.id)
+
     def __repr__(self):
         return f"<Report on {self.parent_id}>"
 
@@ -428,11 +463,12 @@ class Moderators(db.Model):
     username = db.Column(db.String(80), db.ForeignKey('user.username'))
     user = db.relationship('User', backref=db.backref('moderator', cascade="all, delete-orphan"))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    requests_handled = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return f"<Moderator {self.username}>"
 
-def url_of_notif(id):
+def url_of_parent(id):
     if id[-1] == 'F':
         # Notif of flagging of content
         return "#"
@@ -456,6 +492,12 @@ def url_of_notif(id):
             return "404"
         problem = Problem.query.get(solution.problem_id)
         return f"/problem/{problem.id}#solution-{solution.id}"
+    elif id[0] == 'P':
+        problem = Problem.query.get(int(id[1:]))
+        return f"/problem/{problem.id}"
+    elif id[0] == 'D':
+        discussion = Discussion.query.get(int(id[1:]))
+        return f"/discussion/{discussion.id}"
     
 
 def flag_message(id):
