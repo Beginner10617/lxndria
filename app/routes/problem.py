@@ -67,8 +67,11 @@ def owner(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
-   #('Problem ID:', problem_id)
+    #('Problem ID:', problem_id)
     problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     solutions = Solutions.query.filter_by(problem_id=problem.id)
     OwnSolution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
     if problem.author != current_user.username:
@@ -104,6 +107,9 @@ def delete(problem_id):
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     problem_attempts = ProblemAttempts.query.filter_by(problem_id=problem.id)
     if problem.author == current_user.username:
         for attempt in problem_attempts:
@@ -130,8 +136,11 @@ def edit(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
+    problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     if request.method == 'GET':
-        problem = Problem.query.filter_by(id=problem_id).first()
         if problem.author != current_user.username:
             return redirect(url_for('routes.problem.problem', problem_id=problem.id))
         form=PostProblemForm(obj=problem)
@@ -162,6 +171,10 @@ def correct(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
+    problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     attempts = ProblemAttempts.query.filter_by(problem_id=problem_id, username=current_user.username)
     if attempts.count() == 0:
         return redirect(url_for('routes.problem.problem', problem_id=problem_id))
@@ -169,7 +182,6 @@ def correct(problem_id):
         return redirect(url_for('routes.problem.incorrect', problem_id=problem_id))
     # User has already solved the problem
     solution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
-    problem = Problem.query.filter_by(id=problem_id).first()
     if solution is None:
         return redirect(url_for('routes.problem.solution', problem_id=problem_id))
     # User has solved the problem and submitted a solution
@@ -189,13 +201,16 @@ def incorrect(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
+    problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     attempts = ProblemAttempts.query.filter_by(problem_id=problem_id, username=current_user.username)
     if attempts.count() == 0:
         return redirect(url_for('routes.problem.problem', problem_id=problem_id))
     elif attempts.first().is_correct == True:
         return redirect(url_for('routes.problem.correct', problem_id=problem_id))
     form = CommentForm()
-    problem = Problem.query.filter_by(id=problem_id).first()
     all_solutions = Solutions.query.filter_by(problem_id=problem_id) 
     solution_ids = ['S'+str(solution.id) for solution in all_solutions]
     comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
@@ -211,8 +226,11 @@ def solution(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
+    problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     if request.method == 'GET':
-        problem = Problem.query.filter_by(id=problem_id).first()
         Solform=SolutionForm()
 
         all_solutions = Solutions.query.filter_by(problem_id=problem_id)
@@ -253,6 +271,9 @@ def edit_solution(problem_id, solution_id):
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     if request.method == 'GET':
         solution = Solutions.query.filter_by(id=solution_id).first()
         form=SolutionForm(obj=solution)
@@ -274,6 +295,9 @@ def delete_solution(problem_id, solution_id):
         return redirect(url_for('routes.auth.login'))
     solution = Solutions.query.filter_by(id=solution_id).first()
     problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     if solution.username == current_user.username:
         db.session.delete(solution)
         db.session.commit()
@@ -289,6 +313,10 @@ def like_solution(problem_id, solution_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
+    problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     solution = Solutions.query.filter_by(id=solution_id).first()
     upvote = Upvotes.query.filter_by(solution_id=solution_id, username=current_user.username).first()
     profile = Profile.query.filter_by(username=solution.username).first()
@@ -310,6 +338,10 @@ def bookmark_problem(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
+    problem = Problem.query.filter_by(id=problem_id).first()
+    if problem.flagged:
+        return redirect(url_for('routes.main.index'))
+    
     bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
     if bookmark is None:
         bookmark = Bookmarks(problem_id=problem_id, username=current_user.username)
