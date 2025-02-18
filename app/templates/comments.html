@@ -4,6 +4,8 @@
 {% include 'comment-form.html' %}
 </div>
 {% for comment in comments %}
+{% if comment.flagged %}
+{%else%}
     {% if comment.parent_id == post_type ~ post_id|string%}
     <div class="comment" id="comment-{{ comment.id }}">
         <p><strong>{{ comment.username }}</strong>: 
@@ -13,10 +15,14 @@
             {%if current_user.username == comment.username%}
             <button onclick="confirmDeletion(event, '{{comment.id}}', '/comment/')"><i class="fas fa-trash-alt"></i></button>
         {%else%}
-        <button class="reply-button" data-username="{{ comment.username }}"><i class="fas fa-reply"></i></button>
+        <div style="display: flex;">
+            <button class="reply-button" data-username="{{ comment.username }}"><i class="fas fa-reply"></i></button>
+            <a href="/report/C{{comment.id}}"><button><i class="far fa-flag"></i></button></a>
+        </div>
         {%endif%}
     </div>
     {% endif %}
+{% endif %}
 {% endfor %}
 
 <script>

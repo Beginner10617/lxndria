@@ -1,0 +1,27 @@
+body{
+    background-color: #000;
+}
+
+.form-group{
+    margin: 20px;
+    justify-content: center;
+}
+
+.form-group textarea{
+    font-size: 1.5rem;
+    background-color: #000;
+    color: #fff;
+}
+
+.form-group button{
+    font-size: 1.5rem;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    padding: 10px 20px;
+    margin-left: 20px;
+}
+.form-group button:hover{
+    background-color: #fff;
+    color: #000;
+}

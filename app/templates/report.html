@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {%include 'banner.html'%}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/moderation.css')}}">
+  <title>Report</title>
+<body>
+    <form method="POST">
+        <div class="form-group">
+            
+        {{ form.hidden_tag() }}  <!-- CSRF Token -->
+        
+            {{form.reason(class="form-control", rows=10, cols=30, placeholder="Reason")}}
+        
+        <button type="submit">Report</button>
+        
+    </div>
+    </form>
+</body>
+</html>

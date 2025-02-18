@@ -1,4 +1,4 @@
-import jwt, os
+import jwt
 from dotenv import load_dotenv
 from flask import url_for, flash, redirect, Blueprint, render_template
 from app import mail, db, limiter, login_manager

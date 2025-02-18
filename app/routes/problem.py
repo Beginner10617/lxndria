@@ -78,20 +78,20 @@ def owner(problem_id):
        
     if OwnSolution is not None:
         posted_solution = True
-        print('OwnSolution:', OwnSolution)
+       #'OwnSolution:', OwnSolution)
         return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), 
             all_solutions=solutions, posted_solution=posted_solution, form=form, comments=comments)
     else :
         posted_solution = False
-        print('No solution yet')
+       #'No solution yet')
     
     if SolForm.validate_on_submit():
-        print('solution posted', SolForm.solution.data)
+       #'solution posted', SolForm.solution.data)
         solution = Solutions(problem_id=problem.id, username=current_user.username, solution=SolForm.solution.data)
         db.session.add(solution)
         db.session.commit()
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
-    print('No solution submitted')
+   #'No solution submitted')
     return render_template('own-problem.html', problem=problem, answer = decrypt_answer(problem.encrypted_answer.strip()), 
         all_solutions=solutions, posted_solution=posted_solution, solution=SolForm, form=form, comments=comments)
     
@@ -110,11 +110,11 @@ def delete(problem_id):
         solutions = Solutions.query.filter_by(problem_id=problem.id).all()
         #print('Solutions:', solutions)
         for solution in solutions:
-        #    print(solution.solution)
+        #   #solution.solution)
             comments = Comments.query.filter_by(parent_id = 'S'+str(solution.id)).all()
-        #    print('Comments:', comments)
+        #   #'Comments:', comments)
             for comment in comments:
-        #        print(comment.content)
+        #       #comment.content)
                 db.session.delete(comment)
             db.session.delete(solution)
         db.session.delete(problem)

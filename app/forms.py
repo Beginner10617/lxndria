@@ -90,3 +90,7 @@ class PostDiscussionForm(FlaskForm):
 class CommentForm(FlaskForm):
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Post')
+
+class ReportForm(FlaskForm):
+    reason = TextAreaField('Reason', validators=[DataRequired(), Length(min=10, max=225)])
+    submit = SubmitField('Submit')

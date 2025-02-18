@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-
+    
+    {%include 'banner.html'%}
     <script>
         function confirmDeletion(event, DiscussionId, href_start) {
         event.preventDefault(); // Prevent the default navigation
@@ -45,8 +46,8 @@
     <title>
         {{discussion.title}}
     </title> 
+
 </head>
-{%include 'banner.html'%}
   <body>
     <div class="discussion-container">
         <div class="discussion-header">
@@ -71,6 +72,7 @@
             {%else%}
             <a href="/discussion/{{discussion.id}}/bookmark"><button><i class="far fa-bookmark"></i></button></a>
             {%endif%}
+            <a href="/report/D{{discussion.id}}"><button><i class="far fa-flag"></i></button></a>
         </div>
         {% endif %}
         <hr>

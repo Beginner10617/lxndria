@@ -41,7 +41,7 @@ def handle_comment():
             user_to_notify.append(solution.problem.author)
         user_tagged = [text[1:] for text in form.content.data.split() if text.startswith("@") and (text[1:] not in user_to_notify)]
         user_tagged = list(set(user_tagged))
-        print(user_tagged+user_to_notify)
+       #user_tagged+user_to_notify)
         for user in user_to_notify + user_tagged:
             if user == current_user.username:
                 continue
@@ -58,7 +58,7 @@ def handle_comment():
                     parent_id='C' + str(new_comment.id)+'T',
                     username=user
                 )
-            print(new_notification.message)
+           #new_notification.message)
             db.session.add(new_notification)
 
         db.session.commit()

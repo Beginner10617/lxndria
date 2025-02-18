@@ -17,13 +17,14 @@
         <button class="menu-button" onclick="toggleMenu()"><i class="fas fa-bars"></i>
         </button>
         <ul class="menu-list" id="menuList">
+            <a href="/about"><li>About</li></a>
             <a href="/account"><li>Account</li></a>
             <a href="/account/contribute/problem"><li>Post a Problem</li></a>
             <a href="/account/contribute/discussion"><li>Post a Discussion</li></a>
-            <a href="/help"><li>Help</li></a>
-        </ul>
+          </ul>
     </div>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
     
   </header>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  {%include 'banner.html'%}
   <script>
     function openTab(event, tabName){
       document.querySelectorAll('.TabContent').forEach(tab => {
@@ -16,7 +17,6 @@
   <link rel="stylesheet" href="{{url_for('static', filename='css/profile.css')}}">
   <title>Account</title>
 </head>
-{%include 'banner.html'%}
 
 <body>
     <div class="profile-container">
@@ -27,6 +27,9 @@
             <div class="profile-info">
               <h1>{{user.name}}</h1>
               <p>@{{user.username}}</p>
+              {% if user.is_moderator %}
+              <p>Moderator</p>
+              {% endif %}
               <p class="profile-bio">{{user.bio}}</p>
             </div>
           </div>
@@ -60,6 +63,9 @@
         {% if user.username == current_user.username %}
         <div class="profile-sidebar">
           <div class="profile-options">
+            {%if user.is_moderator%}
+            <a href="/moderation"><button>Moderator Panel</button></a>
+            {%endif%}
             <a href="/account/edit"><button>Edit Profile</button></a>
             <a href="/reset-password-2"><button >Change Password</button></a>
             <a href="/logout"><button>Logout</button></a>
@@ -78,6 +84,9 @@
       <div class="TabContent" display="block" id = "Problems" style="display: block;">
       
       {% for problem in problems %}
+      {%if problem.flagged%}
+      // Show the problem with a warning
+      {% else %}
       <a href="/problem/{{problem.id}}"> 
         <div class="problem-post">
               <h2>{{problem.title}}</h2>
@@ -85,6 +94,7 @@
               <div class="date">Posted on {{problem.created_at.strftime('%B %d, %Y')}}</div>
         </div>
       </a>
+      {% endif %}
       {% endfor %}
 
       </div>
@@ -92,6 +102,9 @@
       <div class="TabContent" display="none" id = "Discussions">
 
       {% for discussion in discussions %}
+      {%if discussion.flagged%}
+      // Show the discussion with a warning
+      {% else %}
       <a href="/discussion/{{discussion.id}}"> 
         <div class="discussion-post" id="Discussions">
               <h2>{{discussion.title}}</h2>
@@ -99,6 +112,7 @@
               <div class="date">Posted on {{discussion.created_at.strftime('%B %d, %Y')}}</div>
         </div>
       </a>
+      {% endif %}
       {% endfor %}
       </div>
 

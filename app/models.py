@@ -2,7 +2,7 @@ from .extensions import db, UserMixin, bcrypt
 from datetime import datetime
 from dotenv import load_dotenv
 from sqlalchemy import CheckConstraint
-from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.ext.hybrid import hybrid_property
 import os, math
 load_dotenv()
 class User(db.Model, UserMixin): # create a User class to store user information
@@ -41,13 +41,7 @@ class Profile(db.Model):
     
     profile_pic = db.Column(db.String(255), default="/images/default-profile.jpg")  
     bio = db.Column(db.Text, default="This user has not set a bio yet.")
-    
-    '''problems_posted = db.Column(db.Integer, default=0)
-    solutions = db.Column(db.Integer, default=0)
-    discussions = db.Column(db.Integer, default=0)
-    '''
     upvotes = db.Column(db.Integer, default=0)
-    #comments = db.Column(db.Integer, default=0)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
@@ -69,6 +63,9 @@ class Profile(db.Model):
     @property
     def name(self):
         return self.user.name if self.user else None
+    @property
+    def is_moderator(self):
+        return Moderators.query.filter_by(username=self.username).count() != 0
     
 class Problem(db.Model):
     __tablename__ = "problem"
@@ -95,15 +92,15 @@ class Problem(db.Model):
 
     def __repr__(self):
         return f"<Problem {self.title}>"
-    '''@property
-    def content(self):
-        path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
-        with open(path, 'r') as file:
-            content = file.read()
-        for line in content.split("\n"):
-            if "<<Answer: " in line:
-                return content.replace(line, "")
-    '''
+    
+    @hybrid_property
+    def flagged(self):
+        return Flagged_Content.query.filter_by(parent_id='P' + str(self.id)).count() != 0
+
+    @flagged.expression
+    def flagged(cls):
+        return db.session.query(Flagged_Content.id).filter(Flagged_Content.parent_id == db.func.concat('P', cls.id)).exists()
+    
     @property
     def reducedContent(self):
         FullContent = self.content
@@ -162,15 +159,7 @@ class Problem(db.Model):
     @needs_solution.expression
     def needs_solution(cls):
         return ~db.session.query(Solutions.id).filter(Solutions.problem_id == cls.id).exists()
-    '''@property
-    def encrypted_answer(self):
-        path = os.getenv('UPLOAD_FOLDER')+f"/{self.author}/Problems/{self.id}.txt"
-        with open(path, 'r') as file:
-            content = file.read()
-        for line in content.split("\n"):
-            if "<<Answer: " in line:
-                return line.replace("<<Answer: ", "").replace(">>", "")
-    '''        
+           
 
 class ProblemAttempts(db.Model):
     __tablename__ = "problem_attempts"
@@ -203,6 +192,15 @@ class Solutions(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
+    @hybrid_property
+    def flagged(self):
+        return Flagged_Content.query.filter_by(parent_id='S' + str(self.id)).count() != 0
+
+    @flagged.expression
+    def flagged(cls):
+        """Database-side expression"""
+        return db.session.query(Flagged_Content.id).filter(Flagged_Content.parent_id == db.func.concat('S', cls.id)).exists()
+    
     def __repr__(self):
         return f"<Solution for Problem {self.problem_id}>"
 
@@ -216,12 +214,20 @@ class Discussion(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     views = db.Column(db.Integer, default=0)
-
     author = db.Column(db.String(80), db.ForeignKey('user.username'))
     user = db.relationship('User', backref=db.backref('discussions', cascade="all, delete-orphan"))
 
     def __repr__(self):
         return f"<Discussion {self.title}>"
+    
+    @hybrid_property
+    def flagged(self):
+        return Flagged_Content.query.filter_by(parent_id='D' + str(self.id)).count() != 0
+
+    @flagged.expression
+    def flagged(cls):
+        return db.session.query(Flagged_Content.id).filter(Flagged_Content.parent_id == db.func.concat('D', cls.id)).exists()
+    
     @property
     def reducedContent(self):
         FullContent = self.content
@@ -265,9 +271,18 @@ class Comments(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-
+    
     def __repr__(self):
         return f"<Comment on Discussion {self.parent_id}>"
+    
+    @hybrid_property
+    def flagged(self):
+        return Flagged_Content.query.filter_by(parent_id='C' + str(self.id)).count() != 0
+
+    @flagged.expression
+    def flagged(cls):
+        return db.session.query(Flagged_Content.id).filter(Flagged_Content.parent_id == db.func.concat('C', cls.id)).exists()
+    
     @property
     def reducedContent(self):
         FullContent = self.content
@@ -368,17 +383,65 @@ class Notifications(db.Model):
     def __repr__(self):
         return f"<Notification for {self.username}>"
 
+class Flagged_Content(db.Model):
+    __tablename__ = "flagged_content"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    parent_id = db.Column(db.String(10), nullable=False)
+    flagged_by = db.Column(db.String(10), db.ForeignKey('moderators.username'))
+    reason = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Flagged Content {self.parent_id}>"
+
+class Report(db.Model):
+    __tablename__ = "report"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    parent_id = db.Column(db.String(10), nullable=False)
+    reason = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Report on {self.parent_id}>"
+
+class Appeals(db.Model):
+    __tablename__ = "appeals"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    flag_id = db.Column(db.Integer, db.ForeignKey('flagged_content.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    appeal_reason = db.Column(db.Text)
+
+    def __repr__(self):
+        return f"<Appeal on #{self.flag_id}>"
+
+class Moderators(db.Model):
+    __tablename__ = "moderators"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(80), db.ForeignKey('user.username'))
+    user = db.relationship('User', backref=db.backref('moderator', cascade="all, delete-orphan"))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Moderator {self.username}>"
+
 def url_of_notif(id):
     if id[-1] == 'F':
+        # Notif of flagging of content
         return "#"
     elif id[0] == 'C':
-        print(id)
         if id[-1] == 'T':
             comment = Comments.query.get(int(id[1:-1]))
         else:
             comment = Comments.query.get(int(id[1:]))
         content_type = comment.parent_id[0]
-        print(comment.id)
         if content_type == 'S':
             solution = Solutions.query.get(int(comment.parent_id[1:]))
             problem = Problem.query.get(solution.problem_id)

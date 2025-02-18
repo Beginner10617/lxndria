@@ -57,6 +57,6 @@ def view_account(username):
     if username == current_user.username:
         return redirect(url_for('routes.account.account'))
     profile = Profile.query.filter_by(username=username).first()
-    problems = Problem.query.filter_by(author=username).order_by(Problem.created_at.desc()).all()
-    discussions = Discussion.query.filter_by(author=username).order_by(Discussion.created_at.desc()).all()
+    problems = Problem.query.filter_by(author=username, flagged=False).order_by(Problem.created_at.desc()).all()
+    discussions = Discussion.query.filter_by(author=username, flagged=False).order_by(Discussion.created_at.desc()).all()
     return render_template('account.html', user=profile, problems=problems, stats=profile, discussions=discussions)

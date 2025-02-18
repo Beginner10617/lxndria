@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+{%include 'banner.html'%}
 <script>
 function openTab(event, tabName) {
   // Hide all tables
@@ -17,10 +19,6 @@ function openTab(event, tabName) {
 }
 
 </script>
-
-
-
-    {%include 'banner.html'%}
     <title>Notifications</title>
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/notifications.css')}}">
 </head>

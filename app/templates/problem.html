@@ -12,7 +12,9 @@
     <!-- Include highlight.js for syntax highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-
+    <link rel="stylesheet" href="{{url_for('static', filename='css/problem.css')}}">
+    
+    {%include 'banner.html'%}
     <script>
         function confirmDeletionSolution(event, solutionId, href_start) {
         event.preventDefault(); // Prevent the default navigation
@@ -42,13 +44,11 @@
     </script>
 
     <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>   
-    <link rel="stylesheet" href="{{url_for('static', filename='css/problem.css')}}">
     <title>
         {{problem.title}}
     </title> 
 </head>
 
-{%include 'banner.html'%}
 
 <body>
 <div class="problem-container">
@@ -64,12 +64,14 @@
         <div class="author">
             <h2><a href="/account/{{problem.author}}">{{problem.user.name}}</a></h2>
         </div>
-
+        <div style="display: flex;">
         {%if bookmarked%}
         <a href="/problem/{{problem.id}}/bookmark"><button><i class="fas fa-bookmark"></i></button></a>
         {%else%}
         <a href="/problem/{{problem.id}}/bookmark"><button><i class="far fa-bookmark"></i></button></a>
         {%endif%}
+        <a href="/report/P{{problem.id}}"><button><i class="far fa-flag"></i></button></a>
+        </div>
     </div>
 
     </div>
@@ -131,8 +133,10 @@
                 <button id="delete" onclick="confirmDeletionSolution(event, '{{problem.id}}/{{solution.id}}', '/problem/')">Delete</button>
             </div>
             {%else%}
-            <div class="solution-footer">
+            <div class="solution-footer" style="display: flex;">
                 <a href="/problem/{{problem.id}}/{{solution.id}}/like"><button id="like">⬆</button></a>
+                <a href="/report/S{{solution.id}}"><button><i class="far fa-flag"></i></button></a>
+            
             </div>
                 {{solution.upvotes}}
             {%endif%}
