@@ -51,12 +51,18 @@
             {{content}}
         </div>
         <div class="Buttons">
-            <a href="/moderation/decline/{{id}}">
-            <button class="decline">Decline</button>
-            </a>
-            <a href="/moderation/accept/{{id}}">
-            <button class="accept">Accept</button>
-            </a>
+            
+            <form action="/mod_view/{{content_id}}?report={{id}}" method="POST">
+                    <a href="/moderation/decline/{{id}}">
+                        <button class="decline">Decline</button>
+                    </a>
+                    {{ notes.hidden_tag() }}
+                    {{notes.notes(class="form-control", rows=10, cols=30, placeholder="Note")}}
+        
+                    <button type="submit" class="accept">Accept</button>
+
+                
+            </form>
         </div>
     </div>
 </body>

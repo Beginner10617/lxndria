@@ -4,8 +4,6 @@
 {% include 'comment-form.html' %}
 </div>
 {% for comment in comments %}
-{% if comment.flagged %}
-{%else%}
     {% if comment.parent_id == post_type ~ post_id|string%}
     <div class="comment" id="comment-{{ comment.id }}">
         <p><strong>{{ comment.username }}</strong>: 
@@ -22,7 +20,6 @@
         {%endif%}
     </div>
     {% endif %}
-{% endif %}
 {% endfor %}
 
 <script>

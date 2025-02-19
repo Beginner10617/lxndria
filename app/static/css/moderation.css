@@ -110,8 +110,7 @@ td{
 }
 .Buttons{
     display: flex;
-    justify-content: space-between;
-    margin: 20px;
+    justify-content: center;
 }
 .decline{
     background-color: #dc3545;
@@ -138,4 +137,9 @@ td{
 }
 .accept:hover{
     background-color: #00ff00;
+}
+textarea{
+    font-size: 1.5rem;
+    background-color: #000;
+    color: #fff;
 }

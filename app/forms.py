@@ -94,3 +94,7 @@ class CommentForm(FlaskForm):
 class ReportForm(FlaskForm):
     reason = TextAreaField('Reason', validators=[DataRequired(), Length(min=10, max=225)])
     submit = SubmitField('Submit')
+
+class ModNotes(FlaskForm):
+    notes = TextAreaField('Notes', validators=[DataRequired()])
+    submit = SubmitField('Submit')

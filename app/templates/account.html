@@ -84,9 +84,6 @@
       <div class="TabContent" display="block" id = "Problems" style="display: block;">
       
       {% for problem in problems %}
-      {%if problem.flagged%}
-      // Show the problem with a warning
-      {% else %}
       <a href="/problem/{{problem.id}}"> 
         <div class="problem-post">
               <h2>{{problem.title}}</h2>
@@ -94,7 +91,6 @@
               <div class="date">Posted on {{problem.created_at.strftime('%B %d, %Y')}}</div>
         </div>
       </a>
-      {% endif %}
       {% endfor %}
 
       </div>
@@ -102,9 +98,6 @@
       <div class="TabContent" display="none" id = "Discussions">
 
       {% for discussion in discussions %}
-      {%if discussion.flagged%}
-      // Show the discussion with a warning
-      {% else %}
       <a href="/discussion/{{discussion.id}}"> 
         <div class="discussion-post" id="Discussions">
               <h2>{{discussion.title}}</h2>
@@ -112,7 +105,6 @@
               <div class="date">Posted on {{discussion.created_at.strftime('%B %d, %Y')}}</div>
         </div>
       </a>
-      {% endif %}
       {% endfor %}
       </div>
 

@@ -54,9 +54,14 @@ def decrypt_answer(encrypted_answer):
 def send_verification_email(user):
     token_for_verification = jwt.encode({'email': user.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, 'secret_key', algorithm='HS256')
     verify_url = url_for('routes.auth.verify_email', token=token_for_verification, _external=True)
-    token_for_deletion = jwt.encode({'email': user.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, 'secret_key', algorithm='HS256')
     msg = Message('Email Verification', sender=os.getenv('EMAIL_ID'), recipients=[user.email])
     msg.body = 'Hi '+user.name+'! To verify your email for '+WEBAPP_NAME+', visit the following link:\n' + verify_url + '\nPlease note that these links will expire in 24 hours.'
+    msg.body = msg.body + '\n\nIf you did not create an account on '+WEBAPP_NAME+', please ignore this email, or check if someone else has used your email address to create an account.'
+    mail.send(msg)
+
+def send_email(email, subject, body, cc=[]):
+    msg = Message(subject, sender=os.getenv('EMAIL_ID'), recipients=[email], cc=cc)
+    msg.body = body
     mail.send(msg)
 
 def send_reset_password_email(user):

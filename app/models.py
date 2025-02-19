@@ -93,13 +93,6 @@ class Problem(db.Model):
     def __repr__(self):
         return f"<Problem {self.title}>"
     
-    @hybrid_property
-    def flagged(self):
-        return Flagged_Content.query.filter_by(parent_id='P' + str(self.id)).count() != 0
-
-    @flagged.expression
-    def flagged(cls):
-        return db.session.query(Flagged_Content.id).filter(Flagged_Content.parent_id == db.func.concat('P', cls.id)).exists()
     
     @property
     def reducedContent(self):
@@ -196,15 +189,9 @@ class Solutions(db.Model):
     def content(self):
         return self.solution
 
-    @hybrid_property
-    def flagged(self):
-        return Flagged_Content.query.filter_by(parent_id='S' + str(self.id)).count() != 0
-
-    @flagged.expression
-    def flagged(cls):
-        """Database-side expression"""
-        return db.session.query(Flagged_Content.id).filter(Flagged_Content.parent_id == db.func.concat('S', cls.id)).exists()
-    
+    @property
+    def author(self):
+        return self.username
     def __repr__(self):
         return f"<Solution for Problem {self.problem_id}>"
 
@@ -224,13 +211,6 @@ class Discussion(db.Model):
     def __repr__(self):
         return f"<Discussion {self.title}>"
     
-    @hybrid_property
-    def flagged(self):
-        return Flagged_Content.query.filter_by(parent_id='D' + str(self.id)).count() != 0
-
-    @flagged.expression
-    def flagged(cls):
-        return db.session.query(Flagged_Content.id).filter(Flagged_Content.parent_id == db.func.concat('D', cls.id)).exists()
     
     @property
     def reducedContent(self):
@@ -279,14 +259,9 @@ class Comments(db.Model):
     def __repr__(self):
         return f"<Comment on Discussion {self.parent_id}>"
     
-    @hybrid_property
-    def flagged(self):
-        return Flagged_Content.query.filter_by(parent_id='C' + str(self.id)).count() != 0
-
-    @flagged.expression
-    def flagged(cls):
-        return db.session.query(Flagged_Content.id).filter(Flagged_Content.parent_id == db.func.concat('C', cls.id)).exists()
-    
+    @property
+    def author(self):
+        return self.username
     @property
     def reducedContent(self):
         FullContent = self.content
@@ -343,14 +318,11 @@ class Notifications(db.Model):
     Sxyz: Solution id xyz to your Problem
     Cxyz: Comment id xyz on your Content
     CxyzT: Tagged in Comment id xyz 
-    P/D/S/CxyzF: Problem/Discussion/Solution/Comment id xyz flagged
     '''
 
     @property
     def message(self):
-        if self.parent_id[-1] == 'F':
-            return flag_message(self.id[:-1])
-        elif self.parent_id[0] == 'S':
+        if self.parent_id[0] == 'S':
             solution = Solutions.query.get(int(self.parent_id[1:]))
             if solution is None:
                 return "404"
@@ -387,19 +359,6 @@ class Notifications(db.Model):
     def __repr__(self):
         return f"<Notification for {self.username}>"
 
-class Flagged_Content(db.Model):
-    __tablename__ = "flagged_content"
-    __table_args__ = {"extend_existing": True}
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    parent_id = db.Column(db.String(10), nullable=False)
-    flagged_by = db.Column(db.String(10), db.ForeignKey('moderators.username'))
-    reason = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return f"<Flagged Content {self.parent_id}>"
-
 class Report(db.Model):
     __tablename__ = "report"
     __table_args__ = {"extend_existing": True}
@@ -408,7 +367,7 @@ class Report(db.Model):
     parent_id = db.Column(db.String(10), nullable=False)
     reason = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
+    notes = db.Column(db.Text, default="")
     @hybrid_property 
     def post_by(self):
         if self.parent_id[0] == 'P':
@@ -442,18 +401,6 @@ class Report(db.Model):
 
     def __repr__(self):
         return f"<Report on {self.parent_id}>"
-
-class Appeals(db.Model):
-    __tablename__ = "appeals"
-    __table_args__ = {"extend_existing": True}
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    flag_id = db.Column(db.Integer, db.ForeignKey('flagged_content.id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    appeal_reason = db.Column(db.Text)
-
-    def __repr__(self):
-        return f"<Appeal on #{self.flag_id}>"
 
 class Moderators(db.Model):
     __tablename__ = "moderators"
@@ -499,26 +446,3 @@ def url_of_parent(id):
         discussion = Discussion.query.get(int(id[1:]))
         return f"/discussion/{discussion.id}"
     
-
-def flag_message(id):
-    if id[0] == 'P':
-        problem = Problem.query.get(int(id[1:]))
-        return f"Problem {problem.title} was flagged"
-    elif id[0] == 'D':
-        discussion = Discussion.query.get(int(id[1:]))
-        return f"Discussion {discussion.title} was flagged"
-    elif id[0] == 'S':
-        solution = Solutions.query.get(int(id[1:]))
-        problem = Problem.query.get(solution.problem_id)
-        return f"Solution to Problem {problem.title} was flagged"
-    elif id[0] == 'C':
-        comment = Comments.query.get(int(id[1:]))
-        content_type = comment.parent_id[0]
-        if content_type == 'S':
-            solution = Solutions.query.get(int(comment.parent_id[1:]))
-            problem = Problem.query.get(solution.problem_id)
-            return f"Comment on Solution to Problem {problem.title} was flagged"
-        elif content_type == 'D':
-            discussion = Discussion.query.get(int(comment.parent_id[1:]))
-            return f"Comment on Discussion {discussion.title} was flagged"
-
