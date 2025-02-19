@@ -1,6 +1,6 @@
 from .auth import current_user
 from app.models import Profile, User, Problem, Discussion, Bookmarks
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required
 from app.forms import EditAccountForm
 from werkzeug.utils import secure_filename
@@ -15,6 +15,8 @@ def account():
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
+    if request.args.get('updateEmail'):
+        return redirect(url_for('routes.auth.update_email'))
     profile = Profile.query.filter_by(username=current_user.username).first()
     problems = Problem.query.filter_by(author=current_user.username).order_by(Problem.created_at.desc()).all()
     discussions = Discussion.query.filter_by(author=current_user.username).order_by(Discussion.created_at.desc()).all()

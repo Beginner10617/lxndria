@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/auth.css')}}">
+    <title>Reset Password Request</title>
+  </head>
+  <body>
+    <div class="reset-password-request-container">
+        <div class="reset-password-request-box">
+          <h2>Update Email Request</h2>
+          <form action="{{ url_for('routes.auth.update_email') }}" method="POST">
+            {{ form.hidden_tag() }}
+            <div class="input-group">
+              <label for="email">New Email</label>
+              {{ form.email(class="form-control", placeholder="Enter your email") }}
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                {{ form.password(class="form-control", placeholder="Enter your password") }}
+              </div>
+            <button type="submit" class="register-button">Submit</button>
+          </form>
+          {%include 'flash.html'%}
+          </div>
+        </div>
+    </div>
+  </body>

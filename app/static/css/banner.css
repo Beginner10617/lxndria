@@ -209,3 +209,20 @@ body, h1, p {
   border-radius: 5px;
   cursor: pointer;
 }
+
+.nav-container {
+  display: flex;
+  list-style: none;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  a{
+      color: #fff;
+      text-decoration: none;
+      margin: 0 20px;
+  }
+  a:hover
+  {
+    color: #007bff;
+  }
+}

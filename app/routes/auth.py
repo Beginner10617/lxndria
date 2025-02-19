@@ -3,9 +3,9 @@ from dotenv import load_dotenv
 from flask import url_for, flash, redirect, Blueprint, render_template
 from app import mail, db, limiter, login_manager
 from app.models import User
-from app.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetForm
+from app.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetForm, UpdateEmailForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.extensions import send_verification_email, send_reset_password_email, make_directory_for_user
+from app.extensions import send_verification_email, send_reset_password_email, make_directory_for_user, send_email
 
 auth_bp = Blueprint('auth', __name__)
 pending_users = {}
@@ -166,7 +166,25 @@ def load_user(user_id):
 def logout():
     logout_user()
     return redirect(url_for('routes.auth.login'))
-'''
-Actionables
-1. HTML formatting of the email body.
-'''
+
+@auth_bp.route('/updateEmail', methods=['GET', 'POST'])
+def update_email():
+    update_email_form = UpdateEmailForm()
+    if update_email_form.validate_on_submit():
+        email = update_email_form.email.data
+        password = update_email_form.password.data
+        user = User.query.filter_by(username=current_user.username).first()
+        if user and user.verify_password(password):
+            existing_email = User.query.filter_by(email=email).first()
+            if existing_email:
+                flash('Email already in use. Please choose another.', 'error')
+                return redirect(url_for('routes.auth.update_email'))
+            previous_email = user.email
+            user.email = email
+            db.session.commit()
+            flash('Email updated successfully.', 'success')
+            message = f'Your email has been updated to {email}.'
+            send_email('Email Updated', message, previous_email)
+            return redirect(url_for('routes.account.account'))
+        flash('Invalid password', 'error')
+    return render_template('update_email.html', form=update_email_form)

@@ -5,8 +5,13 @@
 <header class="banner">
     <div class="logo-container">
       <img src="{{url_for('static', filename='Images/logo.png')}}" alt="Logo" class="logo">
-      <span class="site-name"><a href="/">Lxndria</span></div></a>
-    </div>
+      <span class="site-name"><a href="/">Lxndria</span></a>
+    
+    <div class="nav-container">
+      <a href="/">Home</a>
+      <a href="/about">About Us</a>
+      <a href="/account">Profile</a>
+    </div></div>
       <div class="menu-container">
         <span id="notificationBadge" class="badge" style="display: none;">0</span>
         <button class="notif-button" onclick="toggleNotif()"><i class="far fa-bell"></i></button>
@@ -17,10 +22,9 @@
         <button class="menu-button" onclick="toggleMenu()"><i class="fas fa-bars"></i>
         </button>
         <ul class="menu-list" id="menuList">
-            <a href="/about"><li>About</li></a>
-            <a href="/account"><li>Account</li></a>
             <a href="/account/contribute/problem"><li>Post a Problem</li></a>
             <a href="/account/contribute/discussion"><li>Post a Discussion</li></a>
+            <a href="/account?updateEmail=1"><li>Update Email</li></a>
           </ul>
     </div>
     <meta name="csrf-token" content="{{ csrf_token() }}">
