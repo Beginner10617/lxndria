@@ -333,6 +333,8 @@ class Notifications(db.Model):
             return f"{comment.user.name} tagged you in a Comment"
         elif self.parent_id[0] == 'C':
             comment = Comments.query.get(int(self.parent_id[1:]))
+            if comment is None:
+                return "404"
             content_type = comment.parent_id[0]
             if content_type == 'S':
                 solution = Solutions.query.get(int(comment.parent_id[1:]))

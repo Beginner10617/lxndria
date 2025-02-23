@@ -1,13 +1,139 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
+
+    {% include 'banner.html' %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About LXNDRIA</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/about.css')}}">
-    <title>Help</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-    
-{%include 'banner.html'%}
-    <body>
-        <code>
-            Hello World
-        </code>
-    </body>
+<body>
+    <div class="container">
+        <h1>Welcome to LXNDRIA</h1>
+        <p>
+            LXNDRIA is a community-driven platform for problem-solving and  discussions. 
+            Whether you love tackling complex challenges or engaging in thoughtful discussions, this space is designed for you.
+            <br>
+            If you're new here, we encourage you to explore, contribute, and become part of our growing community!
+        </p>
+        
+        <section class="card">
+            <h2>Meet the Creator</h2>
+            <p>
+                LXNDRIA was created by a passionate developer dedicated to fostering a space where knowledge-sharing
+                thrives. Built as an open-source project, it welcomes contributions from like-minded individuals who 
+                value meaningful engagement.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>The Vision Behind LXNDRIA</h2>
+            <p>
+                The inspiration behind LXNDRIA stems from the desire to create a space where users can collaboratively 
+                explore complex problems, discuss ideas, and challenge themselves. As a former user of
+                <a href="https://brilliant.org/community-faq/"> (now discontinued) </a> <a href="https://brilliant.org"> Brilliant.org’s </a> 
+                community, I was inspired by its interactive problem-solving approach. 
+                When its discussion features were discontinued, I felt the need to create a space where like-minded 
+                individuals could continue engaging in meaningful challenges. Unlike traditional course-based 
+                learning platforms, LXNDRIA focuses on interactive problem-solving and open-ended discussions, ensuring a 
+                dynamic and evolving knowledge base for all participants.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>Getting Started & Community Principles</h2>
+            <p>
+                LXNDRIA is designed for thoughtful discussions and collaborative learning. Here are some key guidelines:
+            <ul>
+                <li><strong>Engage Respectfully</strong> - No personal attacks or hate speech.</li>
+                <li><strong>Stay on Topic</strong> - Keep discussions STEM-related.</li>
+                <li><strong>No Self-Promotion</strong> - Advertising or marketing is not allowed.</li>
+                <li><strong>No Explicit Content</strong> - Any form of inappropriate content is prohibited.</li>
+                <li><strong>Report Violations</strong> - Help maintain a high-quality community.</li>
+            </ul>
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>Join Our Moderation Team</h2>
+            <p>
+                LXNDRIA is maintained by a team of dedicated moderators who ensure that discussions remain constructive and 
+                respectful. If you're interested in becoming a moderator, you can apply by submitting an application that includes:
+            <ul>
+            <li>
+                Your background and experience with community moderation.
+            </li>
+            <li>
+                Why you're interested in the role.
+            </li>
+            <li>
+                How you would contribute to upholding LXNDRIA’s values.
+            </li>
+            </ul>
+                Applications are reviewed periodically, and selected moderators will be onboarded with necessary guidelines.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>Support LXNDRIA’s Growth</h2>
+            <p>
+                LXNDRIA is an open-source project that thrives on community support. If you find value in the platform and 
+                wish to contribute financially, donations help sustain the development, hosting, and moderation efforts. 
+                <br>More details on how to donate will be available soon.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>Your Questions, Answered</h2>
+            <details>
+                <summary>Is LXNDRIA free to use?</summary>
+                <p>Yes! LXNDRIA is completely free and open to all users.</p>
+            </details>
+            <details>
+                <summary>Can I contribute to LXNDRIA’s development?</summary>
+                <p>
+                    Absolutely! LXNDRIA is open-source, and we welcome contributions. You can check out <a href="https://github.com/Beginner10617/lxndria.git"> 
+                    our GitHub repository </a> to get started.
+                </p>
+            </details>
+            <details>
+                <summary>How do I report inappropriate content?</summary>
+                <p>
+                    You can report any violations using the "Report" button on posts or by contacting the moderation team directly - via mail or you can tag them in the post.
+                </p>
+            </details>
+            <details>
+                <summary>What kind of topics are allowed?</summary>
+                <p>
+                    LXNDRIA focuses on STEM-related topics, including mathematics, physics, computer science, and more. 
+                    If you're unsure about a topic, feel free to ask the community or moderators for guidance.
+                </p>
+            </details>
+            <details>
+                <summary>Is LXNDRIA a replacement for Brilliant.org?</summary>
+                <p>
+                    Not exactly. While LXNDRIA shares a similar spirit of problem-solving and discussion, it is an independent, open-source initiative with a focus on community-driven engagement.
+
+                </p>
+            </details>
+            <details>
+                <summary>How can I contact the LXNDRIA team?</summary>
+                <p>
+                    You can reach out to the LXNDRIA team via email at <a href="mailto: {{email}}"> {{email}} </a> or through other social media platforms provided in the footer.
+            </details>
+        </section>
+    </div>
+    <div class="footer">
+        <hr>
+
+        <p>Connect with us on social media: 
+            <a href="https://www.youtube.com/" target="_blank"><i class="fab fa-youtube"></i></a> | 
+            <a href="https://www.twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a> |
+            <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+        </p>
+    </div>
+</body>
 </html>
