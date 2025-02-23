@@ -17,7 +17,6 @@ def get_notifs():
 def mark_read():
     if not current_user.is_authenticated:
         return jsonify({'error': 'User not authenticated'})
-    print('arg = ', request.args)
     if request.args.get("all"):
         notifs = Notifications.query.filter_by(username=current_user.username, read=False).all()
         for notif in notifs:
@@ -25,14 +24,11 @@ def mark_read():
         db.session.commit()
         return jsonify({'success': 'All marked as read'})
     hash_value = request.args.get("hash")
-    print('hash=', hash_value)
     if hash_value.startswith("comment-"):
         parent_ids = ['C'+hash_value[8:], 'C'+hash_value[8:]+'T']
-        print(parent_ids)
         for parent_id in parent_ids:
             notif = Notifications.query.filter_by(parent_id=parent_id, read=False, username=current_user.username).first()
             if notif is not None:
-                print(notif.parent_id)
                 notif.read = True
                 db.session.commit()
         return jsonify({})

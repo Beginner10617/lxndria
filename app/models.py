@@ -396,7 +396,6 @@ class Report(db.Model):
     
     @property
     def url(self):
-        print(self.parent_id)
         return '/mod_view/'+self.parent_id+'?report='+str(self.id)
 
     def __repr__(self):
@@ -422,7 +421,6 @@ def url_of_parent(id):
     elif id[0] == 'C':
         if id[-1] == 'T':
             comment = Comments.query.get(int(id[1:-1]))
-            print(comment.id)
         else:
             comment = Comments.query.get(int(id[1:]))
         content_type = comment.parent_id[0]

@@ -39,10 +39,8 @@ def mod_view(content_id):
     report = Report.query.get(int(report_val))
     form = ModNotes()
     if form.validate_on_submit():
-        print("Form validated, notes: ", form.notes.data)
         report.notes = form.notes.data
         db.session.commit()
-        print(report.notes)
         return redirect(url_for('routes.moderation.accept', id=report_val))
     reason = report.reason
     if content_id[0] == 'P':
@@ -150,11 +148,9 @@ def accept(id):
     
     # Draft and send an email to the user
     mod_email = User.query.filter_by(username=current_user.username).first().email
-    print(author)
     email = User.query.filter_by(username=author).first().email
     subject = "Your post has been removed"
     body = "Hello! Your post has been removed from the website. If you have any queries, please contact the moderators."
-    print(report.reason, report.notes, end='\n\n')
     body = body + "\nReason: " + report.reason + "\n\nModerator Notes: " + report.notes
     body = body + "\n\nContent: \n" + content
     send_email(email, subject, body, cc=[mod_email])
