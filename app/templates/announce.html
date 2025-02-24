@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Announce</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+    }
+
+    h1 {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    p {
+        text-align: center;
+    }
+
+    form {
+        width: 50%;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    .title {
+        margin-bottom: 10px;
+    }
+
+    .content {
+        margin-bottom: 10px;
+    }
+
+    button {
+        display: block;
+        margin: 0 auto;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+</style>
+<body>
+<h1>Announce</h1>
+<p>Announce a message to all users.</p>
+<form action="/announce" method="post">
+    {{ form.hidden_tag() }}  <!-- CSRF Token -->
+        <div class="title">
+            {{ form.title(class="form-control", placeholder="Title") }}
+        </div>
+        <div class="content">
+            {{ form.content(class="form-control", rows=40, cols=100) }}
+        </div>
+
+    <button type="submit">Announce</button>
+</form>
+</body>
+</html>

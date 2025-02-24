@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'banner.html' %}
+    <title>Announcements</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/about.css')}}">
+</head>
+<body>
+    <div class="container">
+
+        <h1>Announcements</h1>
+        {% for announcement in announcements %}
+            <section class="card">
+                <h2>{{ announcement.title }}</h2>
+                <p>{{ announcement.content }}</p>
+                <p class="date">{{ announcement.created_at|time_ago }}</p>
+            {% if current_user.username == 'admin' %}
+                <a href="/delete-announce?id={{announcement.id}}">Delete</a>
+            {% endif %}
+            </section>
+        {% endfor %}
+    </div>
+</body>
+</html>

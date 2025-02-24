@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
-from app.forms import EditAccountForm
+from app.forms import AnnouncementForm
 from werkzeug.utils import secure_filename
 from app import db
 from dotenv import load_dotenv
-from app.models import Profile, Moderators, Report
+from app.models import Profile, Moderators, Report, Announcements
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -61,3 +61,45 @@ def view_user():
         return redirect(url_for('routes.admin.admin'))
     reports = Report.query.filter_by(handled_by=username).order_by(Report.created_at.desc()).all()
     return render_template('mod_profile.html', user=user, reports=reports)
+
+@admin_bp.route('/announce', methods=['GET', 'POST'])   
+def announce():
+    if not current_user.is_authenticated:
+        return redirect(url_for('routes.auth.login'))
+    if current_user.username != 'admin':
+        return redirect(url_for('routes.account.account'))
+    form = AnnouncementForm()
+    if form.validate_on_submit():
+        announcement = form.content.data
+        if not announcement:
+            flash('Announcement cannot be empty', 'danger')
+            return redirect(url_for('routes.admin.announce'))
+        announce = Announcements(title=form.title.data, content = form.content.data)
+        db.session.add(announce)
+        db.session.commit()
+        flash('Announcement updated', 'success')
+        return redirect(url_for('routes.admin.admin'))
+    return render_template('announce.html', form=form)
+
+@admin_bp.route('/delete-announce')
+def delete_announce():
+    if not current_user.is_authenticated:
+        return redirect(url_for('routes.auth.login'))
+    if current_user.username != 'admin':
+        return redirect(url_for('routes.account.account'))
+    id = request.args.get('id')
+    announcement = Announcements.query.filter_by(id=id).first()
+    if announcement is None:
+        flash('Announcement not found', 'danger')
+        return redirect(url_for('routes.admin.admin'))
+    db.session.delete(announcement)
+    db.session.commit()
+    flash('Announcement deleted', 'success')
+    return redirect(url_for('routes.admin.show_announcements'))
+
+@admin_bp.route('/show-announcements')
+def show_announcements():
+    if not current_user.is_authenticated:
+        return redirect(url_for('routes.auth.login'))
+    announcements = Announcements.query.order_by(Announcements.created_at.desc()).all()
+    return render_template('view_announcements.html', announcements=announcements)

@@ -447,6 +447,19 @@ class Moderators(db.Model):
     def __repr__(self):
         return f"<Moderator {self.username}>"
 
+class Announcements(db.Model):
+    __tablename__ = "announcements"
+    __table_args__ = {"extend_existing": True}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f"<Announcement {self.title}>"
+
+
 def url_of_parent(id):
     if id[-1] == 'F':
         # Notif of flagging of content

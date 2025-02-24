@@ -80,3 +80,9 @@ summary {
     width: 100%;
     font-size: 1.2em;
 }
+.date{
+    font-size: 1.2em;
+    color: #999;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
