@@ -42,7 +42,11 @@ def edit_account():
             directory = current_profile.username
             path = os.getenv('UPLOAD_FOLDER')+current_profile.username+"/Profile_picture/"  # This should be the path where you want to save
            #(path)
-            file.save(os.path.join(path, filename))
+            try:
+                file.save(os.path.join(path, filename))
+            except FileNotFoundError:
+                os.makedirs(path)
+                file.save(os.path.join(path, filename))
             current_profile.profile_pic = path[len('app/static/'):]+filename
         db.session.commit()
         
