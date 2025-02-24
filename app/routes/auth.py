@@ -49,6 +49,11 @@ def register():
             flash('Password must be at least 8 characters long.', 'error')
             return redirect(url_for('routes.auth.register'))
         
+        # Check if username is valid
+        if username.startswith('_'):
+            flash('Username cannot start with an underscore.', 'error')
+            return redirect(url_for('routes.auth.register'))
+
         # Check if passwords match
         if password != confirm_password:
             flash('Passwords do not match.', 'error')

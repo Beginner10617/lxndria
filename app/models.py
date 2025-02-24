@@ -3,7 +3,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from sqlalchemy import CheckConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
-import os, math
+import os
 load_dotenv()
 class User(db.Model, UserMixin): # create a User class to store user information
     __tablename__ = "user"
@@ -31,6 +31,42 @@ class User(db.Model, UserMixin): # create a User class to store user information
     def __repr__(self):
         ## out the username each time a user is created
         return '<User %r>' % self.username
+    
+    def __delete__(self):
+        profile = Profile.query.filter_by(username=self.username).first()
+        profile.username = '_user_deleted_'+self.username
+        problems = Problem.query.filter_by(author=self.username).all()
+        for problem in problems:
+            problem.author = '_user_deleted_'+self.username
+        attempts = ProblemAttempts.query.filter_by(username=self.username).all()
+        for attempt in attempts:
+            attempt.username = '_user_deleted_'+self.username
+        solutions = Solutions.query.filter_by(username=self.username).all()
+        for solution in solutions:
+            solution.username = '_user_deleted_'+self.username
+        discussions = Discussion.query.filter_by(author=self.username).all()
+        for discussion in discussions:
+            discussion.author = '_user_deleted'+self.username
+        comments = Comments.query.filter_by(username=self.username).all()
+        for comment in comments:
+            comment.username = '_user_deleted_'+self.username
+        upvotes = Upvotes.query.filter_by(username=self.username).all()
+        for upvote in upvotes:
+            upvote.username = '_user_deleted_'+self.username
+        bookmarks = Bookmarks.query.filter_by(username=self.username).all()
+        for bookmark in bookmarks:
+            db.session.delete(bookmark)
+        notifications = Notifications.query.filter_by(username=self.username).all()
+        for notification in notifications:
+            db.session.delete(notification)
+        reports = Report.query.filter_by(username=self.username).all()
+        for report in reports:
+            report.username = '_user_deleted_'+self.username
+        mods = Moderators.query.filter_by(username=self.username).all()
+        for mod in mods:
+            db.session.delete(mod)
+        db.session.delete(self)
+        db.session.commit()
 
 class Profile(db.Model):
     __tablename__ = "profile"
