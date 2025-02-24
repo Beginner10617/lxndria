@@ -36,6 +36,7 @@ class User(db.Model, UserMixin): # create a User class to store user information
         profile = Profile.query.filter_by(username=self.username).first()
         profile.username = '_user_deleted_'+self.username
         problems = Problem.query.filter_by(author=self.username).all()
+        # Changes
         for problem in problems:
             problem.author = '_user_deleted_'+self.username
         attempts = ProblemAttempts.query.filter_by(username=self.username).all()
@@ -46,22 +47,21 @@ class User(db.Model, UserMixin): # create a User class to store user information
             solution.username = '_user_deleted_'+self.username
         discussions = Discussion.query.filter_by(author=self.username).all()
         for discussion in discussions:
-            discussion.author = '_user_deleted'+self.username
+            discussion.author = '_user_deleted_'+self.username
         comments = Comments.query.filter_by(username=self.username).all()
         for comment in comments:
             comment.username = '_user_deleted_'+self.username
         upvotes = Upvotes.query.filter_by(username=self.username).all()
         for upvote in upvotes:
             upvote.username = '_user_deleted_'+self.username
+        # Deletion
         bookmarks = Bookmarks.query.filter_by(username=self.username).all()
         for bookmark in bookmarks:
             db.session.delete(bookmark)
         notifications = Notifications.query.filter_by(username=self.username).all()
         for notification in notifications:
             db.session.delete(notification)
-        reports = Report.query.filter_by(username=self.username).all()
-        for report in reports:
-            report.username = '_user_deleted_'+self.username
+
         mods = Moderators.query.filter_by(username=self.username).all()
         for mod in mods:
             db.session.delete(mod)

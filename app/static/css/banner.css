@@ -68,7 +68,7 @@ body, h1, p {
     justify-content: center;
     align-items: center;
 }
-.notif-button{
+.notif-button {
     padding: 15px;
     margin-right: 10px;
     background-color: #444;
@@ -99,7 +99,7 @@ body, h1, p {
     padding: 0;
     margin: 0;
     display: none;
-    width: 150px;
+    width: 155px;
 }
 .notif-list {
     position: absolute;

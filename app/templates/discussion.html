@@ -65,7 +65,13 @@
         <div class="discussion-footer">
 
             <div class="author">
-                <a href="/account/{{discussion.author}}"><h2>By {{discussion.user.name}}</h2></a>
+
+                <a href="/account/{{discussion.author}}">
+                {%if discussion.user%}<h2>By {{discussion.user.name}}</h2>
+                {%else%}
+                <h2>By {{discussion.author}}</h2>
+                {%endif%}
+                </a>
             </div>
             {%if bookmarked%}
             <a href="/discussion/{{discussion.id}}/bookmark"><button><i class="fas fa-bookmark"></i></button></a>

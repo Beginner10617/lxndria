@@ -62,7 +62,14 @@
     
     <div class="problem-footer">
         <div class="author">
-            <h2><a href="/account/{{problem.author}}">{{problem.user.name}}</a></h2>
+            
+            <h2><a href="/account/{{problem.author}}">
+                {% if problem.user %}
+                {{problem.user.name}}
+                {% else %}
+                {{problem.author}}
+                {% endif %}
+            </a></h2>
         </div>
         <div style="display: flex;">
         {%if bookmarked%}
@@ -125,7 +132,13 @@
                 <div id="solution-{{solution.id}}">
                 <p>{{solution.solution}}</p>
                 
-                <a href="/account/{{solution.username}}"><h2>{{solution.user.name}}</h2></a>
+                <a href="/account/{{solution.username}}"><h2>
+                    {% if solution.user %}
+                    {{solution.user.name}}
+                    {% else %}
+                    {{solution.username}}
+                    {% endif %}
+                </h2></a>
             
             {% if solution.username == current_user.username %}
             <div class="solution-buttons">

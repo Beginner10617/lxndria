@@ -26,6 +26,9 @@ def admin():
     
     if request.args.get('promote') == '1':
         user = request.args.get('user')
+        if user.startswith('_user_deleted_'):
+            flash('User deleted', 'danger')
+            return redirect(url_for('routes.admin.admin'))
         print('promoting', user)
         user_profile = Profile.query.filter_by(username=user).first()
         if user_profile is None:

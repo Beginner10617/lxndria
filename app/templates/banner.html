@@ -2,6 +2,22 @@
 <html>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
+<script>
+  function confirmDeleteAccount()
+  {
+    let confirmation = confirm("Are you sure you want to delete your account?");
+    if (confirmation) {
+      window.location.href = "/account?delete=1";
+    }
+  }
+  function confirmLogout()
+  {
+    let confirmation = confirm("Are you sure you want to logout?");
+    if (confirmation) {
+      window.location.href = "/logout";
+    }
+  }
+</script>
 <header class="banner">
     <div class="logo-container">
       <img src="{{url_for('static', filename='Images/logo.svg')}}" alt="Logo" class="logo">
@@ -20,15 +36,18 @@
           <h2>Notifications</h2>
           <p>Loading...</p>
       </div>
-        <button class="menu-button" onclick="toggleMenu()"><i class="fas fa-bars"></i>
+      
+        <button class="menu-button" onclick="toggleMenu()"><i class="far fa-cog"></i>
         </button>
         <ul class="menu-list" id="menuList">
-            <a href="/account/contribute/problem"><li>Post a Problem</li></a>
-            <a href="/account/contribute/discussion"><li>Post a Discussion</li></a>
             {% if current_user.username == 'admin' %}
+            <a href="/admin-controls"><li>Admin Controls</li></a>
             <a href="/announce"><li>Announce</li></a>
             {% endif %}
+            <a href="/reset-password-2"><li>Change Password</li></a>
             <a href="/account?updateEmail=1"><li>Update Email</li></a>
+            <li onclick="confirmLogout()" style="color: red;">Logout</li>
+            <li onclick="confirmDeleteAccount()" style="color: red;">Delete Account</li>
           </ul>
     </div>
     <meta name="csrf-token" content="{{ csrf_token() }}">

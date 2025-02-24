@@ -26,7 +26,9 @@ def view_discussion(discussion_id):
         return redirect(url_for('routes.auth.login'))
     
     discussion = Discussion.query.get(discussion_id)
-    if current_user.username != discussion.user.username:
+    if discussion.user is None:
+        bookmarked = None
+    elif current_user.username != discussion.user.username:
         try:
             discussion.views += 1
         except:
