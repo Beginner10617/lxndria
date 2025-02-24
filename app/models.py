@@ -322,14 +322,25 @@ class Notifications(db.Model):
 
     @property
     def message(self):
+        if self.parent_id is None:
+            return "404"
+        print("Parent ID:", self.parent_id)
         if self.parent_id[0] == 'S':
             solution = Solutions.query.get(int(self.parent_id[1:]))
             if solution is None:
                 return "404"
             problem = Problem.query.get(solution.problem_id)
+            if problem is None:
+                return "404"
+            if solution.user is None:
+                return f"Deleted User posted solution to your Problem {problem.title}"
             return f"{solution.user.name} posted solution to your Problem {problem.title}"
         elif self.parent_id[-1] == 'T':
             comment = Comments.query.get(int(self.parent_id[1:-1]))
+            if comment is None:
+                return "404"
+            if comment.user is None:
+                return f"Deleted User tagged you in a Comment"
             return f"{comment.user.name} tagged you in a Comment"
         elif self.parent_id[0] == 'C':
             comment = Comments.query.get(int(self.parent_id[1:]))
@@ -344,7 +355,10 @@ class Notifications(db.Model):
                 return f"{comment.user.name} commented on the Problem {problem.title}"
             elif content_type == 'D':
                 discussion = Discussion.query.get(int(comment.parent_id[1:]))
+                if discussion is None:
+                    return "404"
                 return f"{comment.user.name} commented on the Discussion {discussion.title}"
+        return "404"
     @property
     def serialize(self):
         return {
