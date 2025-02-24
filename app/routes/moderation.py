@@ -160,7 +160,7 @@ def accept(id):
     # Draft and send an email to the user
     mod_email = User.query.filter_by(username=current_user.username).first().email
     email = User.query.filter_by(username=author).first().email
-    subject = "Your post has been removed"
+    subject = "Your post has been removed " + "#"+id
     body = "Hello! Your post has been removed from the website. If you have any queries, please contact the moderators."
     body = body + "\nReason: " + report.reason + "\n\nModerator Notes: " + report.notes
     body = body + "\n\nContent: \n" + content
