@@ -158,7 +158,7 @@ a{
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* Subtle glow */
   }
 
-  .problem-post, .discussion-post {
+  .problem-post, .discussion-post, .report-post {
     max-width: 1000px;
     margin: 10px auto;
     padding: 20px;
@@ -167,22 +167,17 @@ a{
     border-radius: 8px;
     color: #e0e0e0;
   }
-  .problem-post h2, .discussion-post h2{
+  .problem-post h2, .discussion-post h2, .report-post h2{
     margin: 0;
     padding: 0;
     background-color: #333;
     color: #e0e0e0;
   }
-  .problem-post p, .discussion-post p{
+  .problem-post p, .discussion-post p, .report-post p{
     background-color: #333;
     color: #e0e0e0;
   }
-  .problem-post .date{
-    margin-top: 10px;
-    color: #666;
-  }
-
-  .discussion-post .date{
+  .problem-post .date, .discussion-post .date, .report-post .date{
     margin-top: 10px;
     color: #666;
   }

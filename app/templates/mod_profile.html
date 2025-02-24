@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'banner.html' %}
+    <title>Profile</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Main Profile Section -->
+        <div class="profile-main">
+          <div class="profile-header">
+            <img src="{{url_for('static', filename=user.profile_pic)}}" alt="Profile Picture" class="profile-pic">
+            <div class="profile-info">
+              <h1>
+                <a href="/account/{{user.username}}">
+                {{user.name}}
+                </a>
+              </h1>
+              <p>@{{user.username}}</p>
+              {% if user.is_moderator %}
+              <p>Moderator</p>
+              {% endif %}
+              <p class="profile-bio">{{user.bio}}</p>
+            </div>
+          </div>
+          <div class="profile-content">
+          </div>
+        </div>
+    </div>
+
+    {% for report in reports %}
+        <div class="report-post">
+              <h2>#{{report.id}}</h2><br>
+              <p>
+                <strong>Reason:</strong><br>
+                {{report.reason}}
+                <br><br>
+                <strong>Moderator Note:</strong><br>
+                {{report.notes}}
+                <br><br>
+                <strong>Action Taken:</strong>
+                {{report.action}}
+              </p>
+              <div class="date">Action on {{report.updated_at.strftime('%B %d, %Y')}}</div>
+        </div>
+      {% endfor %}
+
+</body>
+</html>

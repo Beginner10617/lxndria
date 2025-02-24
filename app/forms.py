@@ -96,7 +96,7 @@ class ReportForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class ModNotes(FlaskForm):
-    notes = TextAreaField('Notes', validators=[DataRequired()])
+    notes = TextAreaField('Notes', validators=[DataRequired(), Length(min=10)])
     submit = SubmitField('Submit')
 
 class UpdateEmailForm(FlaskForm):

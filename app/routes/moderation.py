@@ -13,7 +13,7 @@ def moderation():
         return redirect(url_for('routes.auth.login'))
     if Moderators.query.filter_by(username=current_user.username).count() == 0:
         return redirect(url_for('routes.main.index'))
-    reports = Report.query.filter(Report.post_by != current_user.username).order_by(Report.created_at.desc()).all()
+    reports = Report.query.filter(Report.post_by != current_user.username, Report.handled == False).order_by(Report.created_at.desc()).all()
     
     return render_template('moderation.html', reports=reports)
 
@@ -37,6 +37,9 @@ def mod_view(content_id):
         return redirect(url_for('routes.main.index'))
     report_val = request.args.get('report')
     report = Report.query.get(int(report_val))
+    if report.handled:
+        flash("This report has already been handled", "danger")
+        return redirect(url_for('routes.moderation.moderation'))
     form = ModNotes()
     if form.validate_on_submit():
         report.notes = form.notes.data
@@ -62,7 +65,12 @@ def decline(id):
         return redirect(url_for('routes.main.index'))
     
     report = Report.query.get(int(id))
-    db.session.delete(report)
+    if report.handled:
+        flash("This report has already been handled", "danger")
+        return redirect(url_for('routes.moderation.moderation'))
+    report.handled = True
+    report.handled_by = current_user.username
+    report.action = 'Declined'
     db.session.commit()
     return redirect(url_for('routes.moderation.moderation'))
 
@@ -73,6 +81,9 @@ def accept(id):
     if Moderators.query.filter_by(username=current_user.username).count() == 0:
         return redirect(url_for('routes.main.index'))
     report = Report.query.get(int(id))
+    if report.handled:
+        flash("This report has already been handled", "danger")
+        return redirect(url_for('routes.moderation.moderation'))
     content, author = '', ''
     # Remove the post, send an email to the user, and delete the report
     parent_id = report.parent_id
@@ -80,7 +91,7 @@ def accept(id):
         Id = int(parent_id[1:])
         problem = Problem.query.filter_by(id = Id).first()
         if problem is None:
-            db.session.delete(report)
+            report.handled = True
             db.session.commit()
             flash("The post has already been removed", "danger")
             return redirect(url_for('routes.moderation.moderation'))
@@ -103,7 +114,7 @@ def accept(id):
         Id = int(parent_id[1:])
         solution = Solutions.query.filter_by(id=Id).first()
         if solution is None:
-            db.session.delete(report)
+            report.handled = True
             db.session.commit()
             flash("The post has already been removed", "danger")
             return redirect(url_for('routes.moderation.moderation'))
@@ -120,7 +131,7 @@ def accept(id):
         Id = int(parent_id[1:])
         discussion = Discussion.query.filter_by(id = Id).first()
         if discussion is None:
-            db.session.delete(report)
+            report.handled = True
             db.session.commit()
             flash("The post has already been removed", "danger")
             return redirect(url_for('routes.moderation.moderation'))
@@ -137,7 +148,7 @@ def accept(id):
         Id = int(parent_id[1:])
         comment = Comments.query.filter_by(id=Id).first()
         if comment is None:
-            db.session.delete(report)
+            report.handled = True
             db.session.commit()
             flash("The post has already been removed", "danger")
             return redirect(url_for('routes.moderation.moderation'))
@@ -154,6 +165,8 @@ def accept(id):
     body = body + "\nReason: " + report.reason + "\n\nModerator Notes: " + report.notes
     body = body + "\n\nContent: \n" + content
     send_email(email, subject, body, cc=[mod_email])
-    db.session.delete(report)
+    report.handled = True
+    report.handled_by = current_user.username
+    report.action = 'Removed'
     db.session.commit()
     return redirect(url_for('routes.moderation.moderation'))

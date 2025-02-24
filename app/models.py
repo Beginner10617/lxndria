@@ -369,7 +369,24 @@ class Report(db.Model):
     parent_id = db.Column(db.String(10), nullable=False)
     reason = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+
     notes = db.Column(db.Text, default="")
+    handled = db.Column(db.Boolean, default=False)
+    handled_by = db.Column(db.String(80), db.ForeignKey('user.username'))
+    action = db.Column(db.String(20), default="None")
+
+    __table_args__ = (
+        CheckConstraint("action IN ('Accepted', 'Declined')", name="valid_action_check"),
+    )
+
+    @property
+    def reducedContent(self):
+        FullContent = self.reason + self.notes
+        if len(FullContent) > 500:
+            return FullContent[:500] + "..."
+        return FullContent
+
     @hybrid_property 
     def post_by(self):
         if self.parent_id[0] == 'P':

@@ -3,5 +3,46 @@
     <head>
         {%include 'banner.html'%}
         <title>Admin</title>
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/admin.css')}}">
     </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+
+                {%if user.is_moderator%}
+                    <tr  style="background-color: #d30;">
+                        <td>
+                            <a href="/admin-controls/view?user={{user.username}}">{{user.username}}</a>
+                {% else %}
+                    <tr>
+                        <td>
+                            <a href="/account/{{user.username}}"> {{user.username}} </a>
+                {% endif %}
+                        </td>
+                        <td>
+                            <a href="mailto:{{user.user.email}}">
+                            {{user.user.email}}
+                            </a>
+                        </td>
+                        <td>
+                            {% if user.is_moderator %}
+                                <a href="/admin-controls?demote=1&user={{user.username}}">Demote</a>
+                            {% else %}
+                                <a href="/admin-controls?promote=1&user={{user.username}}">Promote</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+    {% include 'flash.html' %}
 </html>

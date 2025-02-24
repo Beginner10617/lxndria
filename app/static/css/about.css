@@ -27,7 +27,11 @@ h1 {
     animation: fadeIn 1s ease-in;
     margin-bottom: 20px;
 }
-
+h3{
+    font-size: 1.3rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
 .card {
     background: #1E1E1E;
     padding: 20px;
@@ -76,3 +80,5 @@ summary {
     width: 100%;
     font-size: 1.2em;
 }
+
+  

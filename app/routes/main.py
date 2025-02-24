@@ -43,14 +43,3 @@ def index():
     new_sort_convention = 'asc' if sort_convention == 'desc' else 'desc'
     return render_template('index.html', problems=all_problems, page=pageNumber, row_per_page=rows, discussions=all_discussions, table=table, need_solution=need_solution, sort_convention=new_sort_convention)
 
-@main_bp.route('/admin')
-@login_required
-def admin():
-    if not current_user.is_authenticated:
-       #('Not authenticated')
-        return redirect(url_for('routes.auth.login'))
-    
-    if current_user.username == 'admin':
-        return render_template('admin.html', total_users=User.query.count(), admin=True)
-    return render_template('admin.html')
-

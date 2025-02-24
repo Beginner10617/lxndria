@@ -1,0 +1,28 @@
+table{
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #ddd;
+    font-size: 1.2rem;
+    th{
+        background-color: #333;
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    td{
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    tr:hover{
+        background-color: #333;
+    }
+    a {
+        text-decoration: none;
+    }
+    a:hover {
+        color: #007bff;
+        text-decoration: underline;
+    }
+}
