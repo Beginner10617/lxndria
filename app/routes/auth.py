@@ -119,14 +119,14 @@ def reset_password_request():
     return render_template('reset_password_request.html', form=form)
 
 @auth_bp.route('/reset-password-2', methods=['GET', 'POST'])
-@login_required
 @limiter.limit("5 per minute")
 def reset_password_request_2():
-    if current_user.is_authenticated:
+    if not current_user.is_authenticated:
+        return redirect(url_for('routes.auth.login'))
+    else:
         send_reset_password_email(current_user)
         flash('Password reset link sent to your email.', 'success')
-    return redirect(url_for('routes.account.account'))
-
+    
 @auth_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     try:
@@ -167,8 +167,9 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 @auth_bp.route('/logout')
-@login_required
 def logout():
+    if not current_user.is_authenticated:
+        return redirect(url_for('routes.auth.login'))
     logout_user()
     return redirect(url_for('routes.auth.login'))
 

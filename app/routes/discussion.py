@@ -42,8 +42,10 @@ def view_discussion(discussion_id):
     return render_template('discussion.html', discussion=discussion, comments=comments, form=form, bookmarked=bookmarked)
 
 @discussion_bp.route('/discussion/<int:discussion_id>/delete', methods=['POST', 'GET'])
-@login_required
 def delete_discussion(discussion_id):
+    if not current_user.is_authenticated:
+        flash("You need to login to delete discussions!", "danger")
+        return redirect(url_for('routes.auth.login'))
     discussion = Discussion.query.get(discussion_id)
     if discussion.user == current_user:
         db.session.delete(discussion)
@@ -58,8 +60,10 @@ def delete_discussion(discussion_id):
     return redirect(url_for('routes.account.account', discussion_id=discussion_id))
 
 @discussion_bp.route('/discussion/<int:discussion_id>/edit', methods=['POST', 'GET'])
-@login_required
 def edit_discussion(discussion_id):
+    if not current_user.is_authenticated:
+        flash("You need to login to edit discussions!", "danger")
+        return redirect(url_for('routes.auth.login'))
     discussion = Discussion.query.get(discussion_id)
     if discussion.user != current_user:
         flash("You can't edit someone else's discussion!", "danger")
@@ -74,8 +78,10 @@ def edit_discussion(discussion_id):
     return render_template('post-discussion.html', form=form)
 
 @discussion_bp.route('/discussion/<int:discussion_id>/bookmark')
-@login_required
 def bookmark_discussion(discussion_id):
+    if not current_user.is_authenticated:
+        flash("You need to login to bookmark discussions!", "danger")
+        return redirect(url_for('routes.auth.login'))
     discussion = Discussion.query.get(discussion_id)
     bookmark = Bookmarks.query.filter_by(username=current_user.username, discussion_id=discussion_id).first()
     if bookmark:

@@ -31,8 +31,10 @@ def account():
     return render_template('account.html', user=profile, problems=problems, stats=profile, discussions=discussions, bookmarks=bookmarks)
 
 @account_bp.route('/account/edit', methods=['GET', 'POST'])
-@login_required
 def edit_account():
+    if not current_user.is_authenticated:
+        #('Not authenticated')
+        return redirect(url_for('routes.auth.login'))
     form = EditAccountForm()
     current_profile = Profile.query.filter_by(username=current_user.username).first()
     user = User.query.filter_by(username=current_user.username).first()

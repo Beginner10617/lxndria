@@ -59,9 +59,7 @@ def problem(problem_id):
     return render_template('problem.html', problem=problem, submission=submission, solved = 0, bookmarked=bookmark)
 
 @problem_bp.route('/problem/<int:problem_id>/owner', methods=['GET', 'POST'])
-@login_required
 def owner(problem_id):
-
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
@@ -97,7 +95,6 @@ def owner(problem_id):
         all_solutions=solutions, posted_solution=posted_solution, solution=SolForm, form=form, comments=comments)
     
 @problem_bp.route('/problem/<int:problem_id>/delete')
-@login_required
 def delete(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
@@ -125,7 +122,6 @@ def delete(problem_id):
     return redirect(url_for('routes.problem.problem', problem_id=problem.id))
 
 @problem_bp.route('/problem/<int:problem_id>/edit', methods=['GET', 'POST'])
-@login_required
 def edit(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
@@ -158,7 +154,6 @@ def edit(problem_id):
     
 
 @problem_bp.route('/problem/<int:problem_id>/correct')
-@login_required
 def correct(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
@@ -186,7 +181,6 @@ def correct(problem_id):
         comments=comments, bookmarked=bookmark)
 
 @problem_bp.route('/problem/<int:problem_id>/incorrect')
-@login_required
 def incorrect(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
@@ -209,7 +203,6 @@ def incorrect(problem_id):
         comments=comments, bookmarked=bookmark)
 
 @problem_bp.route('/problem/<int:problem_id>/solution', methods=['GET', 'POST'])
-@login_required
 def solution(problem_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
@@ -251,7 +244,6 @@ def solution(problem_id):
         return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//problem.attempts), solution=form)
     
 @problem_bp.route('/problem/<int:problem_id>/<int:solution_id>/edit', methods=['GET', 'POST'])
-@login_required
 def edit_solution(problem_id, solution_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
@@ -273,7 +265,6 @@ def edit_solution(problem_id, solution_id):
 
 
 @problem_bp.route('/problem/<int:problem_id>/<int:solution_id>/delete')
-@login_required
 def delete_solution(problem_id, solution_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
@@ -291,7 +282,6 @@ def delete_solution(problem_id, solution_id):
         return redirect(url_for('routes.problem.correct', problem_id=problem.id))
     
 @problem_bp.route('/problem/<int:problem_id>/<int:solution_id>/like')
-@login_required
 def like_solution(problem_id, solution_id):
     if not current_user.is_authenticated:
        #('Not authenticated')
