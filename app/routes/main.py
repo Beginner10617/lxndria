@@ -6,7 +6,7 @@ main_bp = Blueprint('main', __name__)
 @main_bp.route('/')
 def index():
     if not current_user.is_authenticated:
-        return redirect(url_for('routes.about.about', code=301))
+        return redirect(url_for('routes.about.about'), code=301)
     pageNumber = request.args.get('page', default=0, type=int)
     rows = request.args.get('rows', default=10, type=int)
     table = request.args.get('table', default='problems', type=str)
