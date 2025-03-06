@@ -27,7 +27,7 @@
 .Table{
     display: table;
     width : 70%;
-    margin: 15px auto;
+    margin: 10px auto;
     padding: 20px;
     background-color: #333;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -62,7 +62,7 @@
     border-bottom: none;
   }
   .table td{
-    width :x 250px;
+    width: 100%;
     font-size: 1.25rem;
     padding: 5px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
