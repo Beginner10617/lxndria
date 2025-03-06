@@ -71,7 +71,7 @@
         <h1>Welcome to Lxndria</h1>
         <p>Here you can post problems and discussions for others to see and help you with. You can also help others by answering their questions and discussing topics with them.</p>
   </div>-->
-  
+<div class="content">
   <!---PROBLEMS TABLE---->
   <div class="Table">
 
@@ -185,7 +185,13 @@
       {% if not stop %}
         <a href="/?page={{page+1}}&table=need-solution">Next</a>
       {% endif %}
+    </div>
+  </div>
   {%include 'flash.html'%}
+</div>
+</div>
+<div style="position: fixed; bottom: 0; width: 100%;">
+{%include 'footer.html'%}
 </div>
 </body>
 </html>

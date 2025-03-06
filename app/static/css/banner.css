@@ -68,7 +68,7 @@ body, h1, p {
     justify-content: center;
     align-items: center;
 }
-.notif-button {
+.notif-button, .home-button {
     padding: 15px;
     margin-right: 10px;
     background-color: #444;
@@ -85,8 +85,12 @@ body, h1, p {
     justify-content: center;
     align-items: center;
 }
-.menu-button:hover, .notif-button:hover {
+.menu-button:hover, .notif-button:hover, .home-button:hover {
     background-color: #555;
+    color : white;
+    a:hover{
+      color: white;
+    }
 }
 .menu-list {
     position: absolute;
@@ -227,4 +231,3 @@ body, h1, p {
     color: #007bff;
   }
 }
-

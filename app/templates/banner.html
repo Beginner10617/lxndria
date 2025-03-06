@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet" href="{{url_for('static', filename='css/banner.css')}}">
 <script>
@@ -24,18 +24,17 @@
       <span class="site-name"><a href="/">Lxndria</span></a>
     
     <div class="nav-container">
-      <a href="/show-announcements">Announcements</a>
-      <a href="/">Home</a>
-      <a href="/about">About Us</a>
-      <a href="/account">Profile</a>
+      
+      
     </div></div>
       <div class="menu-container">
+        <button class="home-button"><a href="/"><i class="fa fa-home"></i></a></button>
         <span id="notificationBadge" class="badge" style="display: none;">0</span>
         <button class="notif-button" onclick="toggleNotif()"><i class="far fa-bell"></i></button>
         <div class="notification-popup" id="notificationPopup">
           <h2>Notifications</h2>
           <p>Loading...</p>
-      </div>
+        </div>
       
         <button class="menu-button" onclick="toggleMenu()"><i class="far fa-cog"></i>
         </button>
@@ -44,6 +43,8 @@
             <a href="/admin-controls"><li>Admin Controls</li></a>
             <a href="/announce"><li>Announce</li></a>
             {% endif %}
+            <a href="/account"><li>Profile</li></a>
+            <a href="/show-announcements"><li>Announcements</li></a>
             <a href="/reset-password-2"><li>Change Password</li></a>
             <a href="/account?updateEmail=1"><li>Update Email</li></a>
             <li onclick="confirmLogout()" style="color: red;">Logout</li>
@@ -55,5 +56,3 @@
     <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
 
   </header>
-
-</html>
