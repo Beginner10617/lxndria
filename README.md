@@ -44,14 +44,37 @@ Ensure you have the following installed:
     source venv/bin/activate   # On Windows use: venv\Scripts\activate
     ```
 3. **Install dependencies:**
-    ```
+    ```bash
     pip install -r requirements.txt
     ```
-4. **Run the Flask application:**
+
+4. **Set Up Environment Variables:**
+
+    Create a .env file in the root directory and add required variables:
+    ```bash
+    SECRET_KEY=your-secret-key
+    FERNET_KEY=your-fernet-key
+    EMAIL_ID=your-email-id
+    EMAIL_PASSWORD=app-password
+    UPLOAD_FOLDER=profile-pic-upload
+    EMAIL_SERVER=smtp.gmail.com # Change if using any other server
+    DATABASE_URI=sqlite:///db.sqlite3  # Change if using PostgreSQL/MySQL
     ```
+5. **Apply Database Migrations:**
+    ```bash
+    flask db upgrade  # If using Flask-Migrate
+    ```
+    OR if manually setting up a database:
+    ```bash
+    flask db init
+    flask db migrate -m "Initial migration"
+    flask db upgrade
+    ```
+6. **Run the Development server:**
+    ```bash
     flask run
     ```
-5. **Access the app at:**
+7. **Access the app at:**
     ```
     http://127.0.0.1:5000
     ```
