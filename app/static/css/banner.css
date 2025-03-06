@@ -78,7 +78,7 @@ body, h1, p {
     width:  35px; /* Set a fixed width */
     height: 35px; /* Set a fixed height */
     text-align: center;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     line-height: 1; /* Adjusts vertical alignment */
     display: flex;
     justify-content: center;

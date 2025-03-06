@@ -26,9 +26,9 @@
 }
 .Table{
     display: table;
-    width : 70%;
+    width : 60%;
     margin: 10px auto;
-    padding: 20px;
+    padding: 10px;
     background-color: #333;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -76,7 +76,7 @@
     background-color: #333;
     color: #e0e0e0;
     border: none;
-    padding: 10px 15px;
+    padding: 5px 5px;
     cursor: pointer;
     font-size: 1rem;
     border-radius: 5px 5px 0 0;

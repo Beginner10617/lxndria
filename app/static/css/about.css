@@ -15,6 +15,7 @@ body {
 .container p{
     font-size: 1.2em;
     line-height: 1.5;
+    margin: 10px 10px 10px 10px;
 }
 
 a:hover {
@@ -44,6 +45,7 @@ h3{
     font-size: 1.2em;
     line-height: 1.5;
     background-color: #1E1E1E;
+    margin: 0px 0px 0px 0px;
 }
 
 .card:hover {
