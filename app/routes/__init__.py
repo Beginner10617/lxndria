@@ -10,6 +10,7 @@ from .comments import comments_bp
 from .admin import admin_bp
 from .notification import notification_bp
 from .moderation import moderation_bp
+from .sitemaps import sitemaps_bp
 routes_bp = Blueprint('routes', __name__)
 
 # Register blueprints here
@@ -24,3 +25,4 @@ routes_bp.register_blueprint(comments_bp)
 routes_bp.register_blueprint(admin_bp)
 routes_bp.register_blueprint(notification_bp)
 routes_bp.register_blueprint(moderation_bp)
+routes_bp.register_blueprint(sitemaps_bp)
