@@ -5,7 +5,7 @@ from flask_limiter.util import get_remote_address
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from flask_bcrypt import Bcrypt
-from flask import url_for 
+from flask import url_for, render_template
 from flask_migrate import Migrate
 from datetime import datetime, timedelta
 from cryptography.fernet import Fernet
@@ -16,7 +16,7 @@ from dateutil.relativedelta import relativedelta
 
 load_dotenv()
 
-WEBAPP_NAME = os.getenv('WEBAPP_NAME')
+WEBAPP_NAME = os.getenv('WEBAPP_NAME', 'Lxndria')
 csrf = CSRFProtect()
 login_manager = LoginManager()
 # Get Redis URL from environment variables (set it later in Render)
@@ -54,22 +54,24 @@ def decrypt_answer(encrypted_answer):
 def send_verification_email(user):
     token_for_verification = jwt.encode({'email': user.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, 'secret_key', algorithm='HS256')
     verify_url = url_for('routes.auth.verify_email', token=token_for_verification, _external=True)
-    msg = Message('Email Verification', sender=os.getenv('EMAIL_ID'), recipients=[user.email])
-    msg.body = 'Hi '+user.name+'! To verify your email for '+WEBAPP_NAME+', visit the following link:\n' + verify_url + '\nPlease note that these links will expire in 24 hours.'
-    msg.body = msg.body + '\n\nIf you did not create an account on '+WEBAPP_NAME+', please ignore this email, or check if someone else has used your email address to create an account.'
-    mail.send(msg)
+    subject='Email Verification'
+    email=recipients=[user.email]
+    body = 'Hi '+user.name+'! To verify your email for '+WEBAPP_NAME+', visit the following link:\n' + verify_url + '\nPlease note that these links will expire in 24 hours.'
+    body = body + '\n\nIf you did not create an account on '+WEBAPP_NAME+', please ignore this email, or check if someone else has used your email address to create an account.'
+    send_email(email, subject, body)
 
 def send_email(email, subject, body, cc=[]):
-    msg = Message(subject, sender=os.getenv('EMAIL_ID'), recipients=[email], cc=cc)
-    msg.body = body
+    msg = Message(subject, sender=os.getenv('EMAIL_ID'), recipients=email, cc=cc)
+    msg.html = render_template('email.html', body=body, email_id=os.getenv('EMAIL_ID'))
     mail.send(msg)
 
 def send_reset_password_email(user):
     token_for_reset = jwt.encode({'email': user.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, 'secret_key', algorithm='HS256')
     reset_url = url_for('routes.auth.reset_password', token=token_for_reset, _external=True)
-    msg = Message('Password Reset', sender=os.getenv('EMAIL_ID'), recipients=[user.email])
-    msg.body = 'Hi '+user.name+'! To reset your password for '+WEBAPP_NAME+', visit the following link:\n' + reset_url + '\nPlease note that these links will expire in 24 hours.'
-    mail.send(msg)
+    subject='Password Reset'
+    email=[user.email]
+    body = 'Hi '+user.name+'! To reset your password for '+WEBAPP_NAME+', visit the following link:<br>' + reset_url + '<br><b>Please note that these links will expire in 24 hours.</b>'
+    send_email(email, subject, body)
 
 def make_directory_for_user(directory):
     path = os.getenv('UPLOAD_FOLDER')+directory+"/"

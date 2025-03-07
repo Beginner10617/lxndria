@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Studio Centauri</title>
+    <style>
+
+body
+{
+    background-color: #000;
+    font-family: Arial, sans-serif;
+    color:#fff;
+    margin: 0;
+    padding: 0;
+}
+
+.header
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background-color: #000;
+    margin-top: 25px;
+    color: #fff;
+}
+
+
+.email-body{
+    padding: 20px 50px;
+    background-color: #000;
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.footer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px 50px;
+    background-color: #000;
+    color: #fff;
+    font-size: 1.2rem;
+    a{
+        color: #fff;
+        text-decoration: none;
+    }
+    a:hover{
+        color: #07bff0;
+
+    }
+}
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="header__title">
+        <h1>LXNDRIA</h1>
+    </div>
+    <div class="header__subtitle">
+        <h2>LEARN TOGETHER, GROW TOGETHER</h2>
+    </div>
+</div>
+<hr>
+<div class="email-body">
+    {{ body | safe }}
+</div>
+<hr>
+<div class="footer">
+    This is a computer generated email.
+    <a href = '/'>Lxndria</a>
+    <a href = 'mailto:
+    {{email_id}}'>{{email_id}}</a>
+</div>
+</body>
+</html>
