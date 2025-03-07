@@ -18,6 +18,8 @@ def dynamic_sitemap():
     """Dynamically generates sitemap.xml with the current host"""
     lastmod = datetime.datetime.utcnow().strftime("%Y-%m-%d")
     base_url = request.host_url.rstrip("/")  # Gets the current domain dynamically
+    if base_url.startswith("http://"):
+        base_url = base_url.replace("http://", "https://", 1)  # Force HTTPS
 
     sitemap_xml = '<?xml version="1.0" encoding="UTF-8"?>'
     sitemap_xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
