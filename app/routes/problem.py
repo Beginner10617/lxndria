@@ -13,21 +13,23 @@ problem_bp = Blueprint('problem', __name__)
 def problem(problem_id):
     submission = SubmissionForm()
    #('Problem ID:', problem_id)
-    if not current_user.is_authenticated:
-       #('Not authenticated')
-        return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
-    if problem.author == current_user.username:
+    if not current_user.is_authenticated:
+        attempts = []
+        pass
+    elif problem.author == current_user.username:
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
-    attempts = ProblemAttempts.query.filter_by(problem_id=problem.id, username=current_user.username)
+        attempts = ProblemAttempts.query.filter_by(problem_id=problem.id, username=current_user.username)
     # Increment the view count of the problem
     try:
         problem.views += 1
     except:
         problem.views = 1
     db.session.commit()
-    
-    if attempts.count(): # User has attempted the problem 
+
+    if not current_user.is_authenticated:
+        pass
+    elif attempts.count(): # User has attempted the problem 
        #('Attempted the problem %d times' % attempts.count())
         for attempt in attempts:
            #('Attempt:', attempt.is_correct)
@@ -37,6 +39,8 @@ def problem(problem_id):
     
         
     if submission.validate_on_submit():
+        if not current_user.is_authenticated:
+            return redirect(url_for('routes.auth.login'))
        #('Submitted')
         answer = submission.answer.data
        #(problem.encrypted_answer.strip())
@@ -55,7 +59,10 @@ def problem(problem_id):
             db.session.add(new_attempt)
             db.session.commit()
             return redirect(url_for('routes.problem.incorrect', problem_id=problem.id))
-    bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    if current_user.is_authenticated:
+        bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    else:
+        bookmark = None
     return render_template('problem.html', problem=problem, submission=submission, solved = 0, bookmarked=bookmark)
 
 @problem_bp.route('/problem/<int:problem_id>/owner', methods=['GET', 'POST'])

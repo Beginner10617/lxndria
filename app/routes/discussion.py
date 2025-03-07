@@ -21,12 +21,16 @@ def post_discussion():
 
 @discussion_bp.route('/discussion/<int:discussion_id>')
 def view_discussion(discussion_id):
-    if not current_user.is_authenticated:
-        flash("You need to login to view discussions!", "danger")
-        return redirect(url_for('routes.auth.login'))
     
     discussion = Discussion.query.get(discussion_id)
     if discussion.user is None:
+        bookmarked = None
+    elif not current_user.is_authenticated:
+        try:
+            discussion.views += 1
+        except:
+            discussion.views = 1
+        db.session.commit()
         bookmarked = None
     elif current_user.username != discussion.user.username:
         try:

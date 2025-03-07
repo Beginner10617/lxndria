@@ -16,9 +16,9 @@ def account():
     if not current_user.is_authenticated:
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
-    if request.args.get('updateEmail'):
+    elif request.args.get('updateEmail'):
         return redirect(url_for('routes.auth.update_email'))
-    if request.args.get('delete')=='1':
+    elif request.args.get('delete')=='1':
         user = User.query.filter_by(username=current_user.username).first()
         email_body = f"Your account has been deleted successfully. If you didn't request this, please contact us immediately."
         send_email(user.email, "Account Deleted", email_body)
@@ -64,12 +64,11 @@ def edit_account():
 
 @account_bp.route('/account/<string:username>')
 def view_account(username):
-    if not current_user.is_authenticated:
-       #('Not authenticated')
-        return redirect(url_for('routes.auth.login'))
     if not Profile.query.filter_by(username=username).first():
         return redirect(url_for('routes.account.account'))
-    if username == current_user.username:
+    if not current_user.is_authenticated:
+        pass
+    elif username == current_user.username:
         return redirect(url_for('routes.account.account'))
     profile = Profile.query.filter_by(username=username).first()
     problems = Problem.query.filter_by(author=username).order_by(Problem.created_at.desc()).all()
