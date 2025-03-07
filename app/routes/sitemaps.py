@@ -14,7 +14,7 @@ def get_pages():
     ]
 
 @sitemaps_bp.route('/sitemap.xml')
-def static_sitemap():
+def dynamic_sitemap():
     """Dynamically generates sitemap.xml with the current host"""
     lastmod = datetime.datetime.utcnow().strftime("%Y-%m-%d")
     base_url = request.host_url.rstrip("/")  # Gets the current domain dynamically
