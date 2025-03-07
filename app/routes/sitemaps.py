@@ -6,11 +6,9 @@ def get_pages():
     """List of relative paths instead of full URLs"""
     return [
         {"path": "/", "priority": "1.0"},
-        {"path": "/register", "priority": "0.9"},
-        {"path": "/about", "priority": "0.8"},
+        {"path": "/about", "priority": "0.9"},
+        {"path": "/register", "priority": "0.8"},
         {"path": "/login", "priority": "0.7"},
-        {"path": "/problems", "priority": "0.6"},
-        {"path": "/discussions", "priority": "0.5"},
     ]
 
 @sitemaps_bp.route('/sitemap.xml')
