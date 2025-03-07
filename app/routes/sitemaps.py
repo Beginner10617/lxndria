@@ -14,12 +14,10 @@ def get_pages():
     problems = Problem.query.all()
     for problem in problems:
         pages.append({"path": f"/problem/{problem.id}", "priority": "0.6"})
-    profiles = Profile.query.all()
-    for profile in profiles:
-        pages.append({"path": f"/profile/{profile.username}", "priority": "0.5"})
     discussions = Discussion.query.all()
     for discussion in discussions:
         pages.append({"path": f"/discussion/{discussion.id}", "priority": "0.4"})
+    # Need only "active" profiles to be indexed
     return pages
 
 
