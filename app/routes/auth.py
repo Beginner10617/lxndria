@@ -126,6 +126,7 @@ def reset_password_request_2():
     else:
         send_reset_password_email(current_user)
         flash('Password reset link sent to your email.', 'success')
+    return redirect(url_for('routes.account.account'))
     
 @auth_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
