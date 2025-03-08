@@ -102,7 +102,5 @@ def delete_announce():
 
 @admin_bp.route('/show-announcements')
 def show_announcements():
-    if not current_user.is_authenticated:
-        return redirect(url_for('routes.auth.login'))
     announcements = Announcements.query.order_by(Announcements.created_at.desc()).all()
     return render_template('view_announcements.html', announcements=announcements)
