@@ -42,7 +42,11 @@
             <a href="/admin-controls"><li>Admin Controls</li></a>
             <a href="/announce"><li>Announce</li></a>
             {% endif %}
+            {% if current_user.is_authenticated %}
             <a href="/account"><li>Profile</li></a>
+            {% else %}
+            <a href="/login"><li>Login</li></a>
+            {% endif %}
             <a href="/show-announcements"><li>Announcements</li></a>
             <a href="/reset-password-2"><li>Change Password</li></a>
             <a href="/account?updateEmail=1"><li>Update Email</li></a>
