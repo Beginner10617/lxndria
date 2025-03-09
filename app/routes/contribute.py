@@ -25,7 +25,9 @@ def contribute():
         problem = Problem(title=title, topic=topic, author=current_user.username, content=content, encrypted_answer=encrypt_answer(expected_answer))
         db.session.add(problem)
         db.session.commit()
-        return redirect(url_for('routes.main.index'))
+        flash("Problem added successfully!", "success")
+        problem_id = problem.id
+        return redirect(url_for('routes.problem.problem', problem_id=problem.id))
 
     return render_template('contribute.html', form=form)
 
