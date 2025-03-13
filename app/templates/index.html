@@ -89,6 +89,7 @@
         <th><a href="/?sort=Difficulty&convention={{sort_convention}}&table=problems">Difficulty</a></th>
         <th><a href="/?sort=Popularity&convention={{sort_convention}}&table=problems">Popularity</a></th>
       </tr>
+      {% set stop=false %}
       {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
       {% if index >= problems|length %}
         {% set stop=true %}
@@ -108,7 +109,7 @@
       {% if page > 0 %}
         <a href="/?page={{page-1}}&table=problems">Previous</a>
       {% endif %}
-      {% if not stop %}
+      {% if (page+1) * row_per_page < problems|length%}
         <a href="/?page={{page+1}}&table=problems">Next</a>
       {% endif %}
   </div>
@@ -129,6 +130,8 @@
         <th>Author</th>
         <th><a href="/?sort=Popularity&convention={{sort_convention}}&table=discussions">Popularity</a></th>
       </tr>
+
+      {% set stop=false %}
       {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
       {% if index >= discussions|length %}
         {% set stop=true %}
@@ -147,7 +150,7 @@
       {% if page > 0 %}
         <a href="/?page={{page-1}}&table=discussions">Previous</a>
       {% endif %}
-      {% if not stop %}
+      {% if (page+1) * row_per_page < discussions|length%}
         <a href="/?page={{page+1}}&table=discussions">Next</a>
       {% endif %}
   </div>
@@ -164,6 +167,7 @@
         <th>Topic</th>
         <th><a href="/?sort=Difficulty&convention={{sort_convention}}&table=need-solution">Difficulty</th>
       </tr>
+      {% set stop=false %}
       {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
       {% if index >= need_solution|length %}
         {% set stop=true %}
@@ -182,7 +186,7 @@
       {% if page > 0 %}
         <a href="/?page={{page-1}}&table=need-solution">Previous</a>
       {% endif %}
-      {% if not stop %}
+      {% if (page+1)*row_per_page < need_solution|length%}
         <a href="/?page={{page+1}}&table=need-solution">Next</a>
       {% endif %}
     </div>
