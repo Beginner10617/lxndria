@@ -21,7 +21,7 @@ def account():
     elif request.args.get('delete')=='1':
         user = User.query.filter_by(username=current_user.username).first()
         email_body = f"Your account has been deleted successfully. If you didn't request this, please contact us immediately."
-        send_email(user.email, "Account Deleted", email_body)
+        send_email([user.email], "Account Deleted", email_body)
         user.__delete__()
         return redirect(url_for('routes.auth.logout'))
     profile = Profile.query.filter_by(username=current_user.username).first()

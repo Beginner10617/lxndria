@@ -164,7 +164,7 @@ def accept(id):
     body = "Hello! Your post has been removed from the website. If you have any queries, please contact the moderators."
     body = body + "\nReason: " + report.reason + "\n\nModerator Notes: " + report.notes
     body = body + "\n\nContent: \n" + content
-    send_email(email, subject, body, cc=[mod_email])
+    send_email([email], subject, body, cc=[mod_email])
     report.handled = True
     report.handled_by = current_user.username
     report.action = 'Removed'

@@ -191,7 +191,7 @@ def update_email():
             db.session.commit()
             flash('Email updated successfully.', 'success')
             message = f'Your email has been updated to {email}.'
-            send_email('Email Updated', message, previous_email)
+            send_email([email], 'Email Updated', message)
             return redirect(url_for('routes.account.account'))
         flash('Invalid password', 'error')
     return render_template('update_email.html', form=update_email_form)
