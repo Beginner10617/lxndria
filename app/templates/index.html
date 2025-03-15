@@ -89,7 +89,6 @@
         <th><a href="/?sort=Difficulty&convention={{sort_convention}}&table=problems">Difficulty</a></th>
         <th><a href="/?sort=Popularity&convention={{sort_convention}}&table=problems">Popularity</a></th>
       </tr>
-      {% set stop=false %}
       {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
       {% if index >= problems|length %}
         {% set stop=true %}
@@ -131,7 +130,6 @@
         <th><a href="/?sort=Popularity&convention={{sort_convention}}&table=discussions">Popularity</a></th>
       </tr>
 
-      {% set stop=false %}
       {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
       {% if index >= discussions|length %}
         {% set stop=true %}
@@ -167,7 +165,6 @@
         <th>Topic</th>
         <th><a href="/?sort=Difficulty&convention={{sort_convention}}&table=need-solution">Difficulty</th>
       </tr>
-      {% set stop=false %}
       {% for index in range(page*row_per_page, (page+1)*row_per_page) %}
       {% if index >= need_solution|length %}
         {% set stop=true %}
