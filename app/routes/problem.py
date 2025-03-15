@@ -19,6 +19,7 @@ def problem(problem_id):
         pass
     elif problem.author == current_user.username:
         return redirect(url_for('routes.problem.owner', problem_id=problem.id))
+    else:
         attempts = ProblemAttempts.query.filter_by(problem_id=problem.id, username=current_user.username)
     # Increment the view count of the problem
     try:

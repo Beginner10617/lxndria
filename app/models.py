@@ -33,28 +33,6 @@ class User(db.Model, UserMixin): # create a User class to store user information
         return '<User %r>' % self.username
     
     def __delete__(self):
-        profile = Profile.query.filter_by(username=self.username).first()
-        profile.username = '_user_deleted_'+self.username
-        problems = Problem.query.filter_by(author=self.username).all()
-        # Changes
-        for problem in problems:
-            problem.author = '_user_deleted_'+self.username
-        attempts = ProblemAttempts.query.filter_by(username=self.username).all()
-        for attempt in attempts:
-            attempt.username = '_user_deleted_'+self.username
-        solutions = Solutions.query.filter_by(username=self.username).all()
-        for solution in solutions:
-            solution.username = '_user_deleted_'+self.username
-        discussions = Discussion.query.filter_by(author=self.username).all()
-        for discussion in discussions:
-            discussion.author = '_user_deleted_'+self.username
-        comments = Comments.query.filter_by(username=self.username).all()
-        for comment in comments:
-            comment.username = '_user_deleted_'+self.username
-        upvotes = Upvotes.query.filter_by(username=self.username).all()
-        for upvote in upvotes:
-            upvote.username = '_user_deleted_'+self.username
-        # Deletion
         bookmarks = Bookmarks.query.filter_by(username=self.username).all()
         for bookmark in bookmarks:
             db.session.delete(bookmark)
@@ -65,14 +43,17 @@ class User(db.Model, UserMixin): # create a User class to store user information
         mods = Moderators.query.filter_by(username=self.username).all()
         for mod in mods:
             db.session.delete(mod)
-        db.session.delete(self)
+        self.username = '_' + self.username + "_deleted_"
+        self.email = '_' + self.email + "_deleted_"
+        self.name = '_' + self.name + "_deleted_"
+        self.password_hash = "_deleted_"
         db.session.commit()
 
 class Profile(db.Model):
     __tablename__ = "profile"
     __table_args__ = {"extend_existing": True}
 
-    username = db.Column(db.String(80), db.ForeignKey('user.username'), primary_key=True)  # Primary + Foreign Key
+    username = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE"), primary_key=True)  # Primary + Foreign Key
     user = db.relationship('User', backref=db.backref('profile', uselist=False, cascade="all, delete-orphan"))
     
     profile_pic = db.Column(db.String(255), default="/images/default-profile.jpg")  
@@ -116,7 +97,7 @@ class Problem(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     views = db.Column(db.Integer, default=0)
     
-    author = db.Column(db.String(80), db.ForeignKey('user.username'))
+    author = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE"))
     user = db.relationship('User', backref=db.backref('problems', cascade="all, delete-orphan"))
 
     content = db.Column(db.Text, nullable=False)
@@ -195,9 +176,9 @@ class ProblemAttempts(db.Model):
     __table_args__ = {"extend_existing": True}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id', onupdate="CASCADE"))
     
-    username = db.Column(db.String(80), db.ForeignKey('user.username'))
+    username = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE"))
     user = db.relationship('User', backref=db.backref('attempts', cascade="all, delete-orphan"))
 
     is_correct = db.Column(db.Boolean, default=False)
@@ -212,9 +193,9 @@ class Solutions(db.Model):
     __table_args__ = {"extend_existing": True}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id', onupdate="CASCADE"))
     problem = db.relationship('Problem', backref=db.backref('solutions', cascade="all, delete-orphan"))
-    username = db.Column(db.String(80), db.ForeignKey('user.username'))
+    username = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE"))
     user = db.relationship('User', backref=db.backref('solutions', cascade="all, delete-orphan"))
     solution = db.Column(db.Text, nullable=False)
     upvotes = db.Column(db.Integer, default=0)
@@ -241,7 +222,7 @@ class Discussion(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     views = db.Column(db.Integer, default=0)
-    author = db.Column(db.String(80), db.ForeignKey('user.username'))
+    author = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE"))
     user = db.relationship('User', backref=db.backref('discussions', cascade="all, delete-orphan"))
 
     def __repr__(self):
@@ -286,7 +267,7 @@ class Comments(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     parent_id = db.Column(db.VARCHAR(10), nullable=False)
-    username = db.Column(db.String(80), db.ForeignKey('user.username'))
+    username = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE"))
     user = db.relationship('User', backref=db.backref('comments', cascade="all, delete-orphan"))
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -310,9 +291,9 @@ class Upvotes(db.Model):
     __table_args__ = {"extend_existing": True}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(80), db.ForeignKey('user.username')) # Username of the user who upvoted
+    username = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE")) # Username of the user who upvoted
     user = db.relationship('User', backref=db.backref('upvotes', cascade="all, delete-orphan"))
-    solution_id = db.Column(db.Integer, db.ForeignKey('solutions.id'))
+    solution_id = db.Column(db.Integer, db.ForeignKey('solutions.id', onupdate="CASCADE"))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
@@ -323,11 +304,11 @@ class Bookmarks(db.Model):
     __table_args__ = {"extend_existing": True}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(80), db.ForeignKey('user.username')) # Username of the user who bookmarked
+    username = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE")) # Username of the user who bookmarked
     user = db.relationship('User', backref=db.backref('bookmarks', cascade="all, delete-orphan"))
-    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'), nullable=True)
+    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id', onupdate="CASCADE"), nullable=True)
     problem = db.relationship('Problem', backref=db.backref('bookmarks', cascade="all, delete-orphan"))
-    discussion_id = db.Column(db.Integer, db.ForeignKey('discussion.id'), nullable=True)
+    discussion_id = db.Column(db.Integer, db.ForeignKey('discussion.id', onupdate="CASCADE"), nullable=True)
     discussion = db.relationship('Discussion', backref=db.backref('bookmarks', cascade="all, delete-orphan"))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -344,7 +325,7 @@ class Notifications(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     parent_id = db.Column(db.String(10), nullable=False)
-    username = db.Column(db.String(80), db.ForeignKey('user.username')) # Username of the user who bookmarked
+    username = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE")) # Username of the user who bookmarked
     user = db.relationship('User', backref=db.backref('notifications', cascade="all, delete-orphan"))
     read = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -423,7 +404,7 @@ class Report(db.Model):
 
     notes = db.Column(db.Text, default="")
     handled = db.Column(db.Boolean, default=False)
-    handled_by = db.Column(db.String(80), db.ForeignKey('user.username'))
+    handled_by = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE"))
     action = db.Column(db.String(20), default="None")
 
     __table_args__ = (
@@ -475,7 +456,7 @@ class Moderators(db.Model):
     __table_args__ = {"extend_existing": True}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(80), db.ForeignKey('user.username'))
+    username = db.Column(db.String(80), db.ForeignKey('user.username', onupdate="CASCADE"))
     user = db.relationship('User', backref=db.backref('moderator', cascade="all, delete-orphan"))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     requests_handled = db.Column(db.Integer, default=0)

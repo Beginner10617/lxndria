@@ -88,6 +88,9 @@ def login():
     if form.validate_on_submit():
         username = form.username.data.strip()
         password = form.password.data.strip()
+        if username.startswith('_'):
+            flash('Username cannot start with an underscore.', 'error')
+            return redirect(url_for('routes.auth.login'))
         user = User.query.filter_by(username=username).first()
         if user and user.verify_password(password):
            #('Login successful')
@@ -191,7 +194,7 @@ def update_email():
             db.session.commit()
             flash('Email updated successfully.', 'success')
             message = f'Your email has been updated to {email}.'
-            send_email([email], 'Email Updated', message)
+            send_email([previous_email], 'Email Updated', message)
             return redirect(url_for('routes.account.account'))
         flash('Invalid password', 'error')
     return render_template('update_email.html', form=update_email_form)
