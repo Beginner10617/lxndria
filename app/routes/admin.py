@@ -81,7 +81,7 @@ def announce():
         db.session.add(announce)
         db.session.commit()
         flash('Announcement updated', 'success')
-        return redirect(url_for('routes.admin.admin'))
+        return redirect(url_for('routes.admin.show_announcements'))
     return render_template('announce.html', form=form)
 
 @admin_bp.route('/delete-announce')

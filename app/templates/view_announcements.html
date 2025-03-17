@@ -12,7 +12,7 @@
         {% for announcement in announcements %}
             <section class="card">
                 <h2>{{ announcement.title }}</h2>
-                <p>{{ announcement.content }}</p>
+                <p>{{ announcement.content|safe}}</p>
                 <p class="date">{{ announcement.created_at|time_ago }}</p>
             {% if current_user.username == 'admin' %}
                 <a href="/delete-announce?id={{announcement.id}}">Delete</a>
