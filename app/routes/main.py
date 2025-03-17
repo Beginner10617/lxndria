@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 from app.models import User, Problem, Discussion
-
+import os
 main_bp = Blueprint('main', __name__)
 @main_bp.route('/')
 def index():
@@ -39,5 +39,5 @@ def index():
             need_solution = Problem.query.filter(Problem.needs_solution == True).order_by(Problem.created_at).all()
    #(all_problems)
     new_sort_convention = 'asc' if sort_convention == 'desc' else 'desc'
-    return render_template('index.html', problems=all_problems, page=pageNumber, row_per_page=rows, discussions=all_discussions, table=table, need_solution=need_solution, sort_convention=new_sort_convention)
+    return render_template('index.html', problems=all_problems, page=pageNumber, row_per_page=rows, discussions=all_discussions, table=table, need_solution=need_solution, sort_convention=new_sort_convention, email=os.getenv('EMAIL_ID'))
 
