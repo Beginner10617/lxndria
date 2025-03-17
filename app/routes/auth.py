@@ -53,7 +53,9 @@ def register():
         if username.startswith('_'):
             flash('Username cannot start with an underscore.', 'error')
             return redirect(url_for('routes.auth.register'))
-
+        if ' ' in username:
+            flash('Username cannot contain spaces.', 'error')
+            return redirect(url_for('routes.auth.register'))
         # Check if passwords match
         if password != confirm_password:
             flash('Passwords do not match.', 'error')
