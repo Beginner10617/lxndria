@@ -135,10 +135,10 @@ def edit(problem_id):
        #('Not authenticated')
         return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
-    
+    if problem.author != current_user.username:
+        return redirect(url_for('routes.problem.problem', problem_id=problem.id))
+        
     if request.method == 'GET':
-        if problem.author != current_user.username:
-            return redirect(url_for('routes.problem.problem', problem_id=problem.id))
         form=PostProblemForm(obj=problem)
         form.expected_answer.data = decrypt_answer(problem.encrypted_answer.strip())
         return render_template('edit-problem.html', problem=problem, form=form)
