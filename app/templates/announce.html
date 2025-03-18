@@ -62,7 +62,11 @@
 <body>
 <h1>Announce</h1>
 <p>Announce a message to all users.</p>
+{% if edit%}
+<form action="/edit-announce?id={{id}}" method="post">
+{% else %}
 <form action="/announce" method="post">
+{% endif %}
     {{ form.hidden_tag() }}  <!-- CSRF Token -->
         <div class="title">
             {{ form.title(class="form-control", placeholder="Title") }}

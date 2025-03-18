@@ -5,6 +5,13 @@
     <title>Announcements</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/about.css')}}">
 </head>
+<script>
+    function confirmDeletion(event, id, url) {
+        if (confirm("Are you sure you want to delete this announcement?")) {
+            window.location.href = url + "?id=" + id;
+        }
+    }
+</script>
 <body>
     <div class="container">
 
@@ -15,7 +22,8 @@
                 <p>{{ announcement.content|safe}}</p>
                 <p class="date">{{ announcement.created_at|time_ago }}</p>
             {% if current_user.username == 'admin' %}
-                <a href="/delete-announce?id={{announcement.id}}">Delete</a>
+                <a href="/edit-announce?id={{announcement.id}}">Edit</a>
+                <a onclick="confirmDeletion(event, '{{id}}', '/delete-announce')">Delete</a>
             {% endif %}
             </section>
         {% endfor %}

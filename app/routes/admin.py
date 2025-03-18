@@ -104,3 +104,28 @@ def delete_announce():
 def show_announcements():
     announcements = Announcements.query.order_by(Announcements.created_at.desc()).all()
     return render_template('view_announcements.html', announcements=announcements)
+
+@admin_bp.route('/edit-announce', methods=['GET', 'POST'])
+def edit_announce():
+    if not current_user.is_authenticated:
+        return redirect(url_for('routes.auth.login'))
+    if current_user.username != 'admin':
+        return redirect(url_for('routes.account.account'))
+    id = request.args.get('id')
+    if id is None:
+        flash('Announcement not found', 'danger')
+        return redirect(url_for('routes.admin.admin'))
+    announcement = Announcements.query.filter_by(id=id).first()
+    if announcement is None:
+        flash('Announcement not found', 'danger')
+        return redirect(url_for('routes.admin.admin'))
+    form = AnnouncementForm()
+    if form.validate_on_submit():
+        announcement.title = form.title.data
+        announcement.content = form.content.data
+        db.session.commit()
+        flash('Announcement updated', 'success')
+        return redirect(url_for('routes.admin.show_announcements'))
+    form.title.data = announcement.title
+    form.content.data = announcement.content
+    return render_template('announce.html', form=form, edit=True, id=id)
