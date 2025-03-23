@@ -76,9 +76,8 @@ def register():
         user = User(username=username, name=name, email=email)
         user.set_password(password)
         pending_users[email]=user
-        flash('Account created successfully. Please check your email to verify your account.', 'success')
         send_verification_email(user)
-        return redirect(url_for('routes.auth.login'))
+        return render_template('verify_email.html')
     elif current_user.is_authenticated:
         return redirect(url_for('routes.main.index'))
     return render_template('register.html', form=form)
