@@ -230,7 +230,9 @@ def solution(problem_id):
         return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), solved_percent = (problem.solved*100//(problem.attempts+1)), solution=Solform
             , all_solutions=all_solutions, form=form, comments=comments, bookmarked=bookmark)
     if request.method == 'POST':
-
+        solution = Solutions.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+        if solution is not None:
+            return redirect(url_for('routes.problem.correct', problem_id=problem.id))
         form = SolutionForm()
         if form.validate_on_submit():
             problem = Problem.query.filter_by(id=problem_id).first()
