@@ -41,7 +41,7 @@ def problem(problem_id):
         
     if submission.validate_on_submit():
         if not current_user.is_authenticated:
-            return redirect(url_for('routes.auth.login'))
+            return render_template('problem.html', problem=problem, solved = 2)
        #('Submitted')
         answer = submission.answer.data
        #(problem.encrypted_answer.strip())
@@ -163,10 +163,11 @@ def edit(problem_id):
 
 @problem_bp.route('/problem/<int:problem_id>/correct')
 def correct(problem_id):
-    if not current_user.is_authenticated:
-       #('Not authenticated')
-        return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
+    bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    
+    if not current_user.is_authenticated:
+        return render_template('problem.html', problem=problem, solved=2, bookmarked=bookmark)
     
     attempts = ProblemAttempts.query.filter_by(problem_id=problem_id, username=current_user.username)
     if attempts.count() == 0:
@@ -182,7 +183,6 @@ def correct(problem_id):
     form = CommentForm()
     solution_ids = ['S'+str(solution.id) for solution in all_solutions]
     comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
-    bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
     
     return render_template('problem.html', problem=problem, solved = +1, answer = decrypt_answer(problem.encrypted_answer.strip()), 
         solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, 
@@ -190,10 +190,11 @@ def correct(problem_id):
 
 @problem_bp.route('/problem/<int:problem_id>/incorrect')
 def incorrect(problem_id):
-    if not current_user.is_authenticated:
-       #('Not authenticated')
-        return redirect(url_for('routes.auth.login'))
     problem = Problem.query.filter_by(id=problem_id).first()
+    bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
+    
+    if not current_user.is_authenticated:
+        return render_template('problem.html', problem=problem, solved=2, bookmarked=bookmark)
     
     attempts = ProblemAttempts.query.filter_by(problem_id=problem_id, username=current_user.username)
     if attempts.count() == 0:
@@ -204,7 +205,6 @@ def incorrect(problem_id):
     all_solutions = Solutions.query.filter_by(problem_id=problem_id) 
     solution_ids = ['S'+str(solution.id) for solution in all_solutions]
     comments = Comments.query.filter(Comments.parent_id.in_(solution_ids)).all()
-    bookmark = Bookmarks.query.filter_by(problem_id=problem_id, username=current_user.username).first()
     
     return render_template('problem.html', problem=problem, solved = -1, answer = decrypt_answer(problem.encrypted_answer.strip()),
         solved_percent = (problem.solved*100//problem.attempts), posted_solution = 1, all_solutions=all_solutions, form=form, 

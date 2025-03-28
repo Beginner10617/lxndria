@@ -103,10 +103,14 @@
         <div class="correct-message"><b>🎉Correct!</b></div>
         <div class="problem-stat">Correct by {{solved_percent}}%</div>
     </div>
+    {% elif solved == +2 %}
+    <div class="answer">
+        <div class="wrong-message"><b>You must create an account in order to submit answers</b></div>
+    </div>
     {% endif %}
     </div>
 
-    {% if solved != 0 %}
+    {% if solved != 0 and solved != 2%}
 
     <!--Solution posting/reading area--->
     <div class="solution-header">
