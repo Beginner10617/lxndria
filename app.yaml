@@ -1,0 +1,32 @@
+runtime: python
+env: flex
+entrypoint: gunicorn -b :$PORT run:app
+
+runtime_config:
+  operating_system: ubuntu22
+
+automatic_scaling:
+  min_num_instances: 1   # Keep at least 1 instance running
+  max_num_instances: 10  # Scale up to 10 instances if needed
+  cool_down_period_sec: 60  # Wait 60 seconds before scaling down
+  max_concurrent_requests: 80  # Each instance can handle 80 requests before scaling up
+
+env_variables:
+  SECRET_KEY : "4-Au8A2Me5Cq_BEMTj_7cA"
+  EMAIL_ID : "noreplyotplxndria@gmail.com"
+  EMAIL_PASSWORD : "ftdq fwcw rzwn sfpw"
+  WEBAPP_NAME : "Lxndria"
+  UPLOAD_FOLDER : "app/static/User-content/"
+  FERNET_KEY : "dLNQ8S-RO3VM0JHccZboTKyIC-_JZw_GhFolZ6bEMQg="
+  DATABASE_URI : "postgresql://neondb_owner:npg_5dZvaRCG4Ejk@ep-solitary-rain-a8q2sbf6-pooler.eastus2.azure.neon.tech/neondb?sslmode:require"
+  EMAIL_SERVER : "smtp.gmail.com"
+
+resources:
+  cpu: 2
+  memory_gb: 2
+  disk_size_gb: 10
+
+handlers:
+- url: /.*
+  script: auto
+  secure: always  # Forces HTTPS
