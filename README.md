@@ -112,7 +112,7 @@ See the full license details in the [`LICENSE`](https://github.com/Beginner10617
 
 ## 📬 Contact
 
-- **Website:** [lxndria.com](https://lxndria.com) (Currently not hosting)
+- **Website:** (Currently not hosting)
 - **GitHub Issues:** Report Issues [Here](https://github.com/Beginner10617/lxndria/issues)
 - **Email:** wasihusain23@iitk.ac.in
 
