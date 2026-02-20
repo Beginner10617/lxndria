@@ -1,17 +1,17 @@
 # Lxndria.com
 Lxndria is an open-source web platform inspired by the discontinued [*The Brilliant Community*](https://brilliant.org/community-faq/). It focuses on problem-solving and discussions rather than course-based learning. The goal is to create an interactive and engaging space for knowledge-sharing, logical problem-solving, and collaborative discussions.
 
-## 🚀 Features  
+## Features  
 
-- 🧠 **Problem-Solving Discussions** – Users can engage in deep discussions on problem statements.  
-- 📚 **Open Learning Platform** – Encourages learning through active participation rather than structured courses.  
-- 🌐 **Web-Based Interface** – Accessible through any modern web browser.    
-- ⚡ **Flask-Based Backend** – The backend is built using Python's Flask framework.  
-- 🔄 **Open Source** – Contributions are welcome to expand the platform's functionality.  
+- **Problem-Solving Discussions** – Users can engage in deep discussions on problem statements.  
+- **Open Learning Platform** – Encourages learning through active participation rather than structured courses.  
+- **Web-Based Interface** – Accessible through any modern web browser.    
+- **Flask-Based Backend** – The backend is built using Python's Flask framework.  
+- **Open Source** – Contributions are welcome to expand the platform's functionality.  
 
 ---
 
-## 🏗️ Tech Stack  
+## Tech Stack  
 
 - **Backend:** Flask (Python)  
 - **Frontend:** HTML, CSS, JavaScript  
@@ -21,7 +21,7 @@ Lxndria is an open-source web platform inspired by the discontinued [*The Brilli
 
 ---
 
-## 📦 Installation & Setup  
+## Installation & Setup  
 
 ### Prerequisites  
 
@@ -81,7 +81,7 @@ Ensure you have the following installed:
 
 ---
 
-## 🚀 Deployment
+## Deployment
 Lxndria is intended for production deployment. Consider:
 
 - Setting up a secure Flask server (e.g., using gunicorn)
@@ -91,7 +91,7 @@ Lxndria is intended for production deployment. Consider:
 
 ---
 
-## 🛠️ Contributing
+## Contributing
 
 We welcome contributions! If you'd like to contribute:
 
@@ -102,7 +102,7 @@ We welcome contributions! If you'd like to contribute:
 
 ---
 
-## 📜 License  
+## License  
 
 Lxndria.com is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.  
 
@@ -110,7 +110,7 @@ See the full license details in the [`LICENSE`](https://github.com/Beginner10617
 
 ---
 
-## 📬 Contact
+## Contact
 
 - **Website:** (Currently not hosting)
 - **GitHub Issues:** Report Issues [Here](https://github.com/Beginner10617/lxndria/issues)
