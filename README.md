@@ -81,16 +81,14 @@ Ensure you have the following installed:
 
 ---
 ## Rate Limiting (Redis Config)
-The application uses Flask-Limiter for rate limiting
-If REDIS_URL is set, Redis will be used as the storage backend
-Otherwise, it falls back to in-memory storage
+The application uses Flask-Limiter for rate limiting. If REDIS_URL is set, Redis will be used as the storage backend. Otherwise, it falls back to in-memory storage.
+
 Example:
 `
 REDIS_URL=redis://localhost:6379
 `
-In-memory storage: Resets on restart
-Does not work across multiple instances
-For production, configure Redis.
+
+In-memory storage: Resets on restart. Does not work across multiple instances. For production, configure Redis.
 ___
 
 ## Deployment
