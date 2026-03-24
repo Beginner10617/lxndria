@@ -1,8 +1,8 @@
-"""Recreating all migrations
+"""Initial migration
 
-Revision ID: 798598a5bc4c
+Revision ID: 670eec099d67
 Revises: 
-Create Date: 2025-03-02 14:18:51.806437
+Create Date: 2026-03-24 19:46:11.866082
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '798598a5bc4c'
+revision = '670eec099d67'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -44,7 +44,7 @@ def upgrade():
     sa.Column('content', sa.Text(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['username'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['username'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('discussion',
@@ -55,7 +55,7 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('views', sa.Integer(), nullable=True),
     sa.Column('author', sa.String(length=80), nullable=True),
-    sa.ForeignKeyConstraint(['author'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['author'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('moderators',
@@ -63,7 +63,7 @@ def upgrade():
     sa.Column('username', sa.String(length=80), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('requests_handled', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['username'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['username'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('notifications',
@@ -72,7 +72,7 @@ def upgrade():
     sa.Column('username', sa.String(length=80), nullable=True),
     sa.Column('read', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['username'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['username'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('problem',
@@ -88,7 +88,7 @@ def upgrade():
     sa.Column('content', sa.Text(), nullable=False),
     sa.Column('encrypted_answer', sa.Text(), nullable=False),
     sa.CheckConstraint("topic IN ('Algebra', 'Geometry', 'Number Theory', 'Calculus', 'Logic', 'Classical Mechanics', 'Electricity and Magnetism', 'Computer Science', 'Quantitative Finance', 'Chemistry', 'Probability')", name='valid_topic_check'),
-    sa.ForeignKeyConstraint(['author'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['author'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('profile',
@@ -98,7 +98,7 @@ def upgrade():
     sa.Column('upvotes', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['username'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['username'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('username')
     )
     op.create_table('report',
@@ -112,7 +112,7 @@ def upgrade():
     sa.Column('handled_by', sa.String(length=80), nullable=True),
     sa.Column('action', sa.String(length=20), nullable=True),
     sa.CheckConstraint("action IN ('Accepted', 'Declined')", name='valid_action_check'),
-    sa.ForeignKeyConstraint(['handled_by'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['handled_by'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('bookmarks',
@@ -122,9 +122,9 @@ def upgrade():
     sa.Column('discussion_id', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.CheckConstraint('problem_id IS NOT NULL OR discussion_id IS NOT NULL', name='valid_bookmark_check'),
-    sa.ForeignKeyConstraint(['discussion_id'], ['discussion.id'], ),
-    sa.ForeignKeyConstraint(['problem_id'], ['problem.id'], ),
-    sa.ForeignKeyConstraint(['username'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['discussion_id'], ['discussion.id'], onupdate='CASCADE'),
+    sa.ForeignKeyConstraint(['problem_id'], ['problem.id'], onupdate='CASCADE'),
+    sa.ForeignKeyConstraint(['username'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('problem_attempts',
@@ -133,8 +133,8 @@ def upgrade():
     sa.Column('username', sa.String(length=80), nullable=True),
     sa.Column('is_correct', sa.Boolean(), nullable=True),
     sa.Column('attemptedAt', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['problem_id'], ['problem.id'], ),
-    sa.ForeignKeyConstraint(['username'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['problem_id'], ['problem.id'], onupdate='CASCADE'),
+    sa.ForeignKeyConstraint(['username'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('solutions',
@@ -145,8 +145,8 @@ def upgrade():
     sa.Column('upvotes', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['problem_id'], ['problem.id'], ),
-    sa.ForeignKeyConstraint(['username'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['problem_id'], ['problem.id'], onupdate='CASCADE'),
+    sa.ForeignKeyConstraint(['username'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('upvotes',
@@ -154,8 +154,8 @@ def upgrade():
     sa.Column('username', sa.String(length=80), nullable=True),
     sa.Column('solution_id', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['solution_id'], ['solutions.id'], ),
-    sa.ForeignKeyConstraint(['username'], ['user.username'], ),
+    sa.ForeignKeyConstraint(['solution_id'], ['solutions.id'], onupdate='CASCADE'),
+    sa.ForeignKeyConstraint(['username'], ['user.username'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
